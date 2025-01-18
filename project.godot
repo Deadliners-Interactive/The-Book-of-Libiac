@@ -12,8 +12,12 @@ config_version=5
 
 config/name="Supai's Gates"
 run/main_scene="res://Scenes/player.tscn"
-config/features=PackedStringArray("4.2", "Forward Plus")
+config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/copilot/plugin.cfg")
 
 [importer_defaults]
 

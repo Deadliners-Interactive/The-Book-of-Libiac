@@ -6,6 +6,10 @@ const JUMP_VELOCITY = 2.5
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
+#Animación
+@onready var animated_sprite = $AnimationPlayer
+#Flip nodo
+var is_facing_right = true
 
 
 func _physics_process(delta):
@@ -27,5 +31,18 @@ func _physics_process(delta):
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
+		
+#Si esta mirando a la derecha y aprieto la izquierda
 
 	move_and_slide()
+	update_animations()
+	
+func update_animations():
+	if velocity.length() > 0.1 and is_on_floor():
+		animated_sprite.play("run")
+	else:
+		animated_sprite.play("idle")
+
+	
+	
+	
