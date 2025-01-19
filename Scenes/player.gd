@@ -4,13 +4,29 @@ extends CharacterBody3D
 @export var jump_speed: float
 var is_facing_right = true
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
+@onready var animated_sprite = $Sprite3D
 
 func _physics_process(delta):
 	jump(delta)
 	move()
 	flip()
 	move_and_slide()
+	update_animations()
 
+func update_animations():
+	if not is_on_floor():
+		if velocity.y<0:
+			animated_sprite.play("jump")
+		else: 
+			animated_sprite.play("fall")
+		return
+	
+	
+	if velocity.x != 0 or velocity.z != 0:
+		animated_sprite.play("run")
+	else:
+		animated_sprite.play("idle")
+		
 func jump(delta):
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = jump_speed

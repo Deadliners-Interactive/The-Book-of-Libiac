@@ -1,8 +1,18 @@
-[gd_scene load_steps=18 format=3 uid="uid://dl1ki8dhwoa1f"]
+[gd_scene load_steps=25 format=3 uid="uid://dl1ki8dhwoa1f"]
 
 [ext_resource type="Script" path="res://Scenes/player.gd" id="1_viyiy"]
 [ext_resource type="Texture2D" uid="uid://cj2e17bog4y7c" path="res://assets/Sprites/Characters/Player/Gallito_idle_spritesheet.png" id="2_0cqtj"]
+[ext_resource type="Texture2D" uid="uid://b57o7evfye650" path="res://assets/Sprites/Characters/Player/gallito_fall.png" id="2_545oy"]
 [ext_resource type="Texture2D" uid="uid://dbkobqc5q52gd" path="res://assets/Sprites/Characters/Player/Gallito_run_spritesheet.png" id="3_t6r43"]
+[ext_resource type="Texture2D" uid="uid://x84cnk1rrhfr" path="res://assets/Sprites/Characters/Player/Gallito_jump_spritesheet.png" id="4_5av7p"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ye1wl"]
+atlas = ExtResource("2_545oy")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r5y4a"]
+atlas = ExtResource("2_545oy")
+region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_aixpj"]
 atlas = ExtResource("2_0cqtj")
@@ -27,6 +37,18 @@ region = Rect2(64, 0, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_iemor"]
 atlas = ExtResource("2_0cqtj")
 region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qc37o"]
+atlas = ExtResource("4_5av7p")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_df4ei"]
+atlas = ExtResource("4_5av7p")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_weilg"]
+atlas = ExtResource("4_5av7p")
+region = Rect2(32, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3a16a"]
 atlas = ExtResource("3_t6r43")
@@ -56,6 +78,17 @@ region = Rect2(80, 0, 16, 16)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_ye1wl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r5y4a")
+}],
+"loop": true,
+"name": &"fall",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_aixpj")
 }, {
 "duration": 1.0,
@@ -76,6 +109,20 @@ animations = [{
 "loop": true,
 "name": &"idle",
 "speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qc37o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_df4ei")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_weilg")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -112,8 +159,9 @@ script = ExtResource("1_viyiy")
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0.0106578, 0, 0)
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_ue4gs")
-animation = &"run"
-frame_progress = 0.780815
+animation = &"idle"
+frame = 4
+frame_progress = 0.897007
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(0.0915694, 0, 0, 0, 0.0828276, 0.0445899, 0, -0.0828276, 0.0445899, 0.0163445, -0.00203877, 0.00100458)
