@@ -109,4 +109,6 @@ environment = SubResource("Environment_u5gxq")
 transform = Transform3D(1, 0, 0, 0, 0.70482, 0.709386, 0, -0.709386, 0.70482, 0, 1.18726, 0.775661)
 
 [node name="Player" parent="." instance=ExtResource("1_de4c4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.20059, 0.0419081, -0.0251471)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.20059, 0.044951, -0.0251471)
+move_speed = 3.0
+jump_speed = 2.5

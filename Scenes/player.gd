@@ -1,48 +1,35 @@
 extends CharacterBody3D
 
-
-const SPEED = 3.0
-const JUMP_VELOCITY = 2.5
-
-# Get the gravity from the project settings to be synced with RigidBody nodes.
-var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
-#Animación
-@onready var animated_sprite = $AnimationPlayer
-#Flip nodo
+@export var move_speed: float
+@export var jump_speed: float
 var is_facing_right = true
-
+var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 func _physics_process(delta):
-	# Add the gravity.
+	jump(delta)
+	move()
+	flip()
+	move_and_slide()
+
+func jump(delta):
+	if Input.is_action_just_pressed("jump") and is_on_floor():
+		velocity.y = jump_speed
+		
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
-	# Handle jump.
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
-
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
-	var input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+func move():
+	var input_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	if direction:
-		velocity.x = direction.x * SPEED
-		velocity.z = direction.z * SPEED
+		velocity.x = direction.x * move_speed
+		velocity.z = direction.z * move_speed
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
-		
-#Si esta mirando a la derecha y aprieto la izquierda
+		velocity.x = move_toward(velocity.x, 0, move_speed)
+		velocity.z = move_toward(velocity.z, 0, move_speed)
 
-	move_and_slide()
-	update_animations()
-	
-func update_animations():
-	if velocity.length() > 0.1 and is_on_floor():
-		animated_sprite.play("run")
-	else:
-		animated_sprite.play("idle")
-
-	
-	
+func flip():
+	if (is_facing_right and velocity.x < 0) or (not is_facing_right and velocity.x > 0):
+		$Sprite3D.scale.x *= -1
+		is_facing_right = not is_facing_right
 	
