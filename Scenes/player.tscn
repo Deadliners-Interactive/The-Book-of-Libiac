@@ -207,7 +207,7 @@ animations = [{
 }]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_354j1"]
-size = Vector3(1.12109, 1.15564, 0.298096)
+size = Vector3(1.12109, 1.15564, 0.130508)
 
 [node name="Player" type="CharacterBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00133541, 0, 0.00163442)
@@ -222,7 +222,7 @@ frame = 4
 frame_progress = 0.897007
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(0.0915694, 0, 0, 0, 0.0828276, 0.0445899, 0, -0.0828276, 0.0445899, 0.0163445, -0.00203877, 0.00100458)
+transform = Transform3D(0.0915694, 0, 0, 0, 0.0828276, 0.0445899, 0, -0.0828276, 0.0445899, 0.0163445, -0.00245618, 0.000587168)
 shape = SubResource("BoxShape3D_354j1")
 
 [node name="Camera3D" type="Camera3D" parent="."]

@@ -112,3 +112,7 @@ transform = Transform3D(1, 0, 0, 0, 0.70482, 0.709386, 0, -0.709386, 0.70482, 0,
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.20059, 0.044951, -0.0251471)
 move_speed = 3.0
 jump_speed = 2.5
+
+[node name="CastShadow" type="Node3D" parent="Player"]
+
+[node name="RayCast3D" type="RayCast3D" parent="Player/CastShadow"]
