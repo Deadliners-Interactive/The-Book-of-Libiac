@@ -1,7 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://d331kdwddgjef"]
+[gd_scene load_steps=8 format=3 uid="uid://d331kdwddgjef"]
 
 [ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="1_de4c4"]
 [ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="2_1tbx8"]
+[ext_resource type="Texture2D" uid="uid://caqlrml8ucus1" path="res://assets/Sprites/Effects/shadow.png" id="3_m8aic"]
+[ext_resource type="Script" path="res://Scenes/Cast_Shadow/cast_shadow.gd" id="3_qq0jn"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_un8ce"]
 panorama = ExtResource("2_1tbx8")
@@ -102,17 +104,25 @@ transform = Transform3D(-9.363e-09, 0, 0.345917, 0, 0.155752, 0, -0.2142, 0, -1.
 use_collision = true
 polygon = PackedVector2Array(0, 0, -0.0970402, 0.129273, 3.92801, 4.72571, 1, 0)
 
+[node name="Player" parent="." instance=ExtResource("1_de4c4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.20059, 0.0591922, -0.0251471)
+move_speed = 3.0
+jump_speed = 2.5
+
+[node name="CastShadow" type="Node3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00175244, 0.00861743, -0.0320547)
+script = ExtResource("3_qq0jn")
+
+[node name="RayCast3D" type="RayCast3D" parent="Player/CastShadow"]
+transform = Transform3D(1, 0, 0, 0, 0.707106, 0.707106, 0, -0.707106, 0.707106, 0.0209748, 0.0308838, -0.0129726)
+
+[node name="Sprite3D" type="Sprite3D" parent="Player/CastShadow"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -0.999999, 0, 0.999999, -4.37114e-08, 0.0160724, -0.06381, 0.0802583)
+texture_filter = 0
+texture = ExtResource("3_m8aic")
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_u5gxq")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
 transform = Transform3D(1, 0, 0, 0, 0.70482, 0.709386, 0, -0.709386, 0.70482, 0, 1.18726, 0.775661)
-
-[node name="Player" parent="." instance=ExtResource("1_de4c4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.20059, 0.044951, -0.0251471)
-move_speed = 3.0
-jump_speed = 2.5
-
-[node name="CastShadow" type="Node3D" parent="Player"]
-
-[node name="RayCast3D" type="RayCast3D" parent="Player/CastShadow"]
