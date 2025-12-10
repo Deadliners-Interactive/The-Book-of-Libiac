@@ -1,10 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://d331kdwddgjef"]
+[gd_scene load_steps=8 format=3 uid="uid://d331kdwddgjef"]
 
 [ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="1_de4c4"]
-[ext_resource type="Script" uid="uid://b2qs7wan44866" path="res://Scenes/main.gd" id="1_i3aeo"]
 [ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="2_1tbx8"]
-[ext_resource type="Texture2D" uid="uid://caqlrml8ucus1" path="res://assets/Sprites/Effects/shadow.png" id="3_m8aic"]
-[ext_resource type="Script" uid="uid://b6o6brvw54dlw" path="res://Scenes/Cast_Shadow/cast_shadow.gd" id="3_qq0jn"]
 [ext_resource type="MeshLibrary" uid="uid://dp66kjnu46s3q" path="res://Scenes/mesh_library.tres" id="5_35xla"]
 [ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/Enemy.tscn" id="7_5wyu1"]
 
@@ -19,23 +16,9 @@ background_mode = 2
 sky = SubResource("Sky_8m2q7")
 
 [node name="TestWorld" type="Node3D"]
-script = ExtResource("1_i3aeo")
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("1_de4c4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.20059, 0.14787003, -0.0251471)
-
-[node name="CastShadow" type="Node3D" parent="Player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00175244, 0.00861743, -0.0320547)
-visible = false
-script = ExtResource("3_qq0jn")
-
-[node name="RayCast3D" type="RayCast3D" parent="Player/CastShadow"]
-transform = Transform3D(1, 0, 0, 0, 0.707106, 0.707106, 0, -0.707106, 0.707106, 0.0209748, 0.0308838, -0.0129726)
-
-[node name="Sprite3D" type="Sprite3D" parent="Player/CastShadow"]
-transform = Transform3D(1, 0, 0, 0, -4.3711346e-08, -0.999999, 0, 0.999999, -4.3711346e-08, 0.016072407, -0.06650269, 0.082312234)
-texture_filter = 0
-texture = ExtResource("3_m8aic")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.20059, 0.14787003, -0.04513686)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_u5gxq")
@@ -55,4 +38,4 @@ data = {
 metadata/_editor_floor_ = Vector3(0, 2, 0)
 
 [node name="Enemy" parent="." instance=ExtResource("7_5wyu1")]
-transform = Transform3D(0.695, 0, 0, 0, 0.695, 0, 0, 0, 0.695, 0.4568841, 0.14856854, -0.033749014)
+transform = Transform3D(0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, 0.45940083, 0.14197613, -0.05517295)

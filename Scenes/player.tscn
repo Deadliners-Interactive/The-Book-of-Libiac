@@ -8,9 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://x84cnk1rrhfr" path="res://assets/Sprites/Characters/Player/Gallito_jump_spritesheet.png" id="4_5av7p"]
 [ext_resource type="Texture2D" uid="uid://chap4twucqmsg" path="res://assets/Sprites/Characters/Player/roll.png" id="6_3smsa"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_x3wgy"]
-size = Vector3(1, 1.0996094, 1)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_8erm5"]
 atlas = ExtResource("2_3smsa")
 region = Rect2(0, 0, 32, 16)
@@ -261,22 +258,27 @@ animations = [{
 "speed": 4.0
 }]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_x3wgy"]
+size = Vector3(1, 1.0996094, 1)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_3smsa"]
 size = Vector3(0.14215088, 0.12597656, 0.14233398)
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_viyiy")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(0.1, 0, 0, 0, 0.11688248, 0, 0, 0, 0.03843159, 0, 0, 0)
-shape = SubResource("BoxShape3D_x3wgy")
+move_speed = 1.0
+jump_speed = 2.0
+roll_speed = 5.0
 
 [node name="Sprite3D" type="AnimatedSprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1.0000002, 0, 0, 0, 1.0000002, 0.0003549531, 0, 0)
-billboard = 1
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0.0003549531, 0, 0)
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_ue4gs")
 animation = &"run"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.13, 0, 0, 0, 0.13, 0, 0, 0, 0.13, 0, 0, 0)
+shape = SubResource("BoxShape3D_x3wgy")
 
 [node name="AttackArea" type="Area3D" parent="."]
 unique_name_in_owner = true

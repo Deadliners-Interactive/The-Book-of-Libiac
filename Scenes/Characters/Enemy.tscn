@@ -187,15 +187,15 @@ size = Vector3(0.14215088, 0.12597656, 0.14233398)
 script = ExtResource("1_wovta")
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0)
-billboard = 1
+transform = Transform3D(1, 0, 0, 0, 0.7071067, 0.7071067, 0, -0.7071067, 0.7071067, 0, 0, 0)
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_dascy")
 animation = &"idle"
 frame_progress = 0.12947239
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(0.215, 0, 0, 0, 0.215, 0, 0, 0, 0.03331759, 0, 0.0003411863, 0)
+unique_name_in_owner = true
+transform = Transform3D(0.215, 0, 0, 0, 0.215, 0, 0, 0, 0.215, 0, 0.0003411863, 0)
 shape = SubResource("BoxShape3D_x3wgy")
 
 [node name="AttackArea" type="Area3D" parent="."]
