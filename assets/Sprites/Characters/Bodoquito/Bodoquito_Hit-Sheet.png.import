@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dmu5ckhm787wb"
-path="res://.godot/imported/Bodoquito_Hit-Sheet.png-efd2db99ef5313f47faca5ec747c1665.ctex"
+path="res://.godot/imported/Bodoquito_Hit-Sheet.png-effd10f5114a8f8f625af92af7665cb7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Sprites/Characters/Player/Bodoquito_Hit-Sheet.png"
-dest_files=["res://.godot/imported/Bodoquito_Hit-Sheet.png-efd2db99ef5313f47faca5ec747c1665.ctex"]
+source_file="res://assets/Sprites/Characters/Bodoquito/Bodoquito_Hit-Sheet.png"
+dest_files=["res://.godot/imported/Bodoquito_Hit-Sheet.png-effd10f5114a8f8f625af92af7665cb7.ctex"]
 
 [params]
 
