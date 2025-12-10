@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://d331kdwddgjef"]
+[gd_scene load_steps=9 format=3 uid="uid://d331kdwddgjef"]
 
 [ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="1_de4c4"]
 [ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="2_1tbx8"]
 [ext_resource type="MeshLibrary" uid="uid://dp66kjnu46s3q" path="res://Scenes/mesh_library.tres" id="5_35xla"]
+[ext_resource type="Script" uid="uid://cnemwdn87kf4e" path="res://Scenes/ErraticWalkBehavior.gd" id="5_i3aeo"]
 [ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/Enemy.tscn" id="7_5wyu1"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_un8ce"]
@@ -19,6 +20,7 @@ sky = SubResource("Sky_8m2q7")
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("1_de4c4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.20059, 0.14787003, -0.04513686)
+roll_speed = 3.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_u5gxq")
@@ -39,3 +41,7 @@ metadata/_editor_floor_ = Vector3(0, 2, 0)
 
 [node name="Enemy" parent="." instance=ExtResource("7_5wyu1")]
 transform = Transform3D(0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, 0.45940083, 0.14197613, -0.05517295)
+
+[node name="Node" type="Node" parent="Enemy"]
+script = ExtResource("5_i3aeo")
+travel_distance = 0.1

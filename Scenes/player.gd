@@ -30,7 +30,7 @@ var enemies_hit = [] # Lista de enemigos golpeados en el ataque actual (Para evi
 @onready var animated_sprite = $Sprite3D
 @onready var attack_area = $AttackArea
 @onready var attack_collision = $AttackArea/CollisionShape3D
-@onready var roll_cooldown_timer: Timer = Timer.new() 
+@onready var roll_cooldown_timer: Timer = Timer.new()
 
 func _ready():
 	attack_collision.disabled = true
@@ -107,16 +107,26 @@ func _handle_jump():
 
 func _apply_roll_physics():
 	# La velocidad ya fue calculada en _start_roll(), solo dejamos que move_and_slide() actúe.
-	pass 
+	pass
 
 func _flip_sprite(x_velocity: float):
-	if x_velocity == 0: return
+	# Si no hay input de movimiento y la velocidad es cero, salimos.
+	if x_velocity == 0: 
+		if velocity.x == 0 and velocity.z == 0:
+			return
 	
 	var moving_right = x_velocity > 0
-	if moving_right != is_facing_right:
+	
+	# Solo cambiar si la dirección de movimiento es diferente a la dirección actual.
+	if x_velocity != 0 and moving_right != is_facing_right:
 		is_facing_right = moving_right
-		# Usar flip_h es más eficiente que cambiar la escala
-		animated_sprite.flip_h = not is_facing_right 
+		
+		# 1. Voltear el sprite visual
+		animated_sprite.flip_h = not is_facing_right
+		
+		# 2. Voltear el AttackArea y su CollisionShape (CORRECCIÓN CLAVE)
+		# Esto hace que el área de golpe se refleje del lado derecho al izquierdo.
+		attack_area.scale.x = 1.0 if is_facing_right else -1.0 
 
 # --- GESTIÓN DE ESTADOS (FSM) ---
 
@@ -152,14 +162,14 @@ func _start_attack():
 	enemies_hit.clear() # Limpiamos la lista de golpeados al iniciar un nuevo ataque
 	animated_sprite.speed_scale = 2.0
 	
-	# Lógica Ping-Pong
+	# Lógica Ping-Pong del Combo
 	if attack_combo_step == 0:
 		animated_sprite.play("attack")
 		attack_combo_step = 1
 	else:
 		animated_sprite.play_backwards("attack")
 		attack_combo_step = 0
-	
+		
 	# Retraso para que el hitbox coincida con el frame de golpe
 	get_tree().create_timer(attack_hit_delay).timeout.connect(_on_hitbox_activate)
 
@@ -186,7 +196,6 @@ func _on_attack_hit(body):
 		
 		# Aplicar daño
 		body.take_damage(attack_damage)
-		# Puedes quitar el print para optimizar la consola
 		print("¡Golpe infligido a: ", body.name, "!")
 
 # --- ROLL ---
@@ -196,7 +205,7 @@ func _start_roll():
 	
 	if animated_sprite.sprite_frames.has_animation("roll"):
 		animated_sprite.play("roll")
-	
+		
 	# Calcular dirección del roll
 	var input_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var roll_dir = Vector3.ZERO
@@ -206,7 +215,7 @@ func _start_roll():
 	else:
 		# Roll hacia donde mira (ajustado para el flip_h)
 		roll_dir = Vector3(1 if is_facing_right else -1, 0, 0)
-	
+		
 	velocity.x = roll_dir.x * roll_speed
 	velocity.z = roll_dir.z * roll_speed
 	
