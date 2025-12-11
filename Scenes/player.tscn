@@ -266,7 +266,7 @@ size = Vector3(0.14215088, 0.12597656, 0.14233398)
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_viyiy")
-roll_speed = 3.0
+roll_speed = 2.0
 
 [node name="Sprite3D" type="AnimatedSprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0.0003549531, 0, 0)

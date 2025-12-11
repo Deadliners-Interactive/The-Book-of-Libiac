@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://d331kdwddgjef"]
+[gd_scene load_steps=12 format=3 uid="uid://d331kdwddgjef"]
 
 [ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="1_de4c4"]
 [ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="2_1tbx8"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bir40puveha5i" path="res://assets/Sprites/UI/pluma_half.png" id="6_5wyu1"]
 [ext_resource type="Texture2D" uid="uid://dwtgm545f3f1p" path="res://assets/Sprites/UI/pluma_empty.png" id="7_0c07c"]
 [ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/Enemy.tscn" id="7_5wyu1"]
+[ext_resource type="PackedScene" uid="uid://dvyja22s5013t" path="res://Scenes/Characters/Slime.tscn" id="8_0c07c"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_un8ce"]
 panorama = ExtResource("2_1tbx8")
@@ -41,3 +42,6 @@ size = Vector3(1, 0.06689453, 1)
 full_heart = ExtResource("5_i3aeo")
 half_heart = ExtResource("6_5wyu1")
 empty_heart = ExtResource("7_0c07c")
+
+[node name="Slime" parent="." instance=ExtResource("8_0c07c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.69657326, 0.08965151, -0.10393686)
