@@ -13,9 +13,9 @@ extends CharacterBody3D
 @export_group("Attack")
 @export var melee_range: float = 0.7
 @export var attack_damage: float = 10
-@export var attack_cooldown: float = 0.2 
+@export var attack_cooldown: float = 0.2
 @export var attack_knockback_force: float = 0.2
-@export var post_attack_wait_time: float = 1.0 
+@export var post_attack_wait_time: float = 1.0
 
 # @export_group("Patrol")
 @export var wander_radius: float = 2.5
@@ -23,7 +23,8 @@ extends CharacterBody3D
 
 # **NUEVA CONFIGURACIÓN**
 @export_group("Damage")
-@export var damage_duration: float = 0.3 # Tiempo que dura el estado DAMAGE
+@export var damage_duration: float = 0.3 # Tiempo que dura el estado DAMAGE/stun.
+@export var post_damage_recovery_pause: float = 0.5 # **NUEVA VARIABLE:** Pausa extra después de salir de DAMAGE.
 
 # ================================
 # ESTADOS
@@ -41,7 +42,7 @@ var cooldown_timer: float = 0.0
 var wander_target: Vector3
 var hit_registered: bool = false
 # **NUEVA VARIABLE:** Temporizador para salir del estado DAMAGE
-var damage_recovery_timer: Timer = Timer.new() 
+var damage_recovery_timer: Timer = Timer.new()
 
 @onready var animated_sprite = $AnimatedSprite3D
 @onready var attack_area = $AttackArea
@@ -101,7 +102,10 @@ func _state_machine(delta):
 	if current_state == State.CHASE:
 		_process_chase()
 		return
-
+	
+	# **CAMBIO CLAVE**: Si está en ATTACKING, COOLDOWN, o DAMAGE, simplemente regresa 
+	# sin hacer lógica de movimiento/ataque adicional. Esto ya está en tu código, 
+	# pero es clave para evitar ataques durante el stun.
 	if current_state in [State.ATTACKING, State.ATTACK_COOLDOWN]:
 		return
 
@@ -109,7 +113,6 @@ func _state_machine(delta):
 		# Lógica de frenado del knockback
 		velocity.x = move_toward(velocity.x, 0, 3 * delta)
 		velocity.z = move_toward(velocity.z, 0, 3 * delta)
-		# El cambio de estado se gestiona por el timer, no por _state_machine
 		return
 
 # ================================
@@ -143,8 +146,10 @@ func _process_chase():
 		player_ref = null
 		set_state(State.WANDER)
 		return
-
-	if dist <= melee_range and cooldown_timer <= 0:
+	
+	# El ataque solo ocurre si NO estamos en un estado que debería ser interrumpido por daño,
+	# y si el cooldown_timer <= 0.
+	if current_state not in [State.DAMAGE, State.ATTACK_COOLDOWN] and dist <= melee_range and cooldown_timer <= 0:
 		set_state(State.ATTACKING)
 		return
 
@@ -221,28 +226,32 @@ func _on_detection_exit(body):
 # DAÑO
 # ================================
 func take_damage(amount: int):
-	# Lógica de daño
+	# 1. Reducir el HP inmediatamente.
 	current_hp -= max(amount - defense, 1)
 	
-	# 1. Aplicar un pequeño knockback para que el golpe se sienta.
-	# Necesitas la posición del cuerpo atacante, que no se pasa por aquí,
-	# pero puedes hacer un pequeño "jump" si quieres:
-	velocity.y = 1.0 # Pequeño rebote al ser golpeado
+	# 2. Aplicar un pequeño rebote si el enemigo no está muerto.
+	if current_hp > 0:
+		velocity.y = 1.0 # Pequeño rebote al ser golpeado
 
+	# 3. TRANSICIÓN DE ESTADO (Permitir el combo)
 	if current_hp <= 0:
 		set_state(State.DEAD)
 	else:
 		set_state(State.DAMAGE)
 
-# **NUEVA LÓGICA DE SALIDA DEL DAÑO**
+# **LÓGICA DE SALIDA DEL DAÑO (MODIFICADA)**
 func _on_damage_recovery_timeout():
 	if current_state == State.DAMAGE:
+		# **CAMBIO CLAVE:** Al salir de DAMAGE, impón el cooldown del ataque, 
+		# incluso si no era el momento de atacar. Esto evita ataques instantáneos 
+		# inmediatamente después de la recuperación.
+		cooldown_timer = max(cooldown_timer, post_damage_recovery_pause)
+		
 		# Decidir a dónde volver
 		if player_ref:
 			set_state(State.CHASE)
 		else:
 			set_state(State.WANDER)
-# **FIN NUEVA LÓGICA**
 
 # ================================
 # SET STATE
@@ -264,16 +273,17 @@ func set_state(s: State):
 			_start_post_attack_wait()
 
 		State.DAMAGE:
-			# **LÓGICA DE SALIDA AÑADIDA**
+			# Detener el temporizador de recuperación si ya estaba corriendo
+			# y reiniciarlo para la nueva duración del golpe (stun).
 			damage_recovery_timer.start(damage_duration) 
+			
 			# Detener el movimiento actual
 			velocity.x = move_toward(velocity.x, 0, 10.0) 
 			velocity.z = move_toward(velocity.z, 0, 10.0)
 			
 			if animated_sprite.sprite_frames.has_animation("damage"):
 				animated_sprite.play("damage")
-			# **FIN LÓGICA DE SALIDA AÑADIDA**
-
+			
 		State.DEAD:
 			velocity = Vector3.ZERO
 			if animated_sprite.sprite_frames.has_animation("death"):
