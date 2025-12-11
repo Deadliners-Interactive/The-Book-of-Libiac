@@ -282,7 +282,7 @@ shape = SubResource("BoxShape3D_x3wgy")
 unique_name_in_owner = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AttackArea"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07218335, 0, -0.0025634756)
+transform = Transform3D(1.965, 0, 0, 0, 1.965, 0, 0, 0, 1.965, 0.14008376, 0, -0.0025634756)
 shape = SubResource("BoxShape3D_3smsa")
 
 [node name="Camera3D2" type="Camera3D" parent="."]

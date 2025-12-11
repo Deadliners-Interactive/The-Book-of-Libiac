@@ -13,13 +13,17 @@ extends CharacterBody3D
 @export_group("Attack")
 @export var melee_range: float = 0.7
 @export var attack_damage: float = 10
-@export var attack_cooldown: float = 2.0 # AUMENTADO para reducir la frecuencia.
+@export var attack_cooldown: float = 0.2 
 @export var attack_knockback_force: float = 0.2
-@export var post_attack_wait_time: float = 1.0 # Tiempo de espera después del ataque.
+@export var post_attack_wait_time: float = 1.0 
 
 # @export_group("Patrol")
 @export var wander_radius: float = 2.5
 @export var lost_player_distance: float = 8.0
+
+# **NUEVA CONFIGURACIÓN**
+@export_group("Damage")
+@export var damage_duration: float = 0.3 # Tiempo que dura el estado DAMAGE
 
 # ================================
 # ESTADOS
@@ -35,8 +39,9 @@ var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var player_ref: CharacterBody3D = null
 var cooldown_timer: float = 0.0
 var wander_target: Vector3
-# NUEVA VARIABLE: Para asegurar que el cambio de estado al cooldown solo ocurra una vez por ataque
-var hit_registered: bool = false 
+var hit_registered: bool = false
+# **NUEVA VARIABLE:** Temporizador para salir del estado DAMAGE
+var damage_recovery_timer: Timer = Timer.new() 
 
 @onready var animated_sprite = $AnimatedSprite3D
 @onready var attack_area = $AttackArea
@@ -55,6 +60,12 @@ func _ready():
 	if col:
 		col.set_deferred("disabled", true)
 
+	# **NUEVA LÓGICA DE TIMER**
+	add_child(damage_recovery_timer)
+	damage_recovery_timer.one_shot = true
+	damage_recovery_timer.timeout.connect(_on_damage_recovery_timeout)
+	# **FIN NUEVA LÓGICA**
+
 	set_state(State.WANDER)
 
 # ================================
@@ -67,6 +78,8 @@ func _physics_process(delta):
 	if not is_on_floor():
 		velocity.y -= gravity * gravity_multiplier * delta
 	else:
+		# Aseguramos que la velocidad Y se resetee cuando no estemos en un estado
+		# donde se espere movimiento vertical forzado (como un knockback)
 		if current_state not in [State.ATTACKING, State.ATTACK_COOLDOWN, State.DAMAGE]:
 			velocity.y = 0
 
@@ -93,11 +106,14 @@ func _state_machine(delta):
 		return
 
 	if current_state == State.DAMAGE:
+		# Lógica de frenado del knockback
 		velocity.x = move_toward(velocity.x, 0, 3 * delta)
 		velocity.z = move_toward(velocity.z, 0, 3 * delta)
+		# El cambio de estado se gestiona por el timer, no por _state_machine
+		return
 
 # ================================
-# COMPORTAMIENTO: WANDER
+# COMPORTAMIENTO: WANDER (Se mantiene)
 # ================================
 func _process_wander():
 	if player_ref:
@@ -114,7 +130,7 @@ func _process_wander():
 	velocity.z = dir.z * move_speed
 
 # ================================
-# COMPORTAMIENTO: CHASE
+# COMPORTAMIENTO: CHASE (Se mantiene)
 # ================================
 func _process_chase():
 	if not player_ref:
@@ -141,7 +157,7 @@ func _process_chase():
 	_look_at_player()
 
 # ================================
-# ATAQUE
+# ATAQUE (Se mantiene)
 # ================================
 func _enable_attack_area():
 	var col = attack_area.get_node_or_null("CollisionShape3D")
@@ -154,7 +170,6 @@ func _disable_attack_area():
 		col.set_deferred("disabled", true)
 
 func _execute_attack():
-	# Reinicia la bandera de golpe al iniciar el ataque
 	hit_registered = false
 	velocity = Vector3.ZERO
 
@@ -164,26 +179,16 @@ func _execute_attack():
 		animated_sprite.play("idle")
 
 	_enable_attack_area()
-	# Espera el breve tiempo que el hitbox está activo
 	await get_tree().create_timer(0.15).timeout
 	_disable_attack_area()
 
-	# CAMBIO CLAVE: Si el ataque terminó (hitbox se desactivó) pero no golpeó a nadie,
-	# vuelve al chase y pone el cooldown.
 	if not hit_registered:
 		cooldown_timer = attack_cooldown
 		set_state(State.CHASE)
-	
-	# Si el golpe SÍ se registró, la función _on_attack_hit_player se encargó de pasar al cooldown.
 
 func _start_post_attack_wait():
-	# El enemigo se queda quieto justo después del golpe.
 	velocity = Vector3.ZERO
-	
-	# Aquí ocurre la espera de 1.0 segundo
 	await get_tree().create_timer(post_attack_wait_time).timeout
-
-	# Después de la espera, inicia el cooldown de reataque y vuelve a la persecución.
 	cooldown_timer = attack_cooldown
 	set_state(State.CHASE)
 
@@ -192,16 +197,11 @@ func _on_attack_hit_player(body):
 		return
 		
 	if body.is_in_group("player"):
-		# 1. Aplicar daño y knockback
 		var direction = (body.global_position - global_position).normalized()
 		if body.has_method("take_damage_hearts_with_knockback"):
 			body.take_damage_hearts_with_knockback(attack_damage, direction, attack_knockback_force)
 			
-		# 2. Registrar que el golpe se ejecutó.
 		hit_registered = true
-		
-		# 3. CAMBIO CLAVE: Pasar al estado de ATTACK_COOLDOWN (la pausa de 1 segundo)
-		# INMEDIATAMENTE DESPUÉS DE GENERAR EL KNOCKBACK.
 		set_state(State.ATTACK_COOLDOWN)
 
 # ================================
@@ -218,17 +218,34 @@ func _on_detection_exit(body):
 		set_state(State.WANDER)
 
 # ================================
-# DAÑO (Se mantienen)
+# DAÑO
 # ================================
 func take_damage(amount: int):
+	# Lógica de daño
 	current_hp -= max(amount - defense, 1)
+	
+	# 1. Aplicar un pequeño knockback para que el golpe se sienta.
+	# Necesitas la posición del cuerpo atacante, que no se pasa por aquí,
+	# pero puedes hacer un pequeño "jump" si quieres:
+	velocity.y = 1.0 # Pequeño rebote al ser golpeado
+
 	if current_hp <= 0:
 		set_state(State.DEAD)
 	else:
 		set_state(State.DAMAGE)
 
+# **NUEVA LÓGICA DE SALIDA DEL DAÑO**
+func _on_damage_recovery_timeout():
+	if current_state == State.DAMAGE:
+		# Decidir a dónde volver
+		if player_ref:
+			set_state(State.CHASE)
+		else:
+			set_state(State.WANDER)
+# **FIN NUEVA LÓGICA**
+
 # ================================
-# SET STATE (Se mantienen)
+# SET STATE
 # ================================
 func set_state(s: State):
 	current_state = s
@@ -247,8 +264,15 @@ func set_state(s: State):
 			_start_post_attack_wait()
 
 		State.DAMAGE:
+			# **LÓGICA DE SALIDA AÑADIDA**
+			damage_recovery_timer.start(damage_duration) 
+			# Detener el movimiento actual
+			velocity.x = move_toward(velocity.x, 0, 10.0) 
+			velocity.z = move_toward(velocity.z, 0, 10.0)
+			
 			if animated_sprite.sprite_frames.has_animation("damage"):
 				animated_sprite.play("damage")
+			# **FIN LÓGICA DE SALIDA AÑADIDA**
 
 		State.DEAD:
 			velocity = Vector3.ZERO
