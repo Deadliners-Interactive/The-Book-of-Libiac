@@ -32,6 +32,12 @@ transform = Transform3D(1, 0, 0, 0, 0.70482, 0.709386, 0, -0.709386, 0.70482, 0,
 [node name="Enemy" parent="." instance=ExtResource("7_5wyu1")]
 transform = Transform3D(0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, 0.45940083, 0.14197613, -3.2152033)
 
+[node name="Enemy2" parent="." instance=ExtResource("7_5wyu1")]
+transform = Transform3D(0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, 0.45940083, 0.14197613, 1.2006292)
+
+[node name="Enemy3" parent="." instance=ExtResource("7_5wyu1")]
+transform = Transform3D(0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, -1.3765366, 0.14197613, -0.685235)
+
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
 transform = Transform3D(333.24084, 0, 0, 0, 1, 0, 0, 0, 383.078, 0.5124674, 0.020344257, 0)
 use_collision = true

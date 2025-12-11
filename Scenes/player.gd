@@ -32,9 +32,13 @@ var input_buffer = ""
 var enemies_hit = []
 var damage_knockback_timer = Timer.new()
 var ui_ref: CanvasLayer = null
-var damage_visual_timer = Timer.new()
+
+# Los timers de daño se mantienen, pero la lógica de uso cambia:
+var damage_visual_timer = Timer.new() # Controla solo la duración de la invulnerabilidad (1.0s)
+
 var is_invulnerable: bool = false
-@export var invulnerability_time: float = 1.0
+@export var invulnerability_time: float = 1.0 # El tiempo que dura la invulnerabilidad (1.0s)
+@export var damage_visual_time: float = 0.5 # **NUEVA VARIABLE:** El tiempo que dura el efecto de color (0.5s)
 
 @onready var animated_sprite = $Sprite3D
 @onready var attack_area = $AttackArea
@@ -60,12 +64,12 @@ func _ready():
 			call_deferred("set_state", State.NORMAL) 
 	)
 	
-	# Configuración del temporizador de invulnerabilidad/visual
+	# Configuración del temporizador de invulnerabilidad (ahora SÓLO controla la invulnerabilidad)
 	add_child(damage_visual_timer)
 	damage_visual_timer.one_shot = true
 	damage_visual_timer.timeout.connect(func():
-		animated_sprite.modulate = Color.WHITE
-		is_invulnerable = false # Final de la invulnerabilidad
+		# **Lógica modificada:** SOLO remueve la invulnerabilidad aquí
+		is_invulnerable = false 
 	)
 	
 	animated_sprite.animation_finished.connect(_on_animation_finished)
@@ -235,8 +239,18 @@ func _start_roll():
 func _start_damage():
 	is_invulnerable = true 
 	
-	animated_sprite.modulate = Color(1, 0.5, 0.5, 1) # Efecto de parpadeo
-	damage_visual_timer.start(invulnerability_time) # Controla la invulnerabilidad y el visual.
+	# 1. Iniciar el temporizador de invulnerabilidad (1.0s)
+	damage_visual_timer.start(invulnerability_time) 
+	
+	# 2. Iniciar el efecto visual (color rojo/parpadeo) (0.5s)
+	animated_sprite.modulate = Color(1, 0.5, 0.5, 1) # Efecto de color
+	
+	# Usar un timer one-shot anónimo para limpiar el color después de 0.5s
+	get_tree().create_timer(damage_visual_time).timeout.connect(func():
+		# Solo limpia el color si la invulnerabilidad aún está activa
+		if is_invulnerable:
+			animated_sprite.modulate = Color.WHITE
+	)
 
 # --- SISTEMA DE SALUD Y DAÑO ---
 
