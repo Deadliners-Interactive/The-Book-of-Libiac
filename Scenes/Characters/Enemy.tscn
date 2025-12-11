@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://b55kh4wuclfnu"]
+[gd_scene load_steps=34 format=3 uid="uid://b55kh4wuclfnu"]
 
 [ext_resource type="Script" uid="uid://ivf4mdaa6q66" path="res://Scenes/Characters/enemy.gd" id="1_wovta"]
 [ext_resource type="Texture2D" uid="uid://dmu5ckhm787wb" path="res://assets/Sprites/Characters/Bodoquito/Bodoquito_Hit-Sheet.png" id="2_kpr8r"]
@@ -93,6 +93,18 @@ region = Rect2(200, 0, 20, 25)
 atlas = ExtResource("2_xeo28")
 region = Rect2(220, 0, 20, 25)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_nu35y"]
+atlas = ExtResource("2_xeo28")
+region = Rect2(80, 0, 20, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ccht0"]
+atlas = ExtResource("2_xeo28")
+region = Rect2(100, 0, 20, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u7jc0"]
+atlas = ExtResource("2_xeo28")
+region = Rect2(120, 0, 20, 25)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_dascy"]
 animations = [{
 "frames": [{
@@ -175,6 +187,20 @@ animations = [{
 "loop": true,
 "name": &"idle",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nu35y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ccht0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u7jc0")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 12.0
 }]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_x3wgy"]
@@ -185,18 +211,15 @@ size = Vector3(0.14215088, 0.12597656, 0.14233398)
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_nu35y"]
 
-[node name="Enemy" type="CharacterBody3D"]
+[node name="Enemy" type="CharacterBody3D" groups=["enemy"]]
 script = ExtResource("1_wovta")
-move_speed = 0.7
-attack_cooldown = 1.5
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.7071067, 0.7071067, 0, -0.7071067, 0.7071067, 0, 0, 0)
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_dascy")
-animation = &"idle"
-frame_progress = 0.12947239
+animation = &"walk"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 unique_name_in_owner = true
@@ -205,10 +228,10 @@ shape = SubResource("BoxShape3D_x3wgy")
 
 [node name="AttackArea" type="Area3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.13684082, 0, 0)
+collision_layer = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AttackArea"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07218335, 0, -0.0025634756)
+transform = Transform3D(2.55, 0, 0, 0, 2.55, 0, 0, 0, 2.55, 0, 0, 0)
 shape = SubResource("BoxShape3D_3smsa")
 debug_color = Color(0.724478, 0.14432085, 0.21219188, 0.41960785)
 
@@ -217,6 +240,7 @@ unique_name_in_owner = true
 priority = 1
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea"]
+transform = Transform3D(3.845, 0, 0, 0, 3.845, 0, 0, 0, 3.845, 0, 0, 0)
 shape = SubResource("SphereShape3D_nu35y")
 debug_color = Color(0.2296291, 0.47589135, 0, 0.41960785)
 

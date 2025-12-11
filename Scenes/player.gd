@@ -12,7 +12,7 @@ extends CharacterBody3D
 @export var attack_hit_delay: float = 0.1
 
 @export_group("Health")
-@export var max_health: float = 30.0  # 3 contenedores x 10 HP cada uno
+@export var max_health: float = 30.0 # 3 contenedores x 10 HP cada uno
 var current_health: float
 
 @export_group("Roll")
@@ -30,8 +30,9 @@ var is_facing_right = true
 var attack_combo_step = 0
 var input_buffer = "" 
 var enemies_hit = []
-var damage_knockback_timer = Timer.new()
+var damage_knockback_timer = Timer.new() 
 var ui_ref: CanvasLayer = null
+var damage_visual_timer = Timer.new()
 
 @onready var animated_sprite = $Sprite3D
 @onready var attack_area = $AttackArea
@@ -47,24 +48,32 @@ func _ready():
 	add_child(roll_cooldown_timer)
 	roll_cooldown_timer.one_shot = true
 	
+	# Configuración del temporizador de knockback
 	add_child(damage_knockback_timer)
 	damage_knockback_timer.one_shot = true
+	# Cuando el knockback termina, se restablece la velocidad a 0 y se sale del estado DAMAGE
 	damage_knockback_timer.timeout.connect(func(): 
-		if current_state == State.DAMAGE: 
+		if current_state == State.DAMAGE:
+			velocity = Vector3.ZERO
 			set_state(State.NORMAL)
+	)
+	
+	# Configuración del temporizador de invulnerabilidad/visual
+	add_child(damage_visual_timer)
+	damage_visual_timer.one_shot = true
+	damage_visual_timer.timeout.connect(func():
+		animated_sprite.modulate = Color.WHITE
 	)
 	
 	animated_sprite.animation_finished.connect(_on_animation_finished)
 	if not attack_area.body_entered.is_connected(_on_attack_hit):
 		attack_area.body_entered.connect(_on_attack_hit)
 	
-	# Buscar UI con múltiples métodos
 	call_deferred("_find_ui")
 
 func _physics_process(delta):
-	if current_state == State.DAMAGE:
-		pass
-	else:
+	# Si está en DAMAGE, solo permite que la gravedad actúe y el knockback aplicado.
+	if current_state != State.DAMAGE:
 		match current_state:
 			State.NORMAL:
 				_handle_move(delta)
@@ -78,7 +87,11 @@ func _physics_process(delta):
 
 	if not is_on_floor():
 		velocity.y -= gravity * gravity_multiplier * delta
-		
+	else:
+		# Esto previene que el jugador quede flotando en el estado DAMAGE
+		if current_state == State.DAMAGE:
+			velocity.y = 0
+			
 	move_and_slide()
 	_update_animations()
 
@@ -136,12 +149,17 @@ func set_state(new_state: State):
 	
 	match new_state:
 		State.NORMAL:
-			if input_buffer == "attack":
-				input_buffer = ""
-				set_state(State.ATTACKING)
-			elif input_buffer == "roll" and roll_cooldown_timer.is_stopped():
-				input_buffer = ""
-				set_state(State.ROLLING)
+			# Si el temporizador de knockback sigue activo, no se debe cambiar a NORMAL
+			if damage_knockback_timer.is_stopped():
+				if input_buffer == "attack":
+					input_buffer = ""
+					set_state(State.ATTACKING)
+				elif input_buffer == "roll" and roll_cooldown_timer.is_stopped():
+					input_buffer = ""
+					set_state(State.ROLLING)
+			else:
+				# Si el knockback sigue activo, se asegura que el estado siga siendo DAMAGE
+				current_state = State.DAMAGE
 		State.ATTACKING:
 			_start_attack()
 		State.ROLLING:
@@ -192,15 +210,11 @@ func _start_roll():
 		get_tree().create_timer(roll_duration).timeout.connect(func(): set_state(State.NORMAL))
 
 func _start_damage():
-	velocity = Vector3.ZERO
-	animated_sprite.modulate = Color(1, 0.5, 0.5, 1) 
-	get_tree().create_timer(0.2).timeout.connect(func():
-		animated_sprite.modulate = Color.WHITE
-		if current_state == State.DAMAGE:
-			set_state(State.NORMAL)
-	)
+	velocity = Vector3.ZERO 
+	animated_sprite.modulate = Color(1, 0.5, 0.5, 1) # Efecto de parpadeo
+	damage_visual_timer.start(0.2) # Solo controla la invulnerabilidad visual.
 
-# --- SISTEMA DE SALUD Y DAÑO ---
+# --- SISTEMA DE SALUD Y DAÑO (Aquí está la lógica del Knockback) ---
 
 func take_damage_hearts(damage_amount: float):
 	take_damage_hearts_with_knockback(damage_amount, Vector3.ZERO, 0.0)
@@ -211,22 +225,29 @@ func take_damage_hearts_with_knockback(damage_amount: float, knockback_direction
 		return 
 	
 	current_health -= damage_amount
-	current_health = max(0, current_health)  # No bajar de 0
+	current_health = max(0, current_health) # No bajar de 0
 	
 	print("💔 Player: Recibió %.1f de daño. HP: %.1f/%.1f" % [damage_amount, current_health, max_health])
 	
+	# 1. Aplicar el estado de daño.
 	set_state(State.DAMAGE)
 	
-	# Actualizar UI
+	# 2. Actualizar UI
 	if ui_ref and ui_ref.has_method("update_hearts_display"):
 		ui_ref.update_hearts_display()
 	
-	# Aplicar knockback
+	# 3. Aplicar knockback
 	if knockback_force > 0:
-		var KB_MULTIPLIER = 10.0 
+		# AJUSTE CLAVE: Multiplicador reducido de 100.0 a 30.0 para un retroceso más suave.
+		var KB_MULTIPLIER = 5.0 
 		velocity.x = knockback_direction.x * knockback_force * KB_MULTIPLIER
 		velocity.z = knockback_direction.z * knockback_force * KB_MULTIPLIER
-		damage_knockback_timer.start(0.1) 
+		
+		# AJUSTE CLAVE: Duración ligeramente aumentada de 0.25 a 0.35s para un empuje más gradual.
+		damage_knockback_timer.start(0.35) 
+	else:
+		# Si no hay knockback, sal del estado DAMAGE rápidamente.
+		damage_knockback_timer.start(0.1)
 	
 	if current_health <= 0:
 		die()
@@ -246,7 +267,7 @@ func heal(amount: float):
 
 func increase_max_health(amount: float):
 	max_health += amount
-	current_health = max_health  # Curar al máximo
+	current_health = max_health # Curar al máximo
 	
 	print("💚 Player: Max HP aumentado a %.1f" % max_health)
 	
@@ -255,7 +276,6 @@ func increase_max_health(amount: float):
 
 func die():
 	print("💀 Player: ¡Has muerto!")
-	# Usar call_deferred para evitar el error de física
 	get_tree().call_deferred("reload_current_scene")
 
 # --- ANIMACIONES Y EVENTOS ---
@@ -280,18 +300,13 @@ func _on_animation_finished():
 		set_state(State.NORMAL)
 
 func _find_ui():
-	"""Buscar la UI de forma segura después de que todo esté cargado"""
-	# Método 1: Por grupo
+	# Buscar UI...
 	ui_ref = get_tree().get_first_node_in_group("ui")
-	
-	# Método 2: Por nombre exacto en la raíz
 	if not ui_ref:
 		for child in get_tree().root.get_children():
 			if child.name == "Player_UI" or child is CanvasLayer:
 				ui_ref = child
 				break
-	
-	# Método 3: Buscar cualquier CanvasLayer con el script correcto
 	if not ui_ref:
 		var canvas_layers = get_tree().get_nodes_in_group("ui")
 		if canvas_layers.size() > 0:
@@ -299,7 +314,6 @@ func _find_ui():
 	
 	if ui_ref:
 		print("💚 Player: UI encontrada - ", ui_ref.name)
-		# Actualizar UI inmediatamente
 		if ui_ref.has_method("update_max_hearts_display"):
 			ui_ref.update_max_hearts_display()
 	else:
