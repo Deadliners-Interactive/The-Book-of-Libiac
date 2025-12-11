@@ -8,20 +8,22 @@ extends CharacterBody3D
 @export var gravity_multiplier: float = 1.0
 
 @export_group("Chaser Behavior")
-@export var chase_speed: float = 0.3
-@export var pursuit_speed: float = 0.6
+@export var chase_speed: float = 1.0             # Velocidad normal de persecución
+@export var pursuit_speed: float = 0.6            # Velocidad de persecución agresiva (PURSUIT)
 @export var stalk_speed: float = 0.1
-@export var approach_jump_force: float = 5.0  # Fuerza del salto de ataque
-@export var retreat_jump_force: float = 3.0   # Fuerza del salto de retroceso
+@export var approach_jump_force: float = 1.35    # Fuerza base del salto de ataque
+@export var retreat_jump_force: float = 1.0       # Fuerza del salto de retroceso
 @export var retreat_speed_mult: float = 1.5
 @export var safe_distance: float = 1.0
-@export var melee_range: float = 0.2
+@export var melee_range: float = 0.2              # Rango de ataque (muy cerca)
 @export var retreat_distance: float = 0.5
 @export var retreat_duration: float = 0.15
-@export var attack_damage: float = 1.0
+@export var attack_damage: float = 10
 @export var attack_cooldown: float = 1.0
 @export var stalk_rotation_speed: float = 1.2
-@export var max_pursuit_distance: float = 15.0
+@export var max_pursuit_distance: float = 15.0    # Distancia máxima para abandonar persecución
+@export var attack_fail_distance: float = 0.5     # Si aterriza más lejos de esta distancia (melee_range + X), vuelve a CHASE
+@export var jump_over_margin: float = 0.1         # NUEVO: Distancia extra que debe saltar para caer más cerca del objetivo
 
 # --- ESTADOS TÁCTICOS ---
 enum State { IDLE, WANDER, CHASE, PURSUIT, STALK, APPROACH, ATTACKING, RETREAT, DAMAGE, DEAD }
@@ -32,7 +34,7 @@ var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var current_hp: int
 var is_facing_right = true
 var player_ref: Node3D = null
-var has_detected_player: bool = false  # Marca si alguna vez detectó al jugador
+var has_detected_player: bool = false   # Marca si alguna vez detectó al jugador
 
 # Variables de Control de FSM y Movimiento
 var cooldown_timer: float = 0.0
@@ -41,6 +43,7 @@ var stalk_clockwise: bool = true
 var wander_target: Vector3 = Vector3.ZERO
 var is_jumping_to_attack: bool = false
 var jump_target_position: Vector3 = Vector3.ZERO
+var attack_was_successful: bool = false # <--- VARIABLE DE CONTROL DE ÉXITO
 
 @onready var animated_sprite = $AnimatedSprite3D
 @onready var attack_area = $AttackArea
@@ -110,7 +113,6 @@ func _state_machine(delta: float):
 		return
 
 	if not player_ref:
-		# Si pierde al jugador pero lo había detectado antes
 		if has_detected_player:
 			set_state(State.IDLE)
 		else:
@@ -119,13 +121,12 @@ func _state_machine(delta: float):
 	
 	var distance_to_player = global_position.distance_to(player_ref.global_position)
 	
-	# Si el jugador está muy lejos, perseguirlo agresivamente
-	if has_detected_player and current_state not in [State.ATTACKING, State.RETREAT]:
+	# Lógica para cambiar entre CHASE y PURSUIT
+	if has_detected_player and current_state not in [State.ATTACKING, State.RETREAT, State.APPROACH]:
 		if distance_to_player > safe_distance * 3.0:
 			if current_state != State.PURSUIT:
 				set_state(State.PURSUIT)
 		elif current_state == State.PURSUIT:
-			# Volver a chase normal cuando se acerca
 			set_state(State.CHASE)
 	
 	match current_state:
@@ -137,11 +138,9 @@ func _state_machine(delta: float):
 				_process_chase()
 		
 		State.PURSUIT:
-			# Perseguir agresivamente hasta acercarse
 			if distance_to_player <= safe_distance * 2.0:
 				set_state(State.CHASE)
 			elif distance_to_player > max_pursuit_distance:
-				# Demasiado lejos, abandonar
 				print("🏃 Enemigo: Jugador muy lejos, abandonando persecución")
 				player_ref = null
 				has_detected_player = false
@@ -158,18 +157,27 @@ func _state_machine(delta: float):
 				_process_stalk(delta, distance_to_player)
 		
 		State.APPROACH:
+			var horizontal_distance = Vector2(
+				global_position.x - player_ref.global_position.x,
+				global_position.z - player_ref.global_position.z
+			).length()
+
 			if is_on_floor() and not is_jumping_to_attack:
-				# Realizar salto hacia el jugador
-				_jump_to_player()
+				# Inicia el salto
+				_jump_to_player(horizontal_distance)
+			
 			elif is_jumping_to_attack:
-				# En el aire, esperar a llegar
-				var horizontal_distance = Vector2(
-					global_position.x - player_ref.global_position.x,
-					global_position.z - player_ref.global_position.z
-				).length()
-				
-				if is_on_floor() and horizontal_distance <= melee_range:
-					set_state(State.ATTACKING)
+				if is_on_floor() and velocity.y <= 0.01: # Si ya aterrizó y está detenido verticalmente
+					if horizontal_distance <= melee_range + attack_fail_distance:
+						# Éxito de posicionamiento: Ataque
+						print("⚔️ Enemigo: Ataque directo.")
+						set_state(State.ATTACKING)
+					else:
+						# Fracaso de posicionamiento: Aterrizó lejos.
+						is_jumping_to_attack = false
+						# Vuelve a STALK para intentar de nuevo inmediatamente.
+						print("❌ Enemigo: Aterrizaje fallido (distancia: %.2f). STALK y Reintento." % horizontal_distance)
+						set_state(State.STALK) # CAMBIO CLAVE PARA REINTENTO INMEDIATO
 		
 		State.ATTACKING:
 			velocity = Vector3.ZERO
@@ -177,7 +185,7 @@ func _state_machine(delta: float):
 		State.RETREAT:
 			_process_retreat()
 
-# --- LÓGICA DE PROCESAMIENTO ---
+# --- LÓGICA DE PROCESAMIENTO (Movimiento se mantiene) ---
 
 func _process_wander_idle(_delta):
 	if player_ref:
@@ -205,13 +213,11 @@ func _process_chase():
 	_apply_movement(direction_to_player, chase_speed)
 
 func _process_pursuit():
-	"""Perseguir agresivamente al jugador que intenta escapar"""
 	var direction_to_player = (player_ref.global_position - global_position).normalized()
 	direction_to_player.y = 0
 	_apply_movement(direction_to_player, pursuit_speed)
 	
-	# Debug visual
-	if Engine.get_frames_drawn() % 60 == 0:  # Cada 60 frames
+	if Engine.get_frames_drawn() % 60 == 0: 
 		print("🏃💨 Enemigo: PERSIGUIENDO AGRESIVAMENTE - Distancia: ", 
 			  "%.1f" % global_position.distance_to(player_ref.global_position))
 
@@ -233,52 +239,56 @@ func _process_stalk(delta: float, current_distance: float):
 	_apply_movement(move_direction, stalk_speed)
 
 func _process_approach():
-	# Movimiento mientras está en el aire (salto)
 	if not is_on_floor():
 		return
 	
-	# Si está en el suelo y no ha saltado, prepararse
 	var direction = (player_ref.global_position - global_position).normalized()
 	direction.y = 0
-	_apply_movement(direction, stalk_speed)  # Moverse lentamente antes de saltar
+	_apply_movement(direction, stalk_speed)
 
-func _jump_to_player():
-	"""Saltar directamente hacia la posición del jugador"""
+func _jump_to_player(horizontal_distance: float):
 	is_jumping_to_attack = true
 	
-	# Calcular dirección hacia el jugador
-	var direction_to_player = (player_ref.global_position - global_position).normalized()
+	var direction_to_player = (player_ref.global_position - global_position)
 	direction_to_player.y = 0
 	
+	# MODIFICADO: Añadir jump_over_margin a la distancia que necesita recorrer
+	var distance_needed = horizontal_distance - melee_range + jump_over_margin 
+	var target_h_distance = max(0.1, distance_needed) # Asegura que haya distancia positiva
+	
+	# Calcular el tiempo de vuelo (parábola simple)
+	# T = 2 * V_y / g
+	var time_to_land = 2.0 * approach_jump_force / gravity
+	
+	# Calcular la velocidad horizontal necesaria: Vh = Distancia / T
+	var horizontal_speed = target_h_distance / time_to_land
+	
 	# Aplicar velocidad horizontal hacia el jugador
-	velocity.x = direction_to_player.x * approach_jump_force
-	velocity.z = direction_to_player.z * approach_jump_force
+	var jump_vector = direction_to_player.normalized()
+	velocity.x = jump_vector.x * horizontal_speed
+	velocity.z = jump_vector.z * horizontal_speed
 	
 	# Aplicar salto vertical
 	velocity.y = approach_jump_force
 	
-	print("🦘 Enemigo: ¡SALTO DE ATAQUE!")
+	print("🦘 Enemigo: ¡SALTO DE ATAQUE! Vh: %.2f (Distancia a cubrir: %.2f)" % [horizontal_speed, target_h_distance]) # Log mejorado
 
 func _jump_retreat():
-	"""Saltar hacia atrás después de atacar"""
 	var direction_away = (global_position - player_ref.global_position).normalized()
 	direction_away.y = 0
 	
-	# Aplicar velocidad horizontal hacia atrás
 	velocity.x = direction_away.x * retreat_jump_force
 	velocity.z = direction_away.z * retreat_jump_force
 	
-	# Aplicar salto vertical (más bajo que el de ataque)
 	velocity.y = retreat_jump_force
 	
 	print("🦘 Enemigo: ¡SALTO DE RETROCESO!")
 
 func _process_retreat():
-	# Si está en el suelo, hacer salto de retroceso una sola vez
-	if is_on_floor() and velocity.y <= 0:
+	# Si está en el suelo y sin velocidad vertical, hacer salto de retroceso una sola vez
+	if is_on_floor() and velocity.y <= 0.01:
 		_jump_retreat()
 	
-	# En el aire, mantener dirección (la física se encarga)
 	pass
 
 # --- MANEJO DE ESTADOS ---
@@ -286,7 +296,7 @@ func _process_retreat():
 func set_state(new_state: State):
 	if current_state == new_state: return
 	
-	# Cleanup del estado anterior
+	# Cleanup
 	if current_state == State.ATTACKING:
 		var attack_collision = attack_area.get_node_or_null("CollisionShape3D")
 		if attack_collision:
@@ -294,6 +304,7 @@ func set_state(new_state: State):
 	
 	current_state = new_state
 	
+	# Setup
 	match current_state:
 		State.IDLE:
 			cooldown_timer = randf_range(0.5, 1.5)
@@ -302,12 +313,6 @@ func set_state(new_state: State):
 		State.WANDER:
 			_start_wander()
 		
-		State.CHASE:
-			print("🏃 Enemigo: PERSIGUIENDO al jugador")
-		
-		State.PURSUIT:
-			print("🏃💨 Enemigo: PERSECUCIÓN AGRESIVA - ¡No escaparás!")
-			
 		State.ATTACKING:
 			_execute_attack() 
 			
@@ -336,6 +341,7 @@ func _start_wander():
 func _execute_attack():
 	cooldown_timer = attack_cooldown
 	velocity = Vector3.ZERO
+	attack_was_successful = false # RESETEAR ÉXITO ANTES DEL ATAQUE
 	
 	if animated_sprite.sprite_frames.has_animation("attack"):
 		animated_sprite.play("attack")
@@ -352,14 +358,18 @@ func _execute_attack():
 		attack_collision.disabled = true
 		
 	if current_state != State.DEAD:
-		set_state(State.RETREAT)
+		# LÓGICA: Retirada solo si el ataque tuvo éxito
+		if attack_was_successful:
+			set_state(State.RETREAT)
+		else:
+			# Si falló, volver a STALK para reintentar.
+			set_state(State.STALK) 
 
 func _start_retreat():
 	if not player_ref:
 		set_state(State.IDLE)
 		return
 	
-	# Iniciar timer para volver a STALK
 	retreat_timer.start(retreat_duration)
 	
 func _on_retreat_timer_timeout():
@@ -412,15 +422,19 @@ func _on_detection_area_body_entered(body):
 func _on_detection_area_body_exited(body):
 	if body == player_ref:
 		print("👁️ Enemigo: Jugador salió del área de detección")
-		# NO limpiar player_ref ni has_detected_player
-		# El enemigo seguirá persiguiendo agresivamente
-		if current_state in [State.CHASE, State.STALK, State.APPROACH]:
-			set_state(State.PURSUIT)
+		# El jugador sale del área inmediata, pasa a persecución agresiva
+		if has_detected_player:
+			if current_state in [State.CHASE, State.STALK, State.APPROACH]:
+				set_state(State.PURSUIT)
 
 func _on_attack_hit_player(body):
 	if current_state == State.ATTACKING and body.is_in_group("player"):
-		if body.has_method("take_damage_hearts"):
-			body.take_damage_hearts(attack_damage)
+		attack_was_successful = true # MARCAR ÉXITO
+		if body.has_method("take_damage_hearts_with_knockback"):
+			# Knockback de 0.1, multiplicado por 10.0 en el script del jugador para sentirlo
+			var knockback_force = 0.1 
+			var direction = (body.global_position - global_position).normalized()
+			body.take_damage_hearts_with_knockback(attack_damage, direction, knockback_force)
 
 func take_damage(damage_amount: int):
 	if current_hp > 0:
@@ -434,10 +448,8 @@ func take_damage(damage_amount: int):
 func _apply_movement(direction: Vector3, speed: float):
 	velocity.x = direction.x * speed
 	velocity.z = direction.z * speed
-	# NO llamar _flip_sprite aquí, ya que se hace en _look_at_player
 
 func _look_at_player():
-	"""Hacer que el enemigo siempre mire hacia el jugador"""
 	if not player_ref:
 		return
 	
@@ -449,8 +461,8 @@ func _look_at_player():
 		
 		if facing_right != is_facing_right:
 			is_facing_right = facing_right
-			animated_sprite.flip_h = not is_facing_right
-			# IMPORTANTE: Voltear también el AttackArea
+			# Ajustado para que el sprite mire al jugador
+			animated_sprite.flip_h = not is_facing_right 
 			if attack_area:
 				attack_area.scale.x = 1.0 if is_facing_right else -1.0
 
@@ -466,11 +478,5 @@ func _update_animations():
 		animated_sprite.play(target_animation)
 
 func _flip_sprite(x_direction: float):
-	"""Método legacy - ahora se usa _look_at_player"""
-	if x_direction == 0: return
-	var facing_right = x_direction > 0
-	if facing_right != is_facing_right:
-		is_facing_right = facing_right
-		animated_sprite.flip_h = not is_facing_right
-		if attack_area:
-			attack_area.scale.x = 1.0 if is_facing_right else -1.0
+	# Ya no se usa para el enemigo, _look_at_player hace el trabajo
+	pass

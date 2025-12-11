@@ -188,9 +188,7 @@ size = Vector3(0.14215088, 0.12597656, 0.14233398)
 [node name="Enemy" type="CharacterBody3D"]
 script = ExtResource("1_wovta")
 move_speed = 0.7
-chase_speed = 1.0
-approach_jump_force = 1.0
-retreat_jump_force = 1.0
+attack_cooldown = 1.5
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
 unique_name_in_owner = true

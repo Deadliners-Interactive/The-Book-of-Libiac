@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://bj6troapr0vx4"]
+
+[ext_resource type="Texture2D" uid="uid://d26psj5ygphuv" path="res://assets/Sprites/UI/pluma.png" id="1_0axo5"]
+[ext_resource type="Script" uid="uid://5nlaq2kwgco6" path="res://Scenes/Player_UI.gd" id="1_j5qct"]
+
+[node name="Player_UI" type="CanvasLayer"]
+script = ExtResource("1_j5qct")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+offset_right = 212.91379
+offset_bottom = 53.0
+
+[node name="Heart1" type="TextureRect" parent="HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("1_0axo5")
+expand_mode = 2
+
+[node name="Heart2" type="TextureRect" parent="HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("1_0axo5")
+expand_mode = 2
+
+[node name="Heart3" type="TextureRect" parent="HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("1_0axo5")
+expand_mode = 2

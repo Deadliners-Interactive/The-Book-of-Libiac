@@ -1,7 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://d331kdwddgjef"]
+[gd_scene load_steps=11 format=3 uid="uid://d331kdwddgjef"]
 
 [ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="1_de4c4"]
 [ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="2_1tbx8"]
+[ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/Player_UI.tscn" id="4_ys1qc"]
+[ext_resource type="Texture2D" uid="uid://d26psj5ygphuv" path="res://assets/Sprites/UI/pluma.png" id="5_i3aeo"]
+[ext_resource type="Texture2D" uid="uid://bir40puveha5i" path="res://assets/Sprites/UI/pluma_half.png" id="6_5wyu1"]
+[ext_resource type="Texture2D" uid="uid://dwtgm545f3f1p" path="res://assets/Sprites/UI/pluma_empty.png" id="7_0c07c"]
 [ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/Enemy.tscn" id="7_5wyu1"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_un8ce"]
@@ -18,7 +22,6 @@ sky = SubResource("Sky_8m2q7")
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("1_de4c4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.20059, 0.14787003, -0.04513686)
-jump_speed = 4.5
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_u5gxq")
@@ -33,3 +36,8 @@ transform = Transform3D(0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, 0.45940083, 0.141976
 transform = Transform3D(333.24084, 0, 0, 0, 1, 0, 0, 0, 383.078, 0.5124674, 0.020344257, 0)
 use_collision = true
 size = Vector3(1, 0.06689453, 1)
+
+[node name="Player_UI" parent="." instance=ExtResource("4_ys1qc")]
+full_heart = ExtResource("5_i3aeo")
+half_heart = ExtResource("6_5wyu1")
+empty_heart = ExtResource("7_0c07c")
