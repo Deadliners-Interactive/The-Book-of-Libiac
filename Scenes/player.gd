@@ -9,7 +9,11 @@ extends CharacterBody3D
 @export_group("Combat")
 @export var attack_damage: int = 10
 @export var attack_movement_multiplier: float = 0.6
-@export var attack_hit_delay: float = 0.1 # Tiempo antes de que salga el hitbox
+@export var attack_hit_delay: float = 0.1
+
+@export_group("Health")
+@export var max_health: float = 3.0 # Ejemplo: 3 Corazones
+var current_health: float
 
 @export_group("Roll")
 @export var roll_speed: float = 10.0
@@ -17,15 +21,15 @@ extends CharacterBody3D
 @export var roll_cooldown: float = 0.2
 
 # --- ESTADOS (FSM) ---
-enum State { NORMAL, ATTACKING, ROLLING }
+enum State { NORMAL, ATTACKING, ROLLING, DAMAGE }
 var current_state: State = State.NORMAL
 
 # --- VARIABLES INTERNAS ---
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var is_facing_right = true
-var attack_combo_step = 0 # 0 = forward, 1 = backward (Efecto ping-pong)
-var input_buffer = "" # Para encolar acciones (buffer de input: "attack" o "roll")
-var enemies_hit = [] # Lista de enemigos golpeados en el ataque actual (Para evitar doble golpe)
+var attack_combo_step = 0
+var input_buffer = "" 
+var enemies_hit = []
 
 @onready var animated_sprite = $Sprite3D
 @onready var attack_area = $AttackArea
@@ -33,30 +37,34 @@ var enemies_hit = [] # Lista de enemigos golpeados en el ataque actual (Para evi
 @onready var roll_cooldown_timer: Timer = Timer.new()
 
 func _ready():
+	current_health = max_health
 	attack_collision.disabled = true
 	
-	# Configurar Timer para el cooldown del roll
+	add_to_group("player") # Asegurar que el jugador está en el grupo
+	
 	add_child(roll_cooldown_timer)
 	roll_cooldown_timer.one_shot = true
 	
-	# Conectar señales UNA sola vez
 	animated_sprite.animation_finished.connect(_on_animation_finished)
-	# Conectar la señal del Area para detectar golpes
 	if not attack_area.body_entered.is_connected(_on_attack_hit):
 		attack_area.body_entered.connect(_on_attack_hit)
 
 func _physics_process(delta):
+	if current_state == State.DAMAGE:
+		velocity.x = move_toward(velocity.x, 0, move_speed)
+		velocity.z = move_toward(velocity.z, 0, move_speed)
+
 	# Aplicar gravedad constante
 	if not is_on_floor():
 		velocity.y -= gravity * gravity_multiplier * delta
-
+	
 	# Lógica según estado
 	match current_state:
 		State.NORMAL:
 			_handle_move(delta)
 			_handle_jump()
 			_handle_actions_input()
-		
+			
 		State.ATTACKING:
 			_handle_move(delta, attack_movement_multiplier)
 			_handle_buffer_input()
@@ -69,20 +77,18 @@ func _physics_process(delta):
 
 # --- MANEJO DE INPUTS ---
 
-# Maneja inputs en estado NORMAL
 func _handle_actions_input():
 	if Input.is_action_just_pressed("attack"):
 		set_state(State.ATTACKING)
 	elif Input.is_action_just_pressed("roll") and roll_cooldown_timer.is_stopped():
 		set_state(State.ROLLING)
 
-# Maneja inputs mientras ATACA (para encolar la siguiente acción)
 func _handle_buffer_input():
 	if Input.is_action_just_pressed("attack"):
 		input_buffer = "attack"
 	elif Input.is_action_just_pressed("roll"):
 		input_buffer = "roll"
-		# Prioridad al roll: cancela el ataque inmediatamente
+		# Prioridad al roll
 		set_state(State.ROLLING)
 
 # --- LÓGICA DE MOVIMIENTO ---
@@ -106,27 +112,17 @@ func _handle_jump():
 		velocity.y = jump_speed
 
 func _apply_roll_physics():
-	# La velocidad ya fue calculada en _start_roll(), solo dejamos que move_and_slide() actúe.
 	pass
 
 func _flip_sprite(x_velocity: float):
-	# Si no hay input de movimiento y la velocidad es cero, salimos.
-	if x_velocity == 0: 
-		if velocity.x == 0 and velocity.z == 0:
-			return
+	if x_velocity == 0: return
 	
 	var moving_right = x_velocity > 0
 	
-	# Solo cambiar si la dirección de movimiento es diferente a la dirección actual.
 	if x_velocity != 0 and moving_right != is_facing_right:
 		is_facing_right = moving_right
-		
-		# 1. Voltear el sprite visual
 		animated_sprite.flip_h = not is_facing_right
-		
-		# 2. Voltear el AttackArea y su CollisionShape (CORRECCIÓN CLAVE)
-		# Esto hace que el área de golpe se refleje del lado derecho al izquierdo.
-		attack_area.scale.x = 1.0 if is_facing_right else -1.0 
+		attack_area.scale.x = 1.0 if is_facing_right else -1.0
 
 # --- GESTIÓN DE ESTADOS (FSM) ---
 
@@ -141,7 +137,6 @@ func set_state(new_state: State):
 	# Entrada al nuevo estado (Setup)
 	match new_state:
 		State.NORMAL:
-			# Revisar Buffer al volver a normal
 			if input_buffer == "attack":
 				input_buffer = ""
 				set_state(State.ATTACKING)
@@ -153,16 +148,18 @@ func set_state(new_state: State):
 			_start_attack()
 			
 		State.ROLLING:
-			input_buffer = "" # Limpiar buffer al rodar
+			input_buffer = ""
 			_start_roll()
+			
+		State.DAMAGE:
+			_start_damage()
 
 # --- ACCIONES ---
 
 func _start_attack():
-	enemies_hit.clear() # Limpiamos la lista de golpeados al iniciar un nuevo ataque
+	enemies_hit.clear()
 	animated_sprite.speed_scale = 2.0
 	
-	# Lógica Ping-Pong del Combo
 	if attack_combo_step == 0:
 		animated_sprite.play("attack")
 		attack_combo_step = 1
@@ -170,35 +167,22 @@ func _start_attack():
 		animated_sprite.play_backwards("attack")
 		attack_combo_step = 0
 		
-	# Retraso para que el hitbox coincida con el frame de golpe
 	get_tree().create_timer(attack_hit_delay).timeout.connect(_on_hitbox_activate)
 
 func _on_hitbox_activate():
-	# Seguridad: si ya no estoy atacando, no activar.
 	if current_state != State.ATTACKING:
 		return
 		
-	# Activamos el hitbox. La señal _on_attack_hit hará el daño.
 	attack_collision.disabled = false
 	
-	# Apagar el hitbox después de un momento breve
 	get_tree().create_timer(0.1).timeout.connect(func(): attack_collision.disabled = true)
 
-# --- FUNCIÓN CLAVE (SEÑAL DE DAÑO) ---
-
 func _on_attack_hit(body):
-	# Verificaciones de seguridad (si está deshabilitado, si no es un enemigo, si ya lo golpeé)
 	if attack_collision.disabled: return
 	
 	if body.has_method("take_damage") and body != self and not body in enemies_hit:
-		# Registrar golpe para evitar doble daño
 		enemies_hit.append(body)
-		
-		# Aplicar daño
 		body.take_damage(attack_damage)
-		print("¡Golpe infligido a: ", body.name, "!")
-
-# --- ROLL ---
 
 func _start_roll():
 	animated_sprite.speed_scale = 2.0
@@ -206,27 +190,47 @@ func _start_roll():
 	if animated_sprite.sprite_frames.has_animation("roll"):
 		animated_sprite.play("roll")
 		
-	# Calcular dirección del roll
 	var input_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var roll_dir = Vector3.ZERO
 	
 	if input_dir.length() > 0:
 		roll_dir = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	else:
-		# Roll hacia donde mira (ajustado para el flip_h)
 		roll_dir = Vector3(1 if is_facing_right else -1, 0, 0)
 		
 	velocity.x = roll_dir.x * roll_speed
 	velocity.z = roll_dir.z * roll_speed
 	
-	# Si no hay animación de roll, usamos un timer como respaldo
 	if not animated_sprite.sprite_frames.has_animation("roll"):
 		get_tree().create_timer(roll_duration).timeout.connect(func(): set_state(State.NORMAL))
+
+func _start_damage():
+	# Implementación básica de daño (tintura roja y pausa)
+	velocity = Vector3.ZERO
+	animated_sprite.modulate = Color(1, 0.5, 0.5, 1) # Tinte rojo
+	
+	get_tree().create_timer(0.2).timeout.connect(func():
+		animated_sprite.modulate = Color.WHITE
+		set_state(State.NORMAL)
+	)
+
+# --- FUNCIÓN DE DAÑO (LA QUE EL ENEMIGO LLAMA) ---
+
+func take_damage_hearts(damage_amount: float):
+	if current_state == State.ROLLING:
+		return # Invulnerabilidad durante el roll
+	
+	current_health -= damage_amount
+	set_state(State.DAMAGE)
+	
+	if current_health <= 0:
+		print("Player Died!")
+		queue_free() # Manejar la muerte
 
 # --- ANIMACIONES Y EVENTOS ---
 
 func _update_animations():
-	if current_state != State.NORMAL: return # El estado maneja su propia animación
+	if current_state != State.NORMAL: return
 	
 	if not is_on_floor():
 		animated_sprite.speed_scale = 2.0
@@ -242,9 +246,7 @@ func _update_animations():
 
 func _on_animation_finished():
 	if animated_sprite.animation == "attack":
-		# Al terminar ataque, vuelve al estado NORMAL (donde checa el buffer)
 		set_state(State.NORMAL)
 	elif animated_sprite.animation == "roll":
-		# Al terminar roll, empieza el cooldown y vuelve a NORMAL
 		roll_cooldown_timer.start(roll_cooldown)
 		set_state(State.NORMAL)
