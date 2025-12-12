@@ -145,31 +145,6 @@ size = Vector3(0.14215088, 0.12597656, 0.14233398)
 
 [node name="Slime_Small" type="CharacterBody3D" groups=["enemy"]]
 script = ExtResource("1_31dch")
-max_hp = null
-defense = null
-move_speed = null
-gravity_multiplier = null
-size = null
-chase_speed = null
-pursuit_speed = null
-stalk_speed = null
-approach_jump_force = null
-retreat_jump_force = null
-retreat_speed_mult = null
-safe_distance = null
-melee_range = null
-retreat_distance = null
-retreat_duration = null
-attack_damage = null
-attack_cooldown = null
-stalk_rotation_speed = null
-max_pursuit_distance = null
-attack_fail_distance = null
-jump_over_margin = null
-jump_interval = null
-spawn_invulnerability_time = null
-small_slime_attack_damage = null
-small_slime_approach_range = null
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
 unique_name_in_owner = true

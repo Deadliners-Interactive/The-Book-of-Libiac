@@ -45,7 +45,7 @@ extends CharacterBody3D
 @export var small_slime_approach_range: float = 0.5
 @export var startup_attack_delay: float = 1.0
 @export var split_rebound_distance: float = 1.5  # Distancia de rebote al dividirse
-@export var split_rebound_force: float = 2.5     # Fuerza del rebote
+@export var split_rebound_force: float = 2.5      # Fuerza del rebote
 
 # ==============================================================================
 # --- ESTADOS Y VARIABLES INTERNAS ---
@@ -468,17 +468,24 @@ func _start_damage():
 	
 	velocity = Vector3.ZERO
 	
+	# === MODIFICACIÓN INICIADA AQUI ===
+	var damage_color_applied = false
 	if animated_sprite.sprite_frames.has_animation("damage"):
 		animated_sprite.play("damage")
 	else:
+		# Aplica el color rojo/naranja solo si NO hay animación de daño
 		animated_sprite.modulate = Color(1, 0.5, 0.5, 1)
+		damage_color_applied = true
 
 	await get_tree().create_timer(0.5).timeout
 	
 	if is_splitting or current_state == State.DEAD:
 		return
 		
-	animated_sprite.modulate = Color.WHITE
+	# Restaura el color si se aplicó
+	if damage_color_applied:
+		animated_sprite.modulate = Color.WHITE
+		
 	if current_state != State.DEAD:
 		cooldown_timer = 0.3
 		if player_ref:
@@ -486,6 +493,7 @@ func _start_damage():
 		else:
 			set_state(State.IDLE)
 		can_jump = true
+	# === MODIFICACIÓN TERMINADA AQUI ===
 
 func _start_dead():
 	velocity = Vector3.ZERO
