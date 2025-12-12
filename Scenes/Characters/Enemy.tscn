@@ -105,7 +105,7 @@ animations = [{
 }]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_x3wgy"]
-size = Vector3(1, 1.1716309, 1)
+size = Vector3(1, 0.8494873, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3smsa"]
 size = Vector3(0.14215088, 0.12597656, 0.14233398)
@@ -118,13 +118,14 @@ script = ExtResource("1_wovta")
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.7071067, 0.7071067, 0, -0.7071067, 0.7071067, 0, 0, 0)
+alpha_cut = 1
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_5s7gc")
 animation = &"attack"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(0.215, 0, 0, 0, 0.215, 0, 0, 0, 0.215, 0, 0.0003411863, 0)
+transform = Transform3D(0.215, 0, 0, 0, 0.215, 0, 0, 0, 0.215, 0, 0.034971617, 0)
 shape = SubResource("BoxShape3D_x3wgy")
 
 [node name="AttackArea" type="Area3D" parent="."]

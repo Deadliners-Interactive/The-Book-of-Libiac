@@ -149,6 +149,7 @@ script = ExtResource("1_31dch")
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(0.845, 0, 0, 0, 0.5975052, 0.5975052, 0, -0.5975052, 0.5975052, 0, 0, 0)
+alpha_cut = 1
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_hqaga")
 animation = &"idle"

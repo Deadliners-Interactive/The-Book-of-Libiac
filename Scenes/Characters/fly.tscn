@@ -107,6 +107,7 @@ projectile_scene = ExtResource("2_o35it")
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.7071067, 0.7071067, 0, -0.7071067, 0.7071067, 0, 0.059700765, 0)
+alpha_cut = 1
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_a4six")
 animation = &"idle"

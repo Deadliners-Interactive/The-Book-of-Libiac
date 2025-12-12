@@ -259,7 +259,7 @@ animations = [{
 }]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_x3wgy"]
-size = Vector3(1, 1.0996094, 1)
+size = Vector3(1, 0.9296875, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3smsa"]
 size = Vector3(0.14215088, 0.12597656, 0.14233398)
@@ -270,12 +270,13 @@ roll_speed = 2.0
 
 [node name="Sprite3D" type="AnimatedSprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0.0003549531, 0, 0)
+alpha_cut = 1
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_ue4gs")
 animation = &"run"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(0.13, 0, 0, 0, 0.13, 0, 0, 0, 0.13, 0, 0, 0)
+transform = Transform3D(0.13, 0, 0, 0, 0.13, 0, 0, 0, 0.13, 0, 0.011044921, 0)
 shape = SubResource("BoxShape3D_x3wgy")
 
 [node name="AttackArea" type="Area3D" parent="."]
