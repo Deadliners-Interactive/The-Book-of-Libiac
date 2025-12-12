@@ -145,22 +145,47 @@ size = Vector3(0.14215088, 0.12597656, 0.14233398)
 
 [node name="Slime_Small" type="CharacterBody3D" groups=["enemy"]]
 script = ExtResource("1_31dch")
+max_hp = null
+defense = null
+move_speed = null
+gravity_multiplier = null
+size = null
+chase_speed = null
+pursuit_speed = null
+stalk_speed = null
+approach_jump_force = null
+retreat_jump_force = null
+retreat_speed_mult = null
+safe_distance = null
+melee_range = null
+retreat_distance = null
+retreat_duration = null
+attack_damage = null
+attack_cooldown = null
+stalk_rotation_speed = null
+max_pursuit_distance = null
+attack_fail_distance = null
+jump_over_margin = null
+jump_interval = null
+spawn_invulnerability_time = null
+small_slime_attack_damage = null
+small_slime_approach_range = null
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(0.585, 0, 0, 0, 0.41365746, 0.41365746, 0, -0.41365746, 0.41365746, 0, 0, 0)
+transform = Transform3D(0.845, 0, 0, 0, 0.5975052, 0.5975052, 0, -0.5975052, 0.5975052, 0, 0, 0)
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_hqaga")
 animation = &"idle"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(0.065, 0, 0, 0, 0.065, 0, 0, 0, 0.065, -0.0011764527, 0.004548035, 0)
+transform = Transform3D(0.12, 0, 0, 0, 0.12, 0, 0, 0, 0.12, -0.0011764527, 0.004548035, 0)
 shape = SubResource("BoxShape3D_x3wgy")
 
 [node name="AttackArea" type="Area3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(0.31, 0, 0, 0, 0.31, 0, 0, 0, 0.31, 0, 0, 0)
+transform = Transform3D(0.795, 0, 0, 0, 0.795, 0, 0, 0, 0.795, 0, 0, 0)
 collision_layer = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AttackArea"]

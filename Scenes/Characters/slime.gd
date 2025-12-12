@@ -41,6 +41,8 @@ extends CharacterBody3D
 
 @export_group("Small Slime Settings")
 @export var spawn_invulnerability_time: float = 2.0
+@export var small_slime_attack_damage: float = 5
+@export var small_slime_approach_range: float = 0.5
 
 # ==============================================================================
 # --- ESTADOS Y VARIABLES INTERNAS ---
@@ -81,7 +83,6 @@ var retreat_timer: Timer
 func _ready():
 	current_hp = max_hp
 	
-	# Agregar al grupo slime
 	add_to_group("slime")
 	
 	# Crear timers
@@ -184,6 +185,15 @@ func _start_movement_jump():
 		jump_timer.start(jump_interval)
 
 func _apply_movement(direction: Vector3, speed: float):
+	# Añadir un poco de variabilidad aleatoria para evitar movimiento sincronizado
+	var random_variation = Vector3(
+		randf_range(-0.1, 0.1),
+		0,
+		randf_range(-0.1, 0.1)
+	)
+	direction += random_variation
+	direction = direction.normalized()
+	
 	pending_horizontal_velocity = direction * speed
 	
 	if not is_on_floor():
@@ -217,28 +227,24 @@ func _state_machine(delta: float):
 
 	match current_state:
 		State.CHASE:
-			if size >= 1.0:  # Solo slimes grandes atacan
-				if distance_to_player <= safe_distance:
-					set_state(State.STALK)
-				else:
-					_process_chase()
-			else:  # Slimes pequeños solo persiguen
+			# AHORA AMBOS TAMAÑOS ATACAN
+			if distance_to_player <= small_slime_approach_range:
+				set_state(State.APPROACH)
+			else:
 				_process_chase()
 
 		State.PURSUIT:
-			if size >= 1.0:
-				if distance_to_player <= safe_distance * 2.0:
-					set_state(State.CHASE)
-				elif distance_to_player > max_pursuit_distance:
-					player_ref = null
-					has_detected_player = false
-					set_state(State.IDLE) 
-				else:
-					_process_pursuit()
+			if distance_to_player <= safe_distance * 2.0:
+				set_state(State.CHASE)
+			elif distance_to_player > max_pursuit_distance:
+				player_ref = null
+				has_detected_player = false
+				set_state(State.IDLE) 
 			else:
 				_process_pursuit()
 
 		State.STALK:
+			# Solo slimes grandes usan STALK
 			if distance_to_player > safe_distance + 0.5:
 				set_state(State.CHASE)
 			elif cooldown_timer <= 0:
@@ -256,11 +262,12 @@ func _state_machine(delta: float):
 				_jump_to_player(horizontal_distance)
 			elif is_jumping_to_attack:
 				if is_on_floor() and velocity.y <= 0.01:
-					if horizontal_distance <= melee_range + attack_fail_distance:
+					var attack_range = melee_range if size >= 1.0 else melee_range * 1.5
+					if horizontal_distance <= attack_range + attack_fail_distance:
 						set_state(State.ATTACKING)
 					else:
 						is_jumping_to_attack = false
-						set_state(State.STALK)
+						set_state(State.CHASE)
 
 		State.ATTACKING:
 			velocity = Vector3.ZERO
@@ -305,6 +312,11 @@ func _process_pursuit():
 	_apply_movement(direction_to_player, pursuit_speed)
 
 func _process_stalk(delta: float, current_distance: float):
+	# Solo slimes grandes usan STALK
+	if size < 1.0:
+		set_state(State.CHASE)
+		return
+	
 	var to_target = player_ref.global_position - global_position
 	to_target.y = 0
 
@@ -326,16 +338,19 @@ func _jump_to_player(horizontal_distance: float):
 	var direction_to_player = (player_ref.global_position - global_position)
 	direction_to_player.y = 0
 
+	# Ajustar fuerza de salto según tamaño
+	var jump_force = approach_jump_force if size >= 1.0 else approach_jump_force * 0.7
+	
 	var distance_needed = horizontal_distance - melee_range + jump_over_margin
 	var target_h_distance = max(0.1, distance_needed) 
 
-	var time_to_land = 2.0 * approach_jump_force / gravity
+	var time_to_land = 2.0 * jump_force / gravity
 	var horizontal_speed = target_h_distance / time_to_land
 
 	var jump_vector = direction_to_player.normalized()
 	velocity.x = jump_vector.x * horizontal_speed
 	velocity.z = jump_vector.z * horizontal_speed
-	velocity.y = approach_jump_force
+	velocity.y = jump_force
 
 func _jump_retreat():
 	can_jump = false
@@ -343,26 +358,30 @@ func _jump_retreat():
 	var direction_away = (global_position - player_ref.global_position).normalized()
 	direction_away.y = 0
 
-	velocity.x = direction_away.x * retreat_jump_force
-	velocity.z = direction_away.z * retreat_jump_force
-	velocity.y = retreat_jump_force
+	# Ajustar fuerza de retroceso según tamaño
+	var retreat_force = retreat_jump_force if size >= 1.0 else retreat_jump_force * 0.7
+	
+	velocity.x = direction_away.x * retreat_force
+	velocity.z = direction_away.z * retreat_force
+	velocity.y = retreat_force
 
 func _process_retreat():
 	if is_on_floor() and velocity.y <= 0.01:
 		_jump_retreat()
 
 # ==============================================================================
-# --- MANEJO DE ESTADOS Y TRANSICIONES ---
+# --- MANEJO DE ESTADOS Y TRANSICIONES (CORREGIDO CON call_deferred) ---
 # ==============================================================================
 
 func set_state(new_state: State):
 	if current_state == new_state:
 		return
 
+	# Usar call_deferred para evitar errores de física
 	if current_state == State.ATTACKING:
 		var attack_collision = attack_area.get_node_or_null("CollisionShape3D")
 		if attack_collision:
-			attack_collision.disabled = true
+			attack_collision.set_deferred("disabled", true)
 
 	current_state = new_state
 
@@ -376,9 +395,8 @@ func set_state(new_state: State):
 			_start_wander()
 
 		State.ATTACKING:
-			if size >= 1.0:
-				_execute_attack()
-				can_jump = false
+			_execute_attack()
+			can_jump = false
 
 		State.RETREAT:
 			_start_retreat()
@@ -424,18 +442,18 @@ func _execute_attack():
 
 	var attack_collision = attack_area.get_node_or_null("CollisionShape3D")
 	if attack_collision:
-		attack_collision.disabled = false
+		attack_collision.set_deferred("disabled", false)
 
 	await get_tree().create_timer(0.15).timeout
 
 	if attack_collision:
-		attack_collision.disabled = true
+		attack_collision.set_deferred("disabled", true)
 
 	if current_state != State.DEAD and not is_splitting:
 		if attack_was_successful:
 			set_state(State.RETREAT)
 		else:
-			set_state(State.STALK)
+			set_state(State.CHASE)
 
 func _start_retreat():
 	if not player_ref:
@@ -447,7 +465,7 @@ func _start_retreat():
 func _on_retreat_timer_timeout():
 	if current_state != State.DEAD and not is_splitting and player_ref:
 		velocity = Vector3.ZERO
-		set_state(State.STALK)
+		set_state(State.CHASE)
 	elif current_state != State.DEAD and not is_splitting:
 		set_state(State.IDLE)
 
@@ -509,24 +527,22 @@ func _on_detection_area_body_entered(body):
 	if body.is_in_group("player"):
 		player_ref = body
 		has_detected_player = true
-		set_state(State.CHASE)
+		call_deferred("set_state", State.CHASE)
 
 func _on_detection_area_body_exited(body):
 	if body == player_ref:
 		if has_detected_player and current_state in [State.CHASE, State.STALK, State.APPROACH]:
-			set_state(State.PURSUIT)
+			call_deferred("set_state", State.PURSUIT)
 
 func _on_attack_hit_player(body):
-	# Solo slimes grandes atacan
-	if size < 1.0:
-		return
-		
+	# AHORA AMBOS TAMAÑOS ATACAN
 	if current_state == State.ATTACKING and body.is_in_group("player"):
 		attack_was_successful = true
 		if body.has_method("take_damage_hearts_with_knockback"):
-			var knockback_force = 0.1
+			var knockback_force = 0.05 if size < 1.0 else 0.1
 			var direction = (body.global_position - global_position).normalized()
-			body.take_damage_hearts_with_knockback(attack_damage, direction, knockback_force)
+			var damage = small_slime_attack_damage if size < 1.0 else attack_damage
+			body.take_damage_hearts_with_knockback(damage, direction, knockback_force)
 
 func _look_at_player():
 	if not player_ref:
@@ -557,7 +573,7 @@ func _update_animations():
 		animated_sprite.play(target_animation)
 
 # ==============================================================================
-# --- DIVISIÓN Y DAÑO ---
+# --- DIVISIÓN Y DAÑO (COMPLETAMENTE REESCRITO) ---
 # ==============================================================================
 
 func _split_into_smaller_slimes():
@@ -589,22 +605,38 @@ func _split_into_smaller_slimes():
 		new_slime.max_hp = 10
 		new_slime.current_hp = 10
 		
-		var angle = (i * 120.0 + randf_range(-20, 20)) * PI / 180.0
-		var offset = Vector3(cos(angle), 0, sin(angle)) * 0.5
+		# Generar posiciones en un círculo COMPLETAMENTE EN EL SUELO
+		var base_angle = (i * 120.0) * PI / 180.0
+		var random_variation = randf_range(-20, 20) * PI / 180.0
+		var angle = base_angle + random_variation
+		
+		# Offset MUY pequeño en el suelo
+		var offset_distance = 0.2  # Muy pequeño
+		var offset = Vector3(
+			cos(angle) * offset_distance,
+			0,  # EN EL SUELO, sin altura
+			sin(angle) * offset_distance
+		)
 		
 		if player_ref:
 			new_slime.player_ref = player_ref
 			new_slime.has_detected_player = true
 		
-		# REDUCIMOS LA FUERZA DEL REBOTE para que no atraviesen el suelo
-		var impulse_dir = offset.normalized()
-		new_slime.velocity = impulse_dir * 1.5  # Reducido de 2.0 a 1.5
-		new_slime.velocity.y = 1.2  # Reducido de 1.5 a 1.2
+		# NO dar velocidad inicial - dejar que la gravedad actúe naturalmente
+		new_slime.velocity = Vector3.ZERO
 		
 		parent_node.call_deferred("add_child", new_slime)
-		new_slime.call_deferred("set_global_position", spawn_position + offset)
 		
-		print("✅ Slime pequeño %d creado (invulnerable 2s)" % (i + 1))
+		# Posicionar EXACTAMENTE en el suelo
+		var final_position = spawn_position + offset
+		# Asegurar que Y sea la misma que el slime grande (ya está en el suelo)
+		final_position.y = spawn_position.y
+		
+		# Esperar un frame antes de posicionar para evitar problemas de física
+		await get_tree().process_frame
+		new_slime.global_position = final_position
+		
+		print("✅ Slime pequeño %d creado en posición: %s" % [i + 1, str(final_position)])
 	
 	queue_free()
 
@@ -625,7 +657,8 @@ func take_damage(damage_amount: int):
 		if size >= 1.0:
 			_split_into_smaller_slimes()
 		else:
-			set_state(State.DEAD)
+			call_deferred("set_state", State.DEAD)
 	else:
 		if current_state not in [State.DEAD, State.RETREAT]:
-			set_state(State.DAMAGE)
+			# Usar call_deferred para evitar el error de física
+			call_deferred("set_state", State.DAMAGE)
