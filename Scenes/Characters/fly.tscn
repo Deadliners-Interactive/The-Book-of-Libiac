@@ -1,0 +1,132 @@
+[gd_scene load_steps=16 format=3 uid="uid://ccfyp16616bhf"]
+
+[ext_resource type="Script" uid="uid://d3qriw03ix63y" path="res://Scenes/Characters/FloatingEnemy.gd" id="1_u6e0l"]
+[ext_resource type="Texture2D" uid="uid://crn3fm011v65o" path="res://assets/Sprites/Characters/Fly/fly_anim_spritesheet.png" id="2_csn2e"]
+[ext_resource type="PackedScene" uid="uid://dib67lssin171" path="res://projectile.tscn" id="2_o35it"]
+[ext_resource type="Texture2D" uid="uid://cw7k5htg5qsxj" path="res://assets/Sprites/Effects/enemy_afterdead_explosion_anim_spritesheet.png" id="3_cij7b"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a4six"]
+atlas = ExtResource("3_cij7b")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0dtek"]
+atlas = ExtResource("3_cij7b")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mriam"]
+atlas = ExtResource("3_cij7b")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t8445"]
+atlas = ExtResource("3_cij7b")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6e0l"]
+atlas = ExtResource("2_csn2e")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o35it"]
+atlas = ExtResource("2_csn2e")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ydaqw"]
+atlas = ExtResource("2_csn2e")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cij7b"]
+atlas = ExtResource("2_csn2e")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_a4six"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a4six")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0dtek")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mriam")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t8445")
+}],
+"loop": false,
+"name": &"death",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6e0l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o35it")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ydaqw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cij7b")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6e0l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o35it")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ydaqw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cij7b")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_x3wgy"]
+size = Vector3(1, 1.1716309, 1)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_nu35y"]
+
+[node name="FloatingEnemy" type="CharacterBody3D" groups=["enemy"]]
+motion_mode = 1
+script = ExtResource("1_u6e0l")
+chase_speed = 1.5699999999999998
+shoot_cooldown = 5.0
+projectile_speed = 5.0
+projectile_scene = ExtResource("2_o35it")
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.7071067, 0.7071067, 0, -0.7071067, 0.7071067, 0, 0.059700765, 0)
+texture_filter = 0
+sprite_frames = SubResource("SpriteFrames_a4six")
+animation = &"death"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(0.1, 0, 0, 0, 0.215, 0, 0, 0, 0.08, 0, 0.0003411863, 0)
+shape = SubResource("BoxShape3D_x3wgy")
+
+[node name="DetectionArea" type="Area3D" parent="."]
+unique_name_in_owner = true
+priority = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea"]
+transform = Transform3D(3.845, 0, 0, 0, 3.845, 0, 0, 0, 3.845, 0, 0, 0)
+shape = SubResource("SphereShape3D_nu35y")
+debug_color = Color(0.2296291, 0.47589135, 0, 0.41960785)
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="ProjectileSpawnPoint" type="Node3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05053711, 0)
