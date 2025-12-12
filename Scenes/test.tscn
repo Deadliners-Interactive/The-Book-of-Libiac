@@ -1,11 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://d331kdwddgjef"]
+[gd_scene load_steps=10 format=3 uid="uid://d331kdwddgjef"]
 
 [ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="1_de4c4"]
 [ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="2_1tbx8"]
 [ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/Player_UI.tscn" id="4_ys1qc"]
-[ext_resource type="Texture2D" uid="uid://d26psj5ygphuv" path="res://assets/Sprites/UI/pluma.png" id="5_i3aeo"]
-[ext_resource type="Texture2D" uid="uid://bir40puveha5i" path="res://assets/Sprites/UI/pluma_half.png" id="6_5wyu1"]
-[ext_resource type="Texture2D" uid="uid://dwtgm545f3f1p" path="res://assets/Sprites/UI/pluma_empty.png" id="7_0c07c"]
 [ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/Enemy.tscn" id="7_5wyu1"]
 [ext_resource type="PackedScene" uid="uid://dvyja22s5013t" path="res://Scenes/Characters/Slime.tscn" id="8_0c07c"]
 [ext_resource type="PackedScene" uid="uid://ccfyp16616bhf" path="res://Scenes/Characters/fly.tscn" id="9_2cgwh"]
@@ -20,7 +17,7 @@ sky_material = SubResource("PanoramaSkyMaterial_un8ce")
 background_mode = 2
 sky = SubResource("Sky_8m2q7")
 
-[node name="TestWorld" type="Node3D"]
+[node name="Main" type="Node3D"]
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("1_de4c4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.20059, 0.14787003, -0.04513686)
@@ -32,20 +29,21 @@ environment = SubResource("Environment_u5gxq")
 transform = Transform3D(1, 0, 0, 0, 0.70482, 0.709386, 0, -0.709386, 0.70482, 0, 1.18726, 0.775661)
 
 [node name="Enemy" parent="." instance=ExtResource("7_5wyu1")]
-transform = Transform3D(0.65, 0, 0, 0, 0.65, 0, 0, 0, 0.65, 0.45940083, 0.14197613, -3.2152033)
+transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0.45940083, 0.14197613, -0.3851862)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
-transform = Transform3D(333.24084, 0, 0, 0, 1, 0, 0, 0, 383.078, 0.5124674, 0.020344257, 0)
+transform = Transform3D(333.24084, 0, 0, 0, 1, 0, 0, 0, 383.078, 0, 0, 0)
 use_collision = true
 size = Vector3(1, 0.06689453, 1)
 
 [node name="Player_UI" parent="." instance=ExtResource("4_ys1qc")]
-full_heart = ExtResource("5_i3aeo")
-half_heart = ExtResource("6_5wyu1")
-empty_heart = ExtResource("7_0c07c")
 
 [node name="Slime" parent="." instance=ExtResource("8_0c07c")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.69657326, 0.08965151, -0.10393686)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.69657326, 0.10780947, -0.10393686)
 
 [node name="FloatingEnemy" parent="." instance=ExtResource("9_2cgwh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5078294, 0.053791523, -0.80372965)
+
+[node name="GridMap" type="GridMap" parent="."]
+cell_size = Vector3(0.8, 0.8, 0.8)
+metadata/_editor_floor_ = Vector3(0, 1, 0)

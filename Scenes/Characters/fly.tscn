@@ -109,7 +109,7 @@ unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.7071067, 0.7071067, 0, -0.7071067, 0.7071067, 0, 0.059700765, 0)
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_a4six")
-animation = &"death"
+animation = &"idle"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 unique_name_in_owner = true

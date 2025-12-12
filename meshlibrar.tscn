@@ -1,0 +1,353 @@
+[gd_scene load_steps=21 format=4 uid="uid://d0b8s3kvrnlif"]
+
+[ext_resource type="Texture2D" uid="uid://3rbrggjarm14" path="res://assets/models/Env/hill/nuevos terrenos2_64X64 del primero.png" id="1_kspa3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ay780"]
+resource_name = "Material de la isla grande"
+cull_mode = 2
+albedo_texture = ExtResource("1_kspa3")
+roughness = 0.5
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_d0awn"]
+_surfaces = [{
+"aabb": AABB(-0.30863166, -0.37448287, -0.3194626, 0.6172633, 0.7489657, 0.63892525),
+"format": 34896613377,
+"index_count": 33,
+"index_data": PackedByteArray("AAACAAkAAAABAAIAAwAJAAIABgAAAAkAAwAKAAkACgAGAAkACgADAAUACgAFAAQABwAKAAQACgAHAAYACAAGAAcA"),
+"lods": [0.11351094, PackedByteArray("AAABAAIAAwAAAAIAAwAEAAAABAADAAUABAAGAAAABAAHAAYACAAGAAcA")],
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 11,
+"vertex_data": PackedByteArray("AAALOe9AAAAAAAAAAAAAAL52AACoDgAATvAAAK+EAADHvAs5//8AAP//AAD//wAAAACy2gaDAABfeLLa/v8AAAAA///+/wAA1DgLOY9JAAAFsws5rMAAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_r5uvd"]
+resource_name = "nuevos terrenos2_Cube_005"
+_surfaces = [{
+"aabb": AABB(-0.30863166, -0.37448287, -0.3194626, 0.6172633, 0.7489657, 0.63892525),
+"attribute_data": PackedByteArray("hxYFQYwDrjqsDNojfiYlC4REMBX5PlUCxDxxVUdXxzxIWJ1WRBwGNpE3IRs="),
+"format": 34896613399,
+"index_count": 33,
+"index_data": PackedByteArray("AAACAAkAAAABAAIAAwAJAAIABgAAAAkAAwAKAAkACgAGAAkACgADAAUACgAFAAQABwAKAAQACgAHAAYACAAGAAcA"),
+"lods": [0.11351094, PackedByteArray("AAABAAIAAwAAAAIAAwAEAAAABAADAAUABAAGAAAABAAHAAYACAAGAAcA")],
+"material": SubResource("StandardMaterial3D_ay780"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 11,
+"vertex_data": PackedByteArray("AAALOe9Alu8AAAAAAADD6L52AACoDiPqTvAAAK+Ed+7HvAs5//9S+v//AAD//2DyAACy2gaDWvVfeLLa/v9c9QAA///+/8zl1DgLOY9JZfEFsws5rMDg9n7DU6sAv5GrfLrOpmm0ZqF0s7qZFrG3nMK8TaKIu16f9rIlpmu+Jqewtiue")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_d0awn")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_b85j7"]
+_surfaces = [{
+"aabb": AABB(-0.3086319, -0.37448287, -0.31946254, 0.6172637, 0.7489657, 0.6389251),
+"format": 34896613377,
+"index_count": 33,
+"index_data": PackedByteArray("AAABAAIAAAAJAAEAAwABAAkABgAJAAAAAwAJAAoACgAJAAYACgAFAAMACgAEAAUABwAEAAoACgAGAAcACAAHAAYA"),
+"lods": [0.113510914, PackedByteArray("AAABAAIAAwABAAAAAwAAAAQABAAFAAMABAAAAAYABAAGAAcACAAHAAYA")],
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 11,
+"vertex_data": PackedByteArray("AAALOQ+/AAC+dgAAVvEAAAAAAAD//wAATvAAAE97AADHvAs5AAAAAP//AAAAAAAAAACy2vh8AABfeLLaAAAAAAAA//8AAAAA1DgLOW+2AAAFsws5Uj8AAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_m82j4"]
+resource_name = "nuevos terrenos2_Cube_006"
+_surfaces = [{
+"aabb": AABB(-0.3086319, -0.37448287, -0.31946254, 0.6172637, 0.7489657, 0.6389251),
+"attribute_data": PackedByteArray("M+h5Qe/xBiXC+lo7ztjMDHO7fxbvwBkEx8JHVfqoFz3ip1ZWo+K2NhPIWBw="),
+"format": 34896613399,
+"index_count": 33,
+"index_data": PackedByteArray("AAABAAIAAAAJAAEAAwABAAkABgAJAAAAAwAJAAoACgAJAAYACgAFAAMACgAEAAUABwAEAAoACgAGAAcACAAHAAYA"),
+"lods": [0.113510914, PackedByteArray("AAABAAIAAwABAAAAAwAAAAQABAAFAAMABAAAAAYABAAGAAcACAAHAAYA")],
+"material": SubResource("StandardMaterial3D_ay780"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 11,
+"vertex_data": PackedByteArray("AAALOQ+/hdO+dgAAVvFJ1gAAAAD//8LSTvAAAE97Q9vHvAs5AAAZ5P//AAAAALbgAACy2vh8q9pfeLLaAACN3QAA//8AAJ7W1DgLOW+27NUFsws5Uj+63rqVG5W3o2WYhJmqm7ew2pKFvECGaLmFjqmoboy+rNOLeKusm+SgkZEHtCKK")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_b85j7")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_68md0"]
+_surfaces = [{
+"aabb": AABB(-0.30863166, -0.37448287, -0.31946278, 0.6172633, 0.7489657, 0.6389253),
+"format": 34896613377,
+"index_count": 33,
+"index_data": PackedByteArray("AAACAAkAAAABAAIAAwAJAAIABgAAAAkAAwAKAAkACgAGAAkACgADAAUACgAFAAQABwAKAAQACgAHAAYACAAGAAcA"),
+"lods": [0.11351109, PackedByteArray("AAABAAIAAwAAAAIAAwAEAAAABAADAAUABAAGAAAABAAHAAYACAAGAAcA")],
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 11,
+"vertex_data": PackedByteArray("/v8LOQ+/AAD+/wAA//8AAECJAABW8QAAsA8AAE97AAA3Qws5AAAAAAAAAAAAAAAA/v+y2vh8AACfh7LaAAAAAP////8AAAAAKscLOW+2AAD5TAs5Uj8AAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_lj1wt"]
+resource_name = "nuevos terrenos2_Cube_007"
+_surfaces = [{
+"aabb": AABB(-0.30863166, -0.37448287, -0.31946278, 0.6172633, 0.7489657, 0.6389253),
+"attribute_data": PackedByteArray("BOn5vv/7UMXf8iTcDdnZ9Ae7zuqTwKn9x8KNqkSoN8NDp2GpSOP4yfrH3eQ="),
+"format": 34896613399,
+"index_count": 33,
+"index_data": PackedByteArray("AAACAAkAAAABAAIAAwAJAAIABgAAAAkAAwAKAAkACgAGAAkACgADAAUACgAFAAQABwAKAAQACgAHAAYACAAGAAcA"),
+"lods": [0.11351109, PackedByteArray("AAABAAIAAwAAAAIAAwAEAAAABAADAAUABAAGAAAABAAHAAYACAAGAAcA")],
+"material": SubResource("StandardMaterial3D_ay780"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 11,
+"vertex_data": PackedByteArray("/v8LOQ+/lLP+/wAA//+huUCJAABW8ZO8sA8AAE9738I3Qws5AABOxAAAAAAAAJnH/v+y2vh8/bafh7LaAADiuP////8AAIfGKscLOW+2e7b5TAs5Uj8Cv76bc5zKoQyfwp1jq9WWr7pciGrP25EMxsOQe7YTkGS8Np/ZsMCWZ6pGjXXD")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_68md0")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_tw5q4"]
+_surfaces = [{
+"aabb": AABB(-0.30863166, -0.37448287, -0.31946254, 0.6172633, 0.7489657, 0.6389252),
+"format": 34896613377,
+"index_count": 33,
+"index_data": PackedByteArray("AAABAAIAAAAJAAEAAwABAAkABgAJAAAAAwAJAAoACgAJAAYACgAFAAMACgAEAAUABwAEAAoACgAGAAcACAAHAAYA"),
+"lods": [0.113511145, PackedByteArray("AAABAAIAAwABAAAAAwAAAAQABAAFAAMABAAAAAYABAAGAAcACAAHAAYA")],
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 11,
+"vertex_data": PackedByteArray("//8LOe9AAABAiQAAqA4AAP//AAAAAAAAsA8AAK+EAAA3Qws5/v8AAAAAAAD//wAA//+y2gaDAACfh7La/v8AAP/////+/wAAKscLOY9JAAD5TAs5rMAAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_wyug5"]
+resource_name = "nuevos terrenos2_Cube_008"
+_surfaces = [{
+"aabb": AABB(-0.30863166, -0.37448287, -0.31946254, 0.6172633, 0.7489657, 0.6389252),
+"attribute_data": PackedByteArray("WBeFvpwN+NrJBKTEvSYy8xlEf+mcPuX7xDy3qpFW58KpV6ip6BxIyXk3puM="),
+"format": 34896613399,
+"index_count": 33,
+"index_data": PackedByteArray("AAABAAIAAAAJAAEAAwABAAkABgAJAAAAAwAJAAoACgAJAAYACgAFAAMACgAEAAUABwAEAAoACgAGAAcACAAHAAYA"),
+"lods": [0.113511145, PackedByteArray("AAABAAIAAwABAAAAAwAAAAQABAAFAAMABAAAAAYABAAGAAcACAAHAAYA")],
+"material": SubResource("StandardMaterial3D_ay780"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 11,
+"vertex_data": PackedByteArray("//8LOe9AIe9AiQAAqA6f3///AAAAAKbqsA8AAK+Eo9A3Qws5/v8zxQAAAAD//wrG//+y2gaDXdyfh7La/v8/1//////+/8vVKscLOY9JYOT5TAs5rMARz5irocMXqi+/DasBvvWpk8ETqMTPuahQxd+p3MlRqDfL9KoxuW2r8cSVqeHK")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_tw5q4")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_s7s8c"]
+_surfaces = [{
+"aabb": AABB(-0.514657, 0, -0.4929955, 1.029314, 1e-05, 0.985991),
+"format": 34896613377,
+"index_count": 6,
+"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AAAAAAAAAAD//wAA//8AAAAAAAD+/wAA//8AAAAAAAA=")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_n40cc"]
+resource_name = "nuevos terrenos2_Cube_009"
+_surfaces = [{
+"aabb": AABB(-0.514657, 0, -0.4929955, 1.029314, 1e-05, 0.985991),
+"attribute_data": PackedByteArray("qVeoqeKnVlZDp2GpSFidVg=="),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
+"material": SubResource("StandardMaterial3D_ay780"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AAAAAAAAadX//wAA//9p1QAAAAD+/2nV//8AAAAAadWQqraqkKq2qpCqtqqQqraq")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_s7s8c")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_dtgeb"]
+_surfaces = [{
+"aabb": AABB(-0.514657, -0.37448287, -0.31946254, 1.029314, 0.7489657, 0.6389251),
+"format": 34896613377,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAAAAIABAACAAUABAAFAAYABAAGAAcA"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAALOe9AAAD//wAAAAAAAP//CznvQAAAAAAAAAAAAAAAALLaBoMAAP//stoGgwAA////////AAAAAP////8AAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_py1u4"]
+resource_name = "nuevos terrenos2_Cube_010"
+_surfaces = [{
+"aabb": AABB(-0.514657, -0.37448287, -0.31946254, 1.029314, 0.7489657, 0.6389251),
+"attribute_data": PackedByteArray("RRO3qgAAcVVFE3FVAAC3qsQ8t6rEPHFVSFidVqlXqKk="),
+"format": 34896613399,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAAAAIABAACAAUABAAFAAYABAAGAAcA"),
+"material": SubResource("StandardMaterial3D_ay780"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAALOe9AKfD//wAAAAAS6v//CznvQCnwAAAAAAAAEuoAALLaBoPX6f//stoGg2np////////Kd0AAP////9f3gq4Crg0tTS1CrgKuDS1NLWYtFO1w7V/tAewxa4Pruyv")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_dtgeb")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_h0pt2"]
+_surfaces = [{
+"aabb": AABB(-0.30863166, -0.37448287, -0.49299526, 0.6172633, 0.7489657, 0.9859905),
+"format": 34896613377,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAQADAAIAAQAEAAMAAAAFAAEABgAFAAAABgAHAAUA"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("N0MLOf//AACfh7LaAAAAAJ+Hstr//wAA////////AAD/////AAAAADdDCzkAAAAAAAAAAP//AAAAAAAAAAAAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_pa4ni"]
+resource_name = "nuevos terrenos2_Cube_011"
+_surfaces = [{
+"aabb": AABB(-0.30863166, -0.37448287, -0.49299526, 0.6172633, 0.7489657, 0.9859905),
+"attribute_data": PackedByteArray("HKi47JFW58JEqDfDQ6dhqalXqKloVmjsCaj//1ZWr/8="),
+"format": 34896613399,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAQADAAIAAQAEAAMAAAAFAAEABgAFAAAABgAHAAUA"),
+"material": SubResource("StandardMaterial3D_ay780"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("N0MLOf///8Kfh7LaAADMxZ+Hstr//8LF////////ZM3/////AACDzTdDCzkAAP/CAAAAAP//uMUAAAAAAAC4xVWXoNHAnIvG2pyGxjylpbUMpbW1VZeg0c+co8bPnKPG")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_h0pt2")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_cb08y"]
+_surfaces = [{
+"aabb": AABB(-0.51465726, -0.37448287, -0.31946278, 1.0293143, 0.7489657, 0.63892555),
+"format": 34896613377,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAADAAAABAAFAAMABgAFAAQABgAHAAUA"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAALOQ+/AAD+/wAA//8AAAAAAAD+/wAA/v8LOQ+/AAAAALLa+HwAAP7/str4fAAAAAD//wAAAAD/////AAAAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_81hb2"]
+resource_name = "nuevos terrenos2_Cube_012"
+_surfaces = [{
+"aabb": AABB(-0.51465726, -0.37448287, -0.31946278, 1.0293143, 0.7489657, 0.63892555),
+"attribute_data": PackedByteArray("RuyNqoz/R1WM/42qRuxHVcfCjarHwkdVQ6dhqeKnVlY="),
+"format": 34896613399,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAADAAAABAAFAAMABgAFAAQABgAHAAUA"),
+"material": SubResource("StandardMaterial3D_ay780"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAALOQ+/CcP+/wAA///GxQAAAAD+/8bF/v8LOQ+/CcMAALLa+Hwkxf7/str4fHbGAAD//wAAJs3/////AAAOzyyXLJeqnKqcqpyqnCyXLJeFndOcrJwSnT+mP6V/pPml")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_cb08y")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_up5ax"]
+_surfaces = [{
+"aabb": AABB(-0.30863166, -0.37448287, -0.4929955, 0.61726344, 0.7489657, 0.98599076),
+"format": 34896613377,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAABAAMABAADAAUABgAEAAUABgAFAAcA"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAD//wAAAABfeLLa//8AAAAA/////wAAX3iy2gAAAADHvAs5//8AAMe8CzkAAAAA//8AAP//AAD//wAAAAAAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_bhtpi"]
+resource_name = "nuevos terrenos2_Cube_014"
+_surfaces = [{
+"aabb": AABB(-0.30863166, -0.37448287, -0.4929955, 0.61726344, 0.7489657, 0.98599076),
+"attribute_data": PackedByteArray("SFidVvqoFz3ip1ZWR1fHPCOplhNvV0YTNqlPAIJXAAA="),
+"format": 34896613399,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAABAAMABAADAAUABgAEAAUABgAFAAcA"),
+"material": SubResource("StandardMaterial3D_ay780"),
+"name": "Material de la isla grande",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray("AAD//wAALd5feLLa///76QAA/////1TeX3iy2gAA6OnHvAs5//8O8Me8CzkAAA7w//8AAP//9+n//wAAAAD36Zmv36AwtaGVc6/5oD+1kpUeuNCPHrjQj0m1f5VJtX+V")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_up5ax")
+
+[node name="Node3D" type="Node3D"]
+transform = Transform3D(0.19, 0, 0, 0, 0.19, 0, 0, 0, 0.19, 0, 0, 0)
+
+[node name="hill_1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8231221, 0.37448287, -0.81315374)
+mesh = SubResource("ArrayMesh_r5uvd")
+skeleton = NodePath("")
+
+[node name="hill_3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8231221, 0.37448287, 0.8117621)
+mesh = SubResource("ArrayMesh_m82j4")
+skeleton = NodePath("")
+
+[node name="hill_5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8234553, 0.37448287, 0.8117621)
+mesh = SubResource("ArrayMesh_lj1wt")
+skeleton = NodePath("")
+
+[node name="hill_7" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8234553, 0.37448287, -0.81315374)
+mesh = SubResource("ArrayMesh_wyug5")
+skeleton = NodePath("")
+
+[node name="hill_9" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00016659498, 0.7489657, -0.0006956905)
+mesh = SubResource("ArrayMesh_n40cc")
+skeleton = NodePath("")
+
+[node name="hill_8" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00016659498, 0.37448287, -0.81315374)
+mesh = SubResource("ArrayMesh_py1u4")
+skeleton = NodePath("")
+
+[node name="hill_6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8234553, 0.37448287, -0.00069592893)
+mesh = SubResource("ArrayMesh_pa4ni")
+skeleton = NodePath("")
+
+[node name="hill_4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00016659498, 0.37448287, 0.8117621)
+mesh = SubResource("ArrayMesh_81hb2")
+skeleton = NodePath("")
+
+[node name="hill_2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8231221, 0.37448287, -0.00069592893)
+mesh = SubResource("ArrayMesh_bhtpi")
+skeleton = NodePath("")
