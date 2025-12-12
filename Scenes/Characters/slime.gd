@@ -39,6 +39,9 @@ extends CharacterBody3D
 @export var jump_over_margin: float = 0.1
 @export var jump_interval: float = 0.6
 
+@export_group("Small Slime Settings")
+@export var spawn_invulnerability_time: float = 2.0
+
 # ==============================================================================
 # --- ESTADOS Y VARIABLES INTERNAS ---
 # ==============================================================================
@@ -60,7 +63,11 @@ var attack_was_successful: bool = false
 var can_jump: bool = true
 var pending_horizontal_velocity: Vector3 = Vector3.ZERO
 var jump_timer: Timer
-var is_splitting: bool = false  # NUEVO: Bandera para prevenir división múltiple
+var is_splitting: bool = false
+
+# Variables de invulnerabilidad al spawn (solo para pequeños)
+var is_invulnerable_spawn: bool = false
+var invulnerability_timer: Timer
 
 @onready var animated_sprite = $AnimatedSprite3D
 @onready var attack_area = $AttackArea
@@ -74,6 +81,9 @@ var retreat_timer: Timer
 func _ready():
 	current_hp = max_hp
 	
+	# Agregar al grupo slime
+	add_to_group("slime")
+	
 	# Crear timers
 	retreat_timer = Timer.new()
 	add_child(retreat_timer)
@@ -84,6 +94,12 @@ func _ready():
 	add_child(jump_timer)
 	jump_timer.one_shot = true
 	jump_timer.timeout.connect(_on_jump_timer_timeout)
+	
+	# Timer de invulnerabilidad al spawn (solo para pequeños)
+	invulnerability_timer = Timer.new()
+	add_child(invulnerability_timer)
+	invulnerability_timer.one_shot = true
+	invulnerability_timer.timeout.connect(_on_invulnerability_timeout)
 
 	_setup_detection_area()
 	_update_visual_scale()
@@ -99,7 +115,28 @@ func _ready():
 			attack_collision.disabled = true
 
 	stalk_clockwise = randf() > 0.5
+	
+	# Si es pequeño, activar invulnerabilidad al spawn
+	if size < 1.0:
+		_activate_spawn_invulnerability()
+	
 	set_state(State.WANDER)
+
+func _activate_spawn_invulnerability():
+	is_invulnerable_spawn = true
+	invulnerability_timer.start(spawn_invulnerability_time)
+	
+	# Efecto visual de invulnerabilidad
+	if animated_sprite:
+		animated_sprite.modulate = Color(0.5, 0.5, 1.0, 0.7)  # Azul translúcido
+	
+	print("🛡️ Slime pequeño: Invulnerable por %.1f segundos" % spawn_invulnerability_time)
+
+func _on_invulnerability_timeout():
+	is_invulnerable_spawn = false
+	if animated_sprite:
+		animated_sprite.modulate = Color.WHITE
+	print("✅ Slime pequeño: Invulnerabilidad terminada")
 
 func _physics_process(delta):
 	if current_state == State.DEAD or is_splitting:
@@ -185,19 +222,24 @@ func _state_machine(delta: float):
 
 	match current_state:
 		State.CHASE:
-			if distance_to_player <= safe_distance:
-				set_state(State.STALK)
-			else:
+			if size >= 1.0:  # Solo slimes grandes atacan
+				if distance_to_player <= safe_distance:
+					set_state(State.STALK)
+				else:
+					_process_chase()
+			else:  # Slimes pequeños solo persiguen
 				_process_chase()
 
 		State.PURSUIT:
-			if distance_to_player <= safe_distance * 2.0:
-				set_state(State.CHASE)
-			elif distance_to_player > max_pursuit_distance:
-				print("🏃 Enemigo: Jugador muy lejos, abandonando persecución.")
-				player_ref = null
-				has_detected_player = false
-				set_state(State.IDLE) 
+			if size >= 1.0:
+				if distance_to_player <= safe_distance * 2.0:
+					set_state(State.CHASE)
+				elif distance_to_player > max_pursuit_distance:
+					player_ref = null
+					has_detected_player = false
+					set_state(State.IDLE) 
+				else:
+					_process_pursuit()
 			else:
 				_process_pursuit()
 
@@ -339,8 +381,9 @@ func set_state(new_state: State):
 			_start_wander()
 
 		State.ATTACKING:
-			_execute_attack()
-			can_jump = false
+			if size >= 1.0:
+				_execute_attack()
+				can_jump = false
 
 		State.RETREAT:
 			_start_retreat()
@@ -479,6 +522,10 @@ func _on_detection_area_body_exited(body):
 			set_state(State.PURSUIT)
 
 func _on_attack_hit_player(body):
+	# Solo slimes grandes atacan
+	if size < 1.0:
+		return
+		
 	if current_state == State.ATTACKING and body.is_in_group("player"):
 		attack_was_successful = true
 		if body.has_method("take_damage_hearts_with_knockback"):
@@ -525,7 +572,6 @@ func _split_into_smaller_slimes():
 	is_splitting = true
 	print("🔄 Iniciando división del Slime grande...")
 	
-	# Detener todos los timers
 	if jump_timer:
 		jump_timer.stop()
 	if retreat_timer:
@@ -538,38 +584,41 @@ func _split_into_smaller_slimes():
 		queue_free()
 		return
 	
-	# Crear 3 slimes pequeños
+	var spawn_position = global_position
+	var parent_node = get_parent()
+	
 	for i in range(3):
 		var new_slime = small_slime_scene.instantiate()
-		get_parent().call_deferred("add_child", new_slime)
 		
-		# Posición con dispersión
-		var angle = (i * 120.0 + randf_range(-20, 20)) * PI / 180.0
-		var offset = Vector3(cos(angle), 0, sin(angle)) * 0.5
-		new_slime.global_position = global_position + offset
-		
-		# Configurar como slime pequeño
 		new_slime.size = 0.5
 		new_slime.max_hp = 10
 		new_slime.current_hp = 10
 		
-		# Heredar referencia del jugador
+		var angle = (i * 120.0 + randf_range(-20, 20)) * PI / 180.0
+		var offset = Vector3(cos(angle), 0, sin(angle)) * 0.5
+		
 		if player_ref:
 			new_slime.player_ref = player_ref
 			new_slime.has_detected_player = true
 		
-		# Impulso de separación
 		var impulse_dir = offset.normalized()
 		new_slime.velocity = impulse_dir * 2.0
 		new_slime.velocity.y = 1.5
 		
-		print("✅ Slime pequeño %d creado" % (i + 1))
+		parent_node.call_deferred("add_child", new_slime)
+		new_slime.call_deferred("set_global_position", spawn_position + offset)
+		
+		print("✅ Slime pequeño %d creado (invulnerable 2s)" % (i + 1))
 	
-	# Eliminar el slime grande
 	queue_free()
 
 func take_damage(damage_amount: int):
 	if current_state == State.DEAD or is_splitting:
+		return
+	
+	# Invulnerabilidad al spawn (solo pequeños)
+	if is_invulnerable_spawn:
+		print("🛡️ Slime: Daño bloqueado (invulnerable al spawn)")
 		return
 
 	var actual_damage = max(damage_amount - defense, 1)
@@ -577,9 +626,9 @@ func take_damage(damage_amount: int):
 	print("💔 Slime HP: %d/%d (Daño: %d)" % [current_hp, max_hp, actual_damage])
 	
 	if current_hp <= 0:
-		if size >= 1.0:  # Slime grande
+		if size >= 1.0:
 			_split_into_smaller_slimes()
-		else:  # Slime pequeño
+		else:
 			set_state(State.DEAD)
 	else:
 		if current_state not in [State.DEAD, State.RETREAT]:

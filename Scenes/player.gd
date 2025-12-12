@@ -12,7 +12,7 @@ extends CharacterBody3D
 @export var attack_hit_delay: float = 0.1
 
 @export_group("Health")
-@export var max_health: float = 30.0 # 3 contenedores x 10 HP cada uno
+@export var max_health: float = 30.0
 var current_health: float
 
 @export_group("Roll")
@@ -33,12 +33,11 @@ var enemies_hit = []
 var damage_knockback_timer = Timer.new()
 var ui_ref: CanvasLayer = null
 
-# Los timers de daño se mantienen, pero la lógica de uso cambia:
-var damage_visual_timer = Timer.new() # Controla solo la duración de la invulnerabilidad (1.0s)
-
+# Sistema de invulnerabilidad
+var damage_visual_timer = Timer.new()
 var is_invulnerable: bool = false
-@export var invulnerability_time: float = 1.0 # El tiempo que dura la invulnerabilidad (1.0s)
-@export var damage_visual_time: float = 0.5 # **NUEVA VARIABLE:** El tiempo que dura el efecto de color (0.5s)
+@export var invulnerability_time: float = 1.0
+@export var damage_visual_time: float = 0.5
 
 @onready var animated_sprite = $Sprite3D
 @onready var attack_area = $AttackArea
@@ -51,24 +50,21 @@ func _ready():
 	
 	add_to_group("player")
 	
+	# Timers
 	add_child(roll_cooldown_timer)
 	roll_cooldown_timer.one_shot = true
 	
-	# Configuración del temporizador de knockback
 	add_child(damage_knockback_timer)
 	damage_knockback_timer.one_shot = true
 	damage_knockback_timer.timeout.connect(func():
 		if current_state == State.DAMAGE:
 			velocity = Vector3.ZERO
-			# Retorna al estado NORMAL después de que el knockback termine
 			call_deferred("set_state", State.NORMAL) 
 	)
 	
-	# Configuración del temporizador de invulnerabilidad (ahora SÓLO controla la invulnerabilidad)
 	add_child(damage_visual_timer)
 	damage_visual_timer.one_shot = true
 	damage_visual_timer.timeout.connect(func():
-		# **Lógica modificada:** SOLO remueve la invulnerabilidad aquí
 		is_invulnerable = false 
 	)
 	
@@ -79,35 +75,35 @@ func _ready():
 	call_deferred("_find_ui")
 
 func _physics_process(delta):
-	# Lógica de movimiento principal gestionada por la máquina de estados
+	# Lógica de movimiento principal
 	match current_state:
 		State.NORMAL:
 			_handle_move(delta)
 			_handle_jump()
 			_handle_actions_input()
 		State.ATTACKING:
-			# Permite el movimiento de inercia del ataque si no hay knockback activo
 			if damage_knockback_timer.is_stopped():
 				_handle_move(delta, attack_movement_multiplier)
 			_handle_buffer_input()
 		State.ROLLING:
 			_apply_roll_physics()
 		State.DAMAGE:
-			# El knockback es aplicado en take_damage_hearts_with_knockback.
 			pass
 
 	# Aplicar Gravedad
 	if not is_on_floor():
 		velocity.y -= gravity * gravity_multiplier * delta
 	else:
-		# Si estamos en DAMAGE y ya aterrizamos/el knockback terminó, resetear Y
 		if current_state == State.DAMAGE and damage_knockback_timer.is_stopped():
 			velocity.y = 0
-			
+	
 	move_and_slide()
 	_update_animations()
 
+# ==============================================================================
 # --- MANEJO DE INPUTS ---
+# ==============================================================================
+
 func _handle_actions_input():
 	if Input.is_action_just_pressed("attack"):
 		set_state(State.ATTACKING)
@@ -122,10 +118,11 @@ func _handle_buffer_input():
 		if roll_cooldown_timer.is_stopped():
 			set_state(State.ROLLING)
 
+# ==============================================================================
 # --- LÓGICA DE MOVIMIENTO ---
+# ==============================================================================
+
 func _handle_move(_delta: float, speed_mult: float = 1.0):
-	# Si el temporizador NO está detenido (es decir, está corriendo),
-	# el knockback está en efecto y bloqueamos la entrada de movimiento normal.
 	if not damage_knockback_timer.is_stopped(): 
 		return
 
@@ -162,10 +159,12 @@ func _flip_sprite(_x_velocity: float):
 		animated_sprite.flip_h = not is_facing_right
 		attack_area.scale.x = 1.0 if is_facing_right else -1.0
 
+# ==============================================================================
 # --- GESTIÓN DE ESTADOS (FSM) ---
+# ==============================================================================
+
 func set_state(new_state: State):
 	if current_state == State.ATTACKING:
-		# **CORRECCIÓN APLICADA: Uso de set_deferred()**
 		attack_collision.set_deferred("disabled", true) 
 		animated_sprite.speed_scale = 1.0
 		
@@ -186,8 +185,11 @@ func set_state(new_state: State):
 			_start_roll()
 		State.DAMAGE:
 			_start_damage()
-			
+
+# ==============================================================================
 # --- ACCIONES ---
+# ==============================================================================
+
 func _start_attack():
 	enemies_hit.clear()
 	animated_sprite.speed_scale = 2.0
@@ -238,21 +240,17 @@ func _start_roll():
 
 func _start_damage():
 	is_invulnerable = true 
-	
-	# 1. Iniciar el temporizador de invulnerabilidad (1.0s)
 	damage_visual_timer.start(invulnerability_time) 
+	animated_sprite.modulate = Color(1, 0.5, 0.5, 1)
 	
-	# 2. Iniciar el efecto visual (color rojo/parpadeo) (0.5s)
-	animated_sprite.modulate = Color(1, 0.5, 0.5, 1) # Efecto de color
-	
-	# Usar un timer one-shot anónimo para limpiar el color después de 0.5s
 	get_tree().create_timer(damage_visual_time).timeout.connect(func():
-		# Solo limpia el color si la invulnerabilidad aún está activa
 		if is_invulnerable:
 			animated_sprite.modulate = Color.WHITE
 	)
 
+# ==============================================================================
 # --- SISTEMA DE SALUD Y DAÑO ---
+# ==============================================================================
 
 func take_damage_hearts(damage_amount: float):
 	take_damage_hearts_with_knockback(damage_amount, Vector3.ZERO, 0.0)
@@ -263,38 +261,33 @@ func take_damage_hearts_with_knockback(damage_amount: float, knockback_direction
 		return
 	
 	current_health -= damage_amount
-	current_health = max(0, current_health) # No bajar de 0
+	current_health = max(0, current_health)
 	
 	print("💔 Player: Recibió %.1f de daño. HP: %.1f/%.1f" % [damage_amount, current_health, max_health])
 	
-	# 1. Aplicar el estado de daño de forma inmediata.
 	if current_state != State.DAMAGE:
 		set_state(State.DAMAGE)
 	
-	# 2. Actualizar UI
 	if ui_ref and ui_ref.has_method("update_hearts_display"):
 		ui_ref.update_hearts_display()
 	
-	# 3. Aplicar knockback.
 	if knockback_force > 0:
 		var KB_MULTIPLIER = 5.0
-		# Solo aplicamos velocidad si el timer de knockback no está corriendo.
 		if damage_knockback_timer.is_stopped():
 			velocity.x = knockback_direction.x * knockback_force * KB_MULTIPLIER
 			velocity.z = knockback_direction.z * knockback_force * KB_MULTIPLIER
-			# Añadir un pequeño impulso vertical para un mejor efecto
 			velocity.y = min(velocity.y + knockback_force * 3.0, 5.0)
 		
-		# Iniciar timer para finalizar el knockback y regresar a NORMAL
 		damage_knockback_timer.start(0.35)
 	else:
-		# Si no hay knockback, sal del estado DAMAGE rápidamente.
 		damage_knockback_timer.start(0.1)
 	
 	if current_health <= 0:
 		die()
 
+# ==============================================================================
 # --- FUNCIONES DE CURACIÓN Y SALUD ---
+# ==============================================================================
 
 func heal(amount: float):
 	if current_health < max_health:
@@ -309,7 +302,7 @@ func heal(amount: float):
 
 func increase_max_health(amount: float):
 	max_health += amount
-	current_health = max_health # Curar al máximo
+	current_health = max_health
 	
 	print("💚 Player: Max HP aumentado a %.1f" % max_health)
 	
@@ -320,7 +313,10 @@ func die():
 	print("💀 Player: ¡Has muerto!")
 	get_tree().call_deferred("reload_current_scene")
 
+# ==============================================================================
 # --- ANIMACIONES Y EVENTOS ---
+# ==============================================================================
+
 func _update_animations():
 	if current_state in [State.ATTACKING, State.ROLLING, State.DAMAGE]: 
 		return
@@ -341,7 +337,7 @@ func _on_animation_finished():
 	if animated_sprite.animation == "attack":
 		set_state(State.NORMAL)
 	elif animated_sprite.animation == "roll":
-		is_invulnerable = false # Final de la invulnerabilidad de roll
+		is_invulnerable = false
 		roll_cooldown_timer.start(roll_cooldown)
 		set_state(State.NORMAL)
 
@@ -362,7 +358,4 @@ func _find_ui():
 		if ui_ref.has_method("update_max_hearts_display"):
 			ui_ref.update_max_hearts_display()
 	else:
-		push_warning("⚠️ Player: No se encontró UI. Asegúrate de:")
-		push_warning("  1. Añadir Player_UI al grupo 'ui'")
-		push_warning("  2. Que Player_UI sea CanvasLayer")
-		push_warning("  3. Que la escena esté instanciada correctamente")
+		push_warning("⚠️ Player: No se encontró UI.")
