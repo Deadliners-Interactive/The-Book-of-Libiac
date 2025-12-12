@@ -126,16 +126,11 @@ func _activate_spawn_invulnerability():
 	is_invulnerable_spawn = true
 	invulnerability_timer.start(spawn_invulnerability_time)
 	
-	# Efecto visual de invulnerabilidad
-	if animated_sprite:
-		animated_sprite.modulate = Color(0.5, 0.5, 1.0, 0.7)  # Azul translúcido
-	
+	# SOLO texto, sin cambiar el color
 	print("🛡️ Slime pequeño: Invulnerable por %.1f segundos" % spawn_invulnerability_time)
 
 func _on_invulnerability_timeout():
 	is_invulnerable_spawn = false
-	if animated_sprite:
-		animated_sprite.modulate = Color.WHITE
 	print("✅ Slime pequeño: Invulnerabilidad terminada")
 
 func _physics_process(delta):
@@ -601,9 +596,10 @@ func _split_into_smaller_slimes():
 			new_slime.player_ref = player_ref
 			new_slime.has_detected_player = true
 		
+		# REDUCIMOS LA FUERZA DEL REBOTE para que no atraviesen el suelo
 		var impulse_dir = offset.normalized()
-		new_slime.velocity = impulse_dir * 2.0
-		new_slime.velocity.y = 1.5
+		new_slime.velocity = impulse_dir * 1.5  # Reducido de 2.0 a 1.5
+		new_slime.velocity.y = 1.2  # Reducido de 1.5 a 1.2
 		
 		parent_node.call_deferred("add_child", new_slime)
 		new_slime.call_deferred("set_global_position", spawn_position + offset)
