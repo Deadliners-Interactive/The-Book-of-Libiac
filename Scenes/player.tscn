@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3 uid="uid://dl1ki8dhwoa1f"]
+[gd_scene load_steps=43 format=3 uid="uid://dl1ki8dhwoa1f"]
 
 [ext_resource type="Script" uid="uid://examvqnqwji0" path="res://Scenes/player.gd" id="1_viyiy"]
 [ext_resource type="Texture2D" uid="uid://cj2e17bog4y7c" path="res://assets/Sprites/Characters/Player/Gallito_idle_spritesheet.png" id="2_0cqtj"]
@@ -264,6 +264,8 @@ size = Vector3(1, 0.9296875, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_3smsa"]
 size = Vector3(0.14215088, 0.12597656, 0.14233398)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_8erm5"]
+
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_viyiy")
 
@@ -287,3 +289,9 @@ shape = SubResource("BoxShape3D_3smsa")
 
 [node name="Camera3D2" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 0.7, 0.7)
+
+[node name="DetectionArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea"]
+transform = Transform3D(0.16, 0, 0, 0, 0.16, 0, 0, 0, 0.16, 0, 0, 0)
+shape = SubResource("BoxShape3D_8erm5")

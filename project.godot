@@ -16,11 +16,20 @@ config/features=PackedStringArray("4.5", "Forward Plus")
 run/max_fps=60
 config/icon="res://icon.svg"
 
+[autoload]
+
+GameState="*res://GameState.gd"
+TransitionManager="*res://TransitionManager.gd"
+
 [display]
 
 window/layer_3=""
 window/layer_2=""
 window/layer_1=""
+
+[editor]
+
+version_control/autoload_on_startup=true
 
 [editor_plugins]
 

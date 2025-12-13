@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://d331kdwddgjef"]
+[gd_scene load_steps=38 format=3 uid="uid://d331kdwddgjef"]
 
 [ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/Player_UI.tscn" id="1_6iyac"]
 [ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="2_fdnlq"]
@@ -18,6 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://nw3nau1oyi0c" path="res://assets/Sprites/Characters/muki/muki_idle.png" id="15_b3802"]
 [ext_resource type="Texture2D" uid="uid://ca4voa1kl2b0d" path="res://assets/Sprites/Characters/muki/muki_attack.png" id="16_fevyy"]
 [ext_resource type="Texture2D" uid="uid://cw7k5htg5qsxj" path="res://assets/Sprites/Effects/enemy_afterdead_explosion_anim_spritesheet.png" id="17_hibaj"]
+[ext_resource type="Script" uid="uid://ci2i6cnjhx751" path="res://Scenes/LevelTrigger.gd" id="19_fevyy"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_un8ce"]
 panorama = ExtResource("3_jkdf5")
@@ -155,6 +156,8 @@ animations = [{
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_h1bgf"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_fevyy"]
+
 [node name="Main" type="Node3D"]
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("2_fdnlq")]
@@ -200,7 +203,6 @@ metadata/_editor_floor_ = Vector3(0, 6, 0)
 
 [node name="Key" parent="." instance=ExtResource("7_b3802")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.353081, 0.13918245, -1.6042814)
-visible = false
 
 [node name="Door" parent="." instance=ExtResource("8_fevyy")]
 transform = Transform3D(0.215, 0, 0, 0, 0.215, 0, 0, 0, 0.215, 5.4877744, 0.6848888, -8.206904)
@@ -211,11 +213,9 @@ shake_intensity = 0.02
 
 [node name="Wing" parent="." instance=ExtResource("9_hibaj")]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.44319764, 0.24036443, -1.0937576)
-visible = false
 
 [node name="HealthPickup" parent="." instance=ExtResource("10_pdsj5")]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.75314605, 0.24089986, -0.9486137)
-visible = false
 heal_amount = 10.0
 use_billboard = false
 
@@ -290,3 +290,13 @@ shape = SubResource("BoxShape3D_h1bgf")
 
 [node name="ActorEscape" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0400269, 0.19486102, -4.105335)
+
+[node name="LevelExits" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9311528, 0, -4.0012774)
+script = ExtResource("19_fevyy")
+target_level = "uid://b1rt6auxlkhy"
+spawn_point_id = "entrada_desde_nivel1"
+auto_trigger = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LevelExits"]
+shape = SubResource("BoxShape3D_fevyy")

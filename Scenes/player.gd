@@ -54,6 +54,7 @@ var notification_cooldown_time: float = 1.0  # 1 segundo de cooldown
 @onready var attack_area = $AttackArea
 @onready var attack_collision = $AttackArea/CollisionShape3D
 @onready var roll_cooldown_timer: Timer = Timer.new()
+@onready var detection_area = $DetectionArea  # NUEVO: Para detectar triggers de nivel
 
 # ==============================================================================
 # --- INICIALIZACIÓN ---
@@ -65,10 +66,8 @@ func _ready():
 	# --- GRUPOS IMPORTANTES ---
 	add_to_group("player") # El cuerpo del player
 	
-	# [CORRECCIÓN PRINCIPAL]
 	# Añadimos el área de la espada al grupo que busca el cofre
 	attack_area.add_to_group("hitbox_player") 
-	# -----------------------
 	
 	# Configuración de Timers
 	add_child(roll_cooldown_timer)
@@ -93,6 +92,18 @@ func _ready():
 	
 	if not attack_area.body_entered.is_connected(_on_attack_hit):
 		attack_area.body_entered.connect(_on_attack_hit)
+	
+	# ============ SISTEMA DE CAMBIO DE NIVEL ============
+	# Cargar estado guardado si existe
+	if GameState.player_health > 0:
+		GameState.load_player_state(self)
+	
+	# Conectar señal para detectar áreas desde el Area3D hijo
+	if has_node("DetectionArea"):
+		detection_area.area_entered.connect(_on_area_entered_player)
+	else:
+		push_warning("⚠️ Player: Falta nodo DetectionArea para cambio de nivel")
+	# ====================================================
 	
 	# Buscar UI al inicio
 	call_deferred("_find_ui")
@@ -484,3 +495,14 @@ func show_immediate_notification(message: String):
 		ui_ref.show_immediate_notification(message)
 	else:
 		print("📢 (UI no disponible): ", message)
+
+# ==============================================================================
+# --- SISTEMA DE CAMBIO DE NIVEL ---
+# ==============================================================================
+
+func _on_area_entered_player(area: Area3D):
+	"""Detecta cuando el jugador entra en un Area3D"""
+	if area.is_in_group("level_trigger"):
+		print("🚪 Player: Entrando a zona de cambio de nivel")
+		if area.has_method("trigger_level_change"):
+			area.trigger_level_change(self)
