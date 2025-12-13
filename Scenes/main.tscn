@@ -835,6 +835,8 @@ theme_override_font_sizes/font_size = 32
 horizontal_alignment = 1
 
 [node name="Player_UI" parent="CinematicManager" instance=ExtResource("1_6iyac")]
+notification_fade_speed = 0.5
+max_notifications = 5
 
 [node name="IntroGameCinematic" type="Node" parent="."]
 script = ExtResource("14_wsu2k")

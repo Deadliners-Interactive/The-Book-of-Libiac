@@ -20,6 +20,11 @@ extends CharacterBody3D
 		if is_inside_tree():
 			_update_visual_scale()
 
+@export_group("Loot Settings") # <--- NUEVA SECCIÓN DE LOOT
+@export var loot_scale: Vector3 = Vector3(2.0, 2.0, 2.0) # Escala forzada al aparecer
+@export var loot_drop_chance: float = 0.6 # Probabilidad (0.0 a 1.0)
+@export var possible_loot_scenes: Array[PackedScene] # Array de escenas a soltar
+
 @export_group("Chaser Behavior")
 @export var chase_speed: float = 1.0
 @export var pursuit_speed: float = 0.6
@@ -45,7 +50,7 @@ extends CharacterBody3D
 @export var small_slime_approach_range: float = 0.5
 @export var startup_attack_delay: float = 1.0
 @export var split_rebound_distance: float = 1.5  # Distancia de rebote al dividirse
-@export var split_rebound_force: float = 2.5      # Fuerza del rebote
+@export var split_rebound_force: float = 2.5     # Fuerza del rebote
 
 # ==============================================================================
 # --- ESTADOS Y VARIABLES INTERNAS ---
@@ -468,7 +473,6 @@ func _start_damage():
 	
 	velocity = Vector3.ZERO
 	
-	# === MODIFICACIÓN INICIADA AQUI ===
 	var damage_color_applied = false
 	if animated_sprite.sprite_frames.has_animation("damage"):
 		animated_sprite.play("damage")
@@ -493,11 +497,15 @@ func _start_damage():
 		else:
 			set_state(State.IDLE)
 		can_jump = true
-	# === MODIFICACIÓN TERMINADA AQUI ===
 
-func _start_dead():
+func _start_dead(): # <--- FUNCIÓN MODIFICADA
 	velocity = Vector3.ZERO
 	
+	# 1. Spawnear loot (solo para slime pequeño)
+	if size < 1.0:
+		_spawn_random_loot()
+	
+	# 2. Reproducir animación de muerte y liberar
 	if animated_sprite.sprite_frames.has_animation("death"):
 		animated_sprite.play("death")
 		await animated_sprite.animation_finished
@@ -505,7 +513,56 @@ func _start_dead():
 	queue_free()
 
 # ==============================================================================
-# --- NUEVA FUNCIÓN: ANIMACIÓN DE MUERTE Y DIVISIÓN PARA SLIME GRANDE ---
+# --- FUNCIÓN NUEVA: SPAWN DE LOOT ALEATORIO ---
+# ==============================================================================
+
+func _spawn_random_loot():
+	# 1. Verificar si la probabilidad se cumple
+	if randf() > loot_drop_chance:
+		print("💰 Slime: No se soltó loot (Probabilidad no cumplida).")
+		return
+
+	# 2. Verificar si hay loot configurado
+	if possible_loot_scenes.is_empty():
+		print("❌ ERROR: possible_loot_scenes está vacío, no se puede soltar loot.")
+		return
+		
+	# 3. Elegir una escena de loot aleatoria
+	var loot_scene_to_spawn = possible_loot_scenes.pick_random()
+	if not loot_scene_to_spawn:
+		print("❌ ERROR: El objeto de loot elegido no es válido.")
+		return
+
+	# 4. Instanciar y configurar
+	var item = loot_scene_to_spawn.instantiate()
+	var parent_node = get_parent()
+	if not is_instance_valid(parent_node):
+		# Usar el árbol actual si el slime no tiene padre (debería tenerlo)
+		parent_node = get_tree().current_scene 
+
+	parent_node.add_child(item)
+
+	# --- Posición y Escala (Asegurando que flote y tenga la escala 2.0) ---
+	
+	# Usamos la posición global del slime
+	var spawn_pos = global_position 
+	
+	# Ajuste de posición: 
+	# X, Z: Pequeña variación para que no aparezca exactamente en el centro
+	# Y: Un poco arriba para que parezca que sale disparado y flote
+	var offset_x = randf_range(-0.1, 0.1) * size
+	var offset_z = randf_range(-0.1, 0.1) * size
+	var spawn_offset_y = 0.15 # 15 cm de elevación, debe ser suficiente para un slime pequeño
+
+	var final_position = spawn_pos + Vector3(offset_x, spawn_offset_y, offset_z)
+
+	item.global_position = final_position
+	item.scale = loot_scale
+	
+	print("✅ Slime pequeño soltó loot: %s con escala %s" % [loot_scene_to_spawn.resource_path, str(loot_scale)])
+
+# ==============================================================================
+# --- OTRAS FUNCIONES ---
 # ==============================================================================
 
 func _start_death_animation_and_split():
@@ -642,7 +699,7 @@ func _split_into_smaller_slimes():
 		if player_ref and is_instance_valid(player_ref):
 			new_slime.player_ref = player_ref
 			new_slime.has_detected_player = true
-		
+			
 		# Aplicar rebote MÁS FUERTE para alejarlos
 		var impulse_strength = split_rebound_force  # Nueva variable exportada
 		new_slime.velocity = final_direction * impulse_strength
