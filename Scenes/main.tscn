@@ -1,19 +1,25 @@
-[gd_scene load_steps=17 format=3 uid="uid://c8xtsg5ropwcn"]
+[gd_scene load_steps=35 format=3 uid="uid://d331kdwddgjef"]
 
-[ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="1_de4c4"]
-[ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="2_1tbx8"]
-[ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/Player_UI.tscn" id="4_ys1qc"]
-[ext_resource type="MeshLibrary" uid="uid://pa2ivlnek4an" path="res://assets/Meshlibs/dessertmesh.tres" id="7_0c07c"]
-[ext_resource type="PackedScene" uid="uid://bjy3djarvtqb2" path="res://Scenes/door.tscn" id="7_2cgwh"]
-[ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/Enemy.tscn" id="7_5wyu1"]
-[ext_resource type="Shader" uid="uid://bo5k6vcboghsw" path="res://water.gdshader" id="8_iaow0"]
-[ext_resource type="PackedScene" uid="uid://c28ty3qhpxyb2" path="res://Scenes/key.tscn" id="8_qpfo2"]
-[ext_resource type="PackedScene" uid="uid://bwxjoiqfqe6b3" path="res://Scenes/pluma_vida.tscn" id="9_2cgwh"]
-[ext_resource type="PackedScene" uid="uid://7vlbrdwk8dwl" path="res://Scenes/Health_pickup.tscn" id="10_iaow0"]
-[ext_resource type="PackedScene" uid="uid://3jhl25skambw" path="res://treasure_chest.tscn" id="11_qpfo2"]
+[ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/Player_UI.tscn" id="1_6iyac"]
+[ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="2_fdnlq"]
+[ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="3_jkdf5"]
+[ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/Enemy.tscn" id="4_wsu2k"]
+[ext_resource type="Shader" uid="uid://bo5k6vcboghsw" path="res://water.gdshader" id="5_k12tt"]
+[ext_resource type="MeshLibrary" uid="uid://pa2ivlnek4an" path="res://assets/Meshlibs/dessertmesh.tres" id="6_h1bgf"]
+[ext_resource type="PackedScene" uid="uid://c28ty3qhpxyb2" path="res://Scenes/key.tscn" id="7_b3802"]
+[ext_resource type="PackedScene" uid="uid://bjy3djarvtqb2" path="res://Scenes/door.tscn" id="8_fevyy"]
+[ext_resource type="PackedScene" uid="uid://bwxjoiqfqe6b3" path="res://Scenes/pluma_vida.tscn" id="9_hibaj"]
+[ext_resource type="PackedScene" uid="uid://7vlbrdwk8dwl" path="res://Scenes/Health_pickup.tscn" id="10_pdsj5"]
+[ext_resource type="PackedScene" uid="uid://3jhl25skambw" path="res://treasure_chest.tscn" id="11_ee4r6"]
+[ext_resource type="Script" uid="uid://cublxvhnkaeha" path="res://Scenes/cinematic_manager.gd" id="12_gt3je"]
+[ext_resource type="Script" uid="uid://c1rbpt7gb3wa0" path="res://actor.gd" id="14_h1bgf"]
+[ext_resource type="Script" uid="uid://bejt2poaduo8x" path="res://Scenes/intro_game_cinematic.gd" id="14_wsu2k"]
+[ext_resource type="Texture2D" uid="uid://nw3nau1oyi0c" path="res://assets/Sprites/Characters/muki/muki_idle.png" id="15_b3802"]
+[ext_resource type="Texture2D" uid="uid://ca4voa1kl2b0d" path="res://assets/Sprites/Characters/muki/muki_attack.png" id="16_fevyy"]
+[ext_resource type="Texture2D" uid="uid://cw7k5htg5qsxj" path="res://assets/Sprites/Effects/enemy_afterdead_explosion_anim_spritesheet.png" id="17_hibaj"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_un8ce"]
-panorama = ExtResource("2_1tbx8")
+panorama = ExtResource("3_jkdf5")
 
 [sub_resource type="Sky" id="Sky_8m2q7"]
 sky_material = SubResource("PanoramaSkyMaterial_un8ce")
@@ -24,7 +30,7 @@ sky = SubResource("Sky_8m2q7")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_0c07c"]
 render_priority = 0
-shader = ExtResource("8_iaow0")
+shader = ExtResource("5_k12tt")
 shader_parameter/WATER_COL = Color(0.04, 0.38, 0.88, 1)
 shader_parameter/WATER2_COL = Color(0.04, 0.35, 0.78, 1)
 shader_parameter/FOAM_COL = Color(0.8125, 0.9609, 0.9648, 1)
@@ -47,12 +53,111 @@ shader_parameter/foam_distortion_amount = 0.1
 material = SubResource("ShaderMaterial_0c07c")
 size = Vector2(200, 200)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_u7jc0"]
+atlas = ExtResource("15_b3802")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4k6ug"]
+atlas = ExtResource("15_b3802")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xb08l"]
+atlas = ExtResource("16_fevyy")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gdwie"]
+atlas = ExtResource("16_fevyy")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_blhco"]
+atlas = ExtResource("17_hibaj")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kjg46"]
+atlas = ExtResource("17_hibaj")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_17cwd"]
+atlas = ExtResource("17_hibaj")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hw8um"]
+atlas = ExtResource("17_hibaj")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_23u6q"]
+atlas = ExtResource("16_fevyy")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i7nve"]
+atlas = ExtResource("16_fevyy")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_tmpr7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u7jc0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4k6ug")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xb08l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gdwie")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_blhco")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kjg46")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_17cwd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hw8um")
+}],
+"loop": false,
+"name": &"death",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u7jc0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4k6ug")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_23u6q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i7nve")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_h1bgf"]
+
 [node name="Main" type="Node3D"]
 
-[node name="Player_UI" parent="." instance=ExtResource("4_ys1qc")]
-
-[node name="Player" parent="." groups=["player"] instance=ExtResource("1_de4c4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.20059, 0.2712614, -1.1096586)
+[node name="Player" parent="." groups=["player"] instance=ExtResource("2_fdnlq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1104321, 0.12553698, 1.0885181)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_u5gxq")
@@ -63,7 +168,7 @@ shadow_enabled = true
 shadow_transmittance_bias = -16.0
 shadow_blur = 0.0
 
-[node name="Enemy" parent="." instance=ExtResource("7_5wyu1")]
+[node name="Enemy" parent="." instance=ExtResource("4_wsu2k")]
 transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0.45940083, 0.2537522, -1.449708)
 
 [node name="WaterSurface12" type="MeshInstance3D" parent="."]
@@ -72,7 +177,7 @@ mesh = SubResource("PlaneMesh_2cgwh")
 
 [node name="GridMap" type="GridMap" parent="."]
 top_level = true
-mesh_library = ExtResource("7_0c07c")
+mesh_library = ExtResource("6_h1bgf")
 cell_size = Vector3(0.25, 0.125, 0.25)
 cell_scale = 0.125
 bake_navigation = true
@@ -81,24 +186,92 @@ data = {
 }
 metadata/_editor_floor_ = Vector3(0, -1, 0)
 
-[node name="Key" parent="." instance=ExtResource("8_qpfo2")]
+[node name="Key" parent="." instance=ExtResource("7_b3802")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.353081, 0.13918245, -1.6042814)
 
-[node name="Door" parent="." instance=ExtResource("7_2cgwh")]
+[node name="Door" parent="." instance=ExtResource("8_fevyy")]
 transform = Transform3D(0.215, 0, 0, 0, 0.215, 0, 0, 0, 0.215, 0.20262703, 0.30521297, -1.8972008)
 open_distance = 2.0
 open_speed = 1.5
 shake_duration = 1.0
 shake_intensity = 0.02
 
-[node name="Wing" parent="." instance=ExtResource("9_2cgwh")]
+[node name="Wing" parent="." instance=ExtResource("9_hibaj")]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.44319764, 0.24036443, -1.0937576)
 
-[node name="HealthPickup" parent="." instance=ExtResource("10_iaow0")]
+[node name="HealthPickup" parent="." instance=ExtResource("10_pdsj5")]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.75314605, 0.24089986, -0.9486137)
 heal_amount = 10.0
 use_billboard = false
 
-[node name="TreasureChest" parent="." instance=ExtResource("11_qpfo2")]
+[node name="TreasureChest" parent="." instance=ExtResource("11_ee4r6")]
 transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-09, -1.8991733, 0.10093778, -3.6675897)
-loot_scene = ExtResource("9_2cgwh")
+loot_scene = ExtResource("9_hibaj")
+
+[node name="CinematicManager" type="CanvasLayer" parent="."]
+script = ExtResource("12_gt3je")
+
+[node name="SkipLabel" type="Label" parent="CinematicManager"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -388.0
+offset_top = -45.0
+grow_horizontal = 0
+grow_vertical = 0
+size_flags_horizontal = 8
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/font_size = 32
+text = "ESPACIO para continuar"
+horizontal_alignment = 1
+
+[node name="CinematicContainer" type="PanelContainer" parent="CinematicManager"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -370.5
+offset_top = -119.0
+offset_right = 370.5
+offset_bottom = -74.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="CinematicLabel" type="Label" parent="CinematicManager/CinematicContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+
+[node name="Player_UI" parent="CinematicManager" instance=ExtResource("1_6iyac")]
+
+[node name="IntroGameCinematic" type="Node" parent="."]
+script = ExtResource("14_wsu2k")
+actor_path = NodePath("../Actor")
+waypoint_path = NodePath("../ActorEscape")
+
+[node name="Actor" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4582734, 0.16463944, 0.36663786)
+script = ExtResource("14_h1bgf")
+move_speed = 3.0
+run_animation = "walk"
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Actor"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.7071067, 0.7071067, 0, -0.7071067, 0.7071067, 0, 0, 0)
+alpha_cut = 1
+texture_filter = 0
+sprite_frames = SubResource("SpriteFrames_tmpr7")
+animation = &"idle"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Actor"]
+transform = Transform3D(0.11, 0, 0, 0, 0.11, 0, 0, 0, 0.11, 0, 0, 0)
+shape = SubResource("BoxShape3D_h1bgf")
+
+[node name="ActorEscape" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0400269, 0.19486102, -2.1790712)
