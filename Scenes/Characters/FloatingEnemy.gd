@@ -110,7 +110,7 @@ func _state_machine(delta):
 
 # --- WANDER (Movimiento 3D) ---
 func _process_wander():
-	if player_ref:
+	if player_ref and is_instance_valid(player_ref):
 		set_state(State.CHASE)
 		return
 
@@ -132,7 +132,8 @@ func _process_wander():
 
 # --- CHASE (Movimiento 3D y Ataque de Rango) ---
 func _process_chase():
-	if not player_ref:
+	if not player_ref or not is_instance_valid(player_ref):
+		player_ref = null
 		set_state(State.WANDER)
 		return
 
@@ -165,9 +166,14 @@ func _execute_shoot():
 	velocity.x = 0
 	velocity.z = 0
 	
+	# 💥 VERIFICACIÓN CRÍTICA ANTES DE EMPEZAR EL ATAQUE ASÍNCRONO
+	if not player_ref or not is_instance_valid(player_ref):
+		set_state(State.CHASE) # O WANDER, dependiendo de la distancia
+		return
+	
 	_look_at_player() # Asegurarse de que el enemigo mire al jugador antes de disparar
 	
-	if animated_sprite.sprite_frames.has_animation("attack"): 
+	if animated_sprite.sprite_frames.has_animation("attack"):    
 		animated_sprite.play("attack")
 	else:
 		animated_sprite.play("idle")
@@ -175,6 +181,12 @@ func _execute_shoot():
 	# Esperar un momento (ej. 0.2s) para la animación de 'wind-up'
 	await get_tree().create_timer(0.2).timeout
 	
+	# 💥 VERIFICACIÓN CRÍTICA 2: REVISAR DE NUEVO DESPUÉS DEL AWAIT
+	if not player_ref or not is_instance_valid(player_ref) or current_state != State.SHOOTING:
+		cooldown_timer = shoot_cooldown
+		set_state(State.COOLDOWN)
+		return
+		
 	_spawn_projectile()
 	
 	# Transición a Cooldown/Post-disparo
@@ -188,10 +200,23 @@ func _spawn_projectile():
 	if projectile_scene == null:
 		push_error("Projectile Scene no está asignado en el inspector.")
 		return
+		
+	# 💥 VERIFICACIÓN CRÍTICA 3: Asegurar que el objetivo aún existe
+	if not player_ref or not is_instance_valid(player_ref):
+		# Esto no debería ocurrir si las verificaciones anteriores son correctas
+		push_warning("Intento de disparar sin objetivo válido.")
+		return
 
 	var projectile = projectile_scene.instantiate()
 	get_tree().current_scene.add_child(projectile)
 	
+	# 🟢 CORRECCIÓN: Si projectile_spawn_point no se inicializa correctamente,
+	# el error podría venir de aquí. Aseguramos su validez.
+	if not is_instance_valid(projectile_spawn_point):
+		push_error("ProjectileSpawnPoint no es válido.")
+		projectile.queue_free()
+		return
+
 	projectile.global_position = projectile_spawn_point.global_position
 	
 	# Dirección del disparo hacia el jugador
@@ -237,7 +262,7 @@ func take_damage(amount: int):
 		set_state(State.DAMAGE)
 		
 func _on_damage_recovery_timeout():
-	# 🟢 CAMBIO CLAVE 2: Restablecer el color del sprite al salir de DAMAGE
+	# Restablecer el color del sprite al salir de DAMAGE
 	if animated_sprite.modulate == Color.RED:
 		animated_sprite.modulate = Color.WHITE
 		
@@ -245,7 +270,7 @@ func _on_damage_recovery_timeout():
 		# Al salir de DAMAGE, impón el cooldown para evitar ataques instantáneos
 		cooldown_timer = max(cooldown_timer, post_damage_recovery_pause)
 		
-		if player_ref:
+		if player_ref and is_instance_valid(player_ref):
 			set_state(State.CHASE)
 		else:
 			set_state(State.WANDER)
@@ -265,6 +290,7 @@ func set_state(s: State):
 			wander_target = Vector3.ZERO
 
 		State.SHOOTING:
+			# Ahora _execute_shoot() tiene la lógica de transición al COOLDOWN
 			_execute_shoot()
 
 		State.COOLDOWN:
@@ -275,7 +301,6 @@ func set_state(s: State):
 			velocity.x = move_toward(velocity.x, 0, 10.0) 
 			velocity.z = move_toward(velocity.z, 0, 10.0)
 			
-			# 🟢 CAMBIO CLAVE 1: Aplicar color rojo si NO hay animación de daño.
 			if animated_sprite.sprite_frames.has_animation("damage"):
 				animated_sprite.play("damage")
 			else:
@@ -292,7 +317,7 @@ func set_state(s: State):
 # UTILIDADES
 # ================================
 func _look_at_player():
-	if player_ref:
+	if player_ref and is_instance_valid(player_ref):
 		var dir = player_ref.global_position - global_position
 		# Solo miramos en el eje X para sprites 2D
 		animated_sprite.flip_h = dir.x < 0

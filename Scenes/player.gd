@@ -386,8 +386,13 @@ func increase_max_health(amount: float):
 
 func die():
 	print("💀 Player: ¡Has muerto!")
-	# Reiniciar escena
-	get_tree().call_deferred("reload_current_scene")
+	
+	# 💥 LLAMAR AL MANEJADOR DE GAME OVER (REQUIERE AUTOLOAD)
+	if is_instance_valid(GameOverHandler):
+		GameOverHandler.handle_player_death(self)
+	else:
+		# Fallback si el Autoload no está configurado (pero es menos limpio)
+		get_tree().call_deferred("reload_current_scene")
 
 # ==============================================================================
 # --- ANIMACIONES Y EVENTOS ---

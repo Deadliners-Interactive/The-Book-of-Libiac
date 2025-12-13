@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 
 GameState="*res://GameState.gd"
 TransitionManager="*res://TransitionManager.gd"
+GameOverHandler="*res://GameOverHandler.gd"
 
 [display]
 
