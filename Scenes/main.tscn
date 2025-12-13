@@ -1,4 +1,4 @@
-[gd_scene load_steps=93 format=4 uid="uid://d331kdwddgjef"]
+[gd_scene load_steps=96 format=4 uid="uid://d331kdwddgjef"]
 
 [ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/Player_UI.tscn" id="1_6iyac"]
 [ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="2_fdnlq"]
@@ -19,6 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://nw3nau1oyi0c" path="res://assets/Sprites/Characters/muki/muki_idle.png" id="15_b3802"]
 [ext_resource type="Texture2D" uid="uid://ca4voa1kl2b0d" path="res://assets/Sprites/Characters/muki/muki_attack.png" id="16_fevyy"]
 [ext_resource type="Texture2D" uid="uid://cw7k5htg5qsxj" path="res://assets/Sprites/Effects/enemy_afterdead_explosion_anim_spritesheet.png" id="17_hibaj"]
+[ext_resource type="Texture2D" uid="uid://cqkss8tkjeqt5" path="res://assets/Sprites/Characters/muki/muki_ratero_idle.png" id="17_ueoa1"]
 [ext_resource type="Script" uid="uid://ci2i6cnjhx751" path="res://Scenes/LevelTrigger.gd" id="19_fevyy"]
 [ext_resource type="Texture2D" uid="uid://bvaeqn2o16tcv" path="res://assets/models/Env/Mesh forest/forest_texture.png" id="22_ee4r6"]
 [ext_resource type="Texture2D" uid="uid://b7bqq0e6w31dt" path="res://assets/models/Env/dessert/ruina_0.png" id="23_1w6v2"]
@@ -101,13 +102,21 @@ region = Rect2(32, 0, 16, 16)
 atlas = ExtResource("17_hibaj")
 region = Rect2(48, 0, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_23u6q"]
-atlas = ExtResource("16_fevyy")
-region = Rect2(0, 0, 16, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_hpc6h"]
+atlas = ExtResource("17_ueoa1")
+region = Rect2(0, 0, 16, 20)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_i7nve"]
-atlas = ExtResource("16_fevyy")
-region = Rect2(16, 0, 16, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_kltya"]
+atlas = ExtResource("17_ueoa1")
+region = Rect2(16, 0, 16, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e08e2"]
+atlas = ExtResource("17_ueoa1")
+region = Rect2(0, 0, 16, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_neg2b"]
+atlas = ExtResource("17_ueoa1")
+region = Rect2(16, 0, 16, 20)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_tmpr7"]
 animations = [{
@@ -147,10 +156,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_u7jc0")
+"texture": SubResource("AtlasTexture_hpc6h")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_4k6ug")
+"texture": SubResource("AtlasTexture_kltya")
 }],
 "loop": true,
 "name": &"idle",
@@ -158,10 +167,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_23u6q")
+"texture": SubResource("AtlasTexture_e08e2")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_i7nve")
+"texture": SubResource("AtlasTexture_neg2b")
 }],
 "loop": true,
 "name": &"walk",
@@ -863,11 +872,11 @@ run_animation = "walk"
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Actor"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 0.7071067, 0.7071067, 0, -0.7071067, 0.7071067, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 0.7071067, 0.7071067, 0, -0.7071067, 0.7071067, 0, 0.023578495, 0)
 alpha_cut = 1
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_tmpr7")
-animation = &"idle"
+animation = &"walk"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Actor"]
 transform = Transform3D(0.11, 0, 0, 0, 0.11, 0, 0, 0, 0.11, 0, 0, 0)
