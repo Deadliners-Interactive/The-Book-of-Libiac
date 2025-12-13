@@ -1,6 +1,5 @@
 # IntroGameCinematic.gd
-# Cinemática inicial del juego
-# Extiende Node
+# MODIFICADO: Diálogo y movimiento simultáneos
 
 extends Node
 
@@ -21,34 +20,31 @@ var has_played: bool = false
 # INICIALIZACIÓN
 # ==============================================================================
 func _ready() -> void:
-	# Conectar con el CinematicManager
 	if not cinematic_manager:
 		push_error("❌ IntroGameCinematic: No se encuentra CinematicManager")
 		return
 
-	# Conectar señal de fin de cinemática
 	cinematic_manager.dialogue_finished.connect(_on_cinematic_finished)
-
-	# Esperar un frame para inicializar todo correctamente
 	call_deferred("_start_intro")
 
 # ==============================================================================
-# SECUENCIA DE INTRO
+# SECUENCIA DE INTRO (MODIFICADO)
 # ==============================================================================
 func _start_intro() -> void:
 	if has_played:
 		return
 
 	has_played = true
-
-	# PASO 1: Mover actor hacia el waypoint
+	
+	# PASO 1: Iniciar movimiento del actor (pero NO esperar a que termine)
 	if actor:
-		await _move_actor_to_waypoint()
-
-	# PASO 2: Esperar antes del diálogo
-	await get_tree().create_timer(1.5).timeout
-
-	# PASO 3: Mostrar diálogo
+		# Iniciar movimiento sin esperar
+		_move_actor_to_waypoint()
+	
+	# PASO 2: Iniciar diálogo INMEDIATAMENTE (sin esperar)
+	# Solo un pequeño delay visual para que el actor dé el primer paso
+	await get_tree().create_timer(0.3).timeout
+	
 	var intro_dialogue: Array = [
 		{
 			"speaker": "Rupicola",
@@ -59,14 +55,13 @@ func _start_intro() -> void:
 			"text": "El viejo Taita se enojará si llego sin la cena... ¡chesumaquina!"
 		}
 	]
-
+	
 	cinematic_manager.play_cinematic(intro_dialogue, _on_intro_dialogue_finished)
 
 # ==============================================================================
-# LÓGICA DEL ACTOR (LADRÓN)
+# LÓGICA DEL ACTOR (MODIFICADO)
 # ==============================================================================
 
-# Función asíncrona que espera a que el actor termine de moverse
 func _move_actor_to_waypoint() -> void:
 	if not actor or not waypoint_path:
 		return
@@ -77,17 +72,29 @@ func _move_actor_to_waypoint() -> void:
 		return
 
 	if actor.has_method("move_to_position"):
-		# Iniciar movimiento
+		# IMPORTANTE: No usar 'await' aquí para que no espere
+		# Guardamos la conexión para limpiar después
+		var movement_completed = false
+		
+		# Conectar señal para saber cuándo terminó
+		var on_movement_finished = func():
+			movement_completed = true
+			if actor.has_method("fade_out_and_disappear"):
+				actor.fade_out_and_disappear(0.5)
+			else:
+				actor.queue_free()
+		
+		# Conectar la señal
+		if actor.movement_finished.is_connected(on_movement_finished):
+			actor.movement_finished.disconnect(on_movement_finished)
+		actor.movement_finished.connect(on_movement_finished)
+		
+		# Iniciar movimiento (continúa en background)
 		actor.move_to_position(waypoint.global_position)
-
-		# Esperar a que termine
-		await actor.movement_finished
-
-		# Fade out al finalizar
-		if actor.has_method("fade_out_and_disappear"):
-			actor.fade_out_and_disappear(0.5)
-		else:
-			actor.queue_free()
+		
+		# Opcional: Esperar hasta que termine, pero en paralelo con diálogo
+		# Esto se ejecutará en paralelo si no usamos 'await'
+		
 	else:
 		push_error("❌ El actor no tiene la función 'move_to_position'. ¿Tiene Actor.gd?")
 
@@ -96,6 +103,7 @@ func _move_actor_to_waypoint() -> void:
 # ==============================================================================
 func _on_intro_dialogue_finished() -> void:
 	print("✅ IntroGameCinematic: Diálogo de introducción completado")
+	# El actor podría seguir moviéndose o ya haber terminado
 
 func _on_cinematic_finished() -> void:
 	print("🎬 IntroGameCinematic: Cinemática finalizada, el juego puede continuar")
