@@ -75,7 +75,6 @@ func _ready():
 	call_deferred("_find_ui")
 
 func _physics_process(delta):
-	# Lógica de movimiento principal
 	match current_state:
 		State.NORMAL:
 			_handle_move(delta)
@@ -90,7 +89,6 @@ func _physics_process(delta):
 		State.DAMAGE:
 			pass
 
-	# Aplicar Gravedad
 	if not is_on_floor():
 		velocity.y -= gravity * gravity_multiplier * delta
 	else:
@@ -154,7 +152,7 @@ func _apply_roll_physics():
 func _flip_sprite(_x_velocity: float):
 	if _x_velocity == 0: return
 	var moving_right = _x_velocity > 0
-	if _x_velocity != 0 and moving_right != is_facing_right:
+	if moving_right != is_facing_right:
 		is_facing_right = moving_right
 		animated_sprite.flip_h = not is_facing_right
 		attack_area.scale.x = 1.0 if is_facing_right else -1.0
@@ -359,3 +357,27 @@ func _find_ui():
 			ui_ref.update_max_hearts_display()
 	else:
 		push_warning("⚠️ Player: No se encontró UI.")
+
+# ==============================================================================
+# --- SISTEMA DE LLAVES ---
+# ==============================================================================
+
+var key_count: int = 0
+
+func add_key():
+	key_count += 1
+	print("🔑 Player: Llaves actuales =", key_count)
+	
+	if ui_ref and ui_ref.has_method("update_keys_display"):
+		ui_ref.update_keys_display()
+
+func use_key() -> bool:
+	if key_count > 0:
+		key_count -= 1
+		print("🚪 Player: Usó 1 llave. Restantes =", key_count)
+		
+		if ui_ref and ui_ref.has_method("update_keys_display"):
+			ui_ref.update_keys_display()
+			
+		return true
+	return false

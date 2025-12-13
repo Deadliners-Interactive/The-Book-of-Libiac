@@ -1,0 +1,43 @@
+[gd_scene load_steps=7 format=3 uid="uid://bjy3djarvtqb2"]
+
+[ext_resource type="Script" uid="uid://bn8x0gvu1j1et" path="res://door.gd" id="1_w6aom"]
+[ext_resource type="Texture2D" uid="uid://ckbpsvfmo2kki" path="res://assets/Sprites/enviroment/door_text.png" id="2_p0e35"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p0e35"]
+albedo_color = Color(0.45490196, 0.27058825, 0.20784314, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_w6aom"]
+material = SubResource("StandardMaterial3D_p0e35")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_p0e35"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_w6aom"]
+
+[node name="Door" type="Node3D"]
+script = ExtResource("1_w6aom")
+
+[node name="AnimatableBody3D" type="AnimatableBody3D" parent="."]
+unique_name_in_owner = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="AnimatableBody3D"]
+transform = Transform3D(0.95, 0, 0, 0, 1, 0, 0, 0, 0.115, 0, 0, 0)
+mesh = SubResource("BoxMesh_w6aom")
+skeleton = NodePath("../..")
+
+[node name="Sprite3D" type="Sprite3D" parent="AnimatableBody3D/MeshInstance3D"]
+transform = Transform3D(5.0105267, 0, 0, 0, 4.76, 0, 0, 0, 41.391304, 0, 0, 0.53266853)
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("2_p0e35")
+
+[node name="Area3D" type="Area3D" parent="AnimatableBody3D"]
+unique_name_in_owner = true
+transform = Transform3D(0.99, 0, 0, 0, 0.99, 0, 0, 0, 0.99, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AnimatableBody3D/Area3D"]
+shape = SubResource("BoxShape3D_p0e35")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.14, 0, 0, 0)
+shape = SubResource("BoxShape3D_w6aom")
+debug_color = Color(0.25768533, 0.6347768, 0, 0.41960785)
