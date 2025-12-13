@@ -38,7 +38,9 @@ const HALF_CONTAINER_HP: float = 5.0
 var heart_nodes: Array[TextureRect] = []
 var notification_queue: Array[String] = []
 var is_showing_notification: bool = false
-
+var last_notification_message: String = ""  # Para evitar notificaciones duplicadas
+var notification_cooldown: float = 0.5  # 0.5 segundos entre notificaciones iguales
+var last_notification_time: float = 0.0
 # ================================
 # REFERENCIA AL JUGADOR
 # ================================
@@ -80,7 +82,17 @@ func _on_viewport_size_changed():
 #  SISTEMA DE NOTIFICACIONES
 # =============================================================
 func show_notification(message: String):
+	var current_time = Time.get_unix_time_from_system()
+	
+	# Verificar si es la misma notificación reciente
+	if message == last_notification_message and current_time - last_notification_time < notification_cooldown:
+		return  # No mostrar notificaciones duplicadas muy seguidas
+	
 	print("📢 Notificación: ", message)
+	
+	# Guardar la última notificación
+	last_notification_message = message
+	last_notification_time = current_time
 	
 	# Agregar mensaje a la cola
 	notification_queue.append(message)

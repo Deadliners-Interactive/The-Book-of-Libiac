@@ -56,6 +56,7 @@ func _process(delta):
 	var new_y = start_y + sin(time_passed * bob_speed) * bob_height
 	global_position.y = new_y
 
+# HealthPickup.gd - Solo modifica la parte de notificaciones
 func _on_body_entered(body: Node):
 	if collected:
 		return
@@ -72,8 +73,12 @@ func _on_body_entered(body: Node):
 	# Verificar si el player necesita curación
 	if body.current_health >= body.max_health:
 		print("❤️ HealthPickup: El player ya tiene vida completa")
+		
+		# Mostrar notificación temática cuando ya tiene vida completa
+		if body.has_method("show_notification"):
+			body.show_notification("¡Ya tienes la vida completa!")
 		return
-	
+		
 	# Aplicar la curación
 	collected = true
 	body.heal(heal_amount)

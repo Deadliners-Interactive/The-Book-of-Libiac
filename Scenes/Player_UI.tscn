@@ -11,6 +11,9 @@ script = ExtResource("1_j5qct")
 full_heart = ExtResource("1_0axo5")
 half_heart = ExtResource("3_bsti6")
 empty_heart = ExtResource("4_rffj1")
+notification_duration = 1.5
+notification_fade_speed = null
+max_notifications = null
 
 [node name="HeartsContainer" type="HBoxContainer" parent="."]
 unique_name_in_owner = true

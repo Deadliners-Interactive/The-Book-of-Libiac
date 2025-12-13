@@ -45,6 +45,10 @@ var is_invulnerable: bool = false
 @export var invulnerability_time: float = 1.0
 @export var damage_visual_time: float = 0.5
 
+# Sistema de prevención de notificaciones repetidas
+var notification_cooldown: Dictionary = {}
+var notification_cooldown_time: float = 1.0  # 1 segundo de cooldown
+
 # Referencias a Nodos
 @onready var animated_sprite = $Sprite3D
 @onready var attack_area = $AttackArea
@@ -331,26 +335,40 @@ func heal(amount: float):
 	if current_health < max_health:
 		var previous_health = current_health
 		current_health += amount
+		
+		# Asegurar que no exceda el máximo
 		if current_health > max_health:
 			current_health = max_health
 		
+		# Calcular cuántos corazones completos se curaron
+		# Cada corazón es 10 HP, así que calculamos cuántos corazones completos
+		var actual_heal = current_health - previous_health
+		var heart_containers = floor(actual_heal / 10.0)
+		
+		# CORRECCIÓN: Usar fmod() en lugar del operador %
+		var partial_heart = fmod(actual_heal, 10.0)
+		
 		print("💚 Player: Curado. Total: ", current_health)
 		
-		# Mostrar notificación de curación
-		show_notification("Vida recuperada: +%.0f HP" % (current_health - previous_health))
+		# Mostrar notificación temática de curación
+		if actual_heal > 0:
+			if heart_containers >= 1:
+				show_notification("Recuperaste %d pluma(s) de vida" % heart_containers)
+			elif partial_heart > 0:
+				show_notification("Medio corazon recuperado")
 		
 		if ui_ref and ui_ref.has_method("update_hearts_display"):
 			ui_ref.update_hearts_display()
-	else:
-		# Mostrar notificación de vida llena
-		show_notification("¡Ya tienes la vida llena!")
 
 func increase_max_health(amount: float):
 	max_health += amount
 	current_health = max_health
 	
-	# Mostrar notificación de vida máxima aumentada
-	show_notification("¡Vida máxima aumentada! +%.0f HP" % amount)
+	# Calcular cuántos corazones extra se obtuvieron
+	var extra_hearts = amount / 10.0
+	
+	# Mostrar notificación temática de vida extra
+	show_notification("Obtuviste una vida extra!")
 	
 	if ui_ref and ui_ref.has_method("update_max_hearts_display"):
 		ui_ref.update_max_hearts_display()
@@ -416,8 +434,8 @@ func add_key():
 	key_count += 1
 	print("🔑 Player: Llaves =", key_count)
 	
-	# Mostrar notificación de llave conseguida
-	show_notification("¡Llave conseguida! (%d)" % key_count)
+	# Mostrar notificación temática de llave conseguida
+	show_notification("Llave conseguida (%d)" % key_count)
 	
 	if ui_ref and ui_ref.has_method("update_keys_display"):
 		ui_ref.update_keys_display()
@@ -427,21 +445,35 @@ func use_key() -> bool:
 		key_count -= 1
 		print("🚪 Player: Usó llave. Restantes =", key_count)
 		
-		# Mostrar notificación de llave usada
-		show_notification("Llave usada (%d restantes)" % key_count)
+		# IMPORTANTE: NO mostramos notificación aquí porque la puerta lo hará
+		# Solo actualizamos la UI silenciosamente
 		
 		if ui_ref and ui_ref.has_method("update_keys_display"):
 			ui_ref.update_keys_display()
 		return true
 	else:
-		# Mostrar notificación de que no hay llaves
-		show_notification("¡Necesitas una llave!")
+		# Mostrar notificación temática cuando no tiene llaves (con cooldown)
+		show_notification("Necesitas una llave!")
 		return false
+
 # ==============================================================================
-# --- FUNCIONES DE NOTIFICACIONES ---
+# --- FUNCIONES DE NOTIFICACIONES (CON COOLDOWN) ---
 # ==============================================================================
 
 func show_notification(message: String):
+	var current_time = Time.get_ticks_msec()
+	
+	# Verificar si esta notificación está en cooldown
+	if notification_cooldown.has(message):
+		var last_shown_time = notification_cooldown[message]
+		if current_time - last_shown_time < notification_cooldown_time * 1000:
+			# Aún está en cooldown, no mostrar
+			return
+	
+	# Actualizar el tiempo de la última notificación
+	notification_cooldown[message] = current_time
+	
+	# Mostrar la notificación
 	if ui_ref and ui_ref.has_method("show_notification"):
 		ui_ref.show_notification(message)
 	else:

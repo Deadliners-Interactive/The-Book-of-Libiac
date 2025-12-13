@@ -1,4 +1,3 @@
-# Door.gd - Con efecto de temblor y optimización
 extends Node3D
 
 @export var open_distance: float = 2.0
@@ -8,6 +7,9 @@ extends Node3D
 
 var is_open: bool = false
 var is_opening: bool = false
+var player_nearby: bool = false  # Para controlar si el jugador está cerca
+var last_notification_time: float = 0.0  # Tiempo de la última notificación
+var notification_cooldown: float = 2.0  # 2 segundos entre notificaciones
 
 @onready var area: Area3D = %Area3D
 @onready var animatable_body: AnimatableBody3D = %AnimatableBody3D
@@ -36,9 +38,12 @@ func _ready():
 	start_pos = global_position
 	target_pos = start_pos - Vector3(0, open_distance, 0)
 	
-	# Conectar señal
+	# Conectar señales
 	if not area.body_entered.is_connected(_on_body_entered):
 		area.body_entered.connect(_on_body_entered)
+	
+	if not area.body_exited.is_connected(_on_body_exited):
+		area.body_exited.connect(_on_body_exited)
 	
 	print("✅ Door: Lista en posición ", start_pos)
 
@@ -49,6 +54,8 @@ func _on_body_entered(body: Node):
 	if not body.is_in_group("player"):
 		return
 	
+	player_nearby = true
+	
 	if not body.has_method("use_key"):
 		return
 	
@@ -56,14 +63,27 @@ func _on_body_entered(body: Node):
 		is_opening = true
 		print("🔓 Door: Llave usada, iniciando secuencia...")
 		
-		# Mostrar notificación de puerta abierta
+		# Mostrar notificación mejorada (sin emojis)
 		if body.has_method("show_notification"):
-			body.show_notification("¡Puerta abierta!")
+			body.show_notification("Puerta abierta! (usaste una llave)")
 		
 		_shake_and_open()
 	else:
-		print("⛔ Necesitas una llave para abrir esta puerta.")
+		var current_time = Time.get_unix_time_from_system()
+		
+		# Verificar cooldown para evitar spam
+		if current_time - last_notification_time >= notification_cooldown:
+			last_notification_time = current_time
+			print("⛔ Necesitas una llave para abrir esta puerta.")
+			
+			# Notificación con cooldown
+			if body.has_method("show_notification"):
+				body.show_notification("Necesitas una llave!")
 
+func _on_body_exited(body: Node):
+	if body.is_in_group("player"):
+		player_nearby = false
+			
 func _shake_and_open():
 	# Desactivar el área de forma segura (deferred)
 	area.set_deferred("monitoring", false)

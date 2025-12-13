@@ -75,6 +75,9 @@ func _on_body_entered(body: Node):
 	
 	print("🪽 Wing: ¡Recogida! +%.1f HP máximos" % health_increase)
 	
+	# NOTA: La notificación ya se muestra en increase_max_health del jugador
+	# ¡Obtuviste una vida extra! 🪶
+	
 	# Efecto de recogida
 	_play_collect_effect()
 

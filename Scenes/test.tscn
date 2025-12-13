@@ -86,6 +86,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.353081, 0.13918245, -1.6042
 
 [node name="Door" parent="." instance=ExtResource("7_2cgwh")]
 transform = Transform3D(0.215, 0, 0, 0, 0.215, 0, 0, 0, 0.215, 0.20262703, 0.30521297, -1.8972008)
+open_distance = 2.0
+open_speed = 1.5
+shake_duration = 1.0
 shake_intensity = 0.02
 
 [node name="Wing" parent="." instance=ExtResource("9_2cgwh")]
@@ -93,6 +96,8 @@ transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.44319764, 0.24036443,
 
 [node name="HealthPickup" parent="." instance=ExtResource("10_iaow0")]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.75314605, 0.24089986, -0.9486137)
+heal_amount = 10.0
+use_billboard = false
 
 [node name="TreasureChest" parent="." instance=ExtResource("11_qpfo2")]
 transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-09, -1.8991733, 0.10093778, -3.6675897)

@@ -8,10 +8,12 @@
 [node name="HealthPickup" type="Node3D"]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
 script = ExtResource("1_hffi6")
+heal_amount = null
 enable_rotation = false
 rotation_speed = 0.44
 bob_speed = 0.055
 bob_height = 0.095
+use_billboard = null
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(0.5620833, -0.82708055, 0, 0.5848342, 0.39745295, 0.7071067, -0.5848342, -0.39745295, 0.7071067, 0, 0, 0)
