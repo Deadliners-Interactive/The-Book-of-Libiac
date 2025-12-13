@@ -1,4 +1,4 @@
-[gd_scene load_steps=92 format=4 uid="uid://d331kdwddgjef"]
+[gd_scene load_steps=93 format=4 uid="uid://d331kdwddgjef"]
 
 [ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/Player_UI.tscn" id="1_6iyac"]
 [ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="2_fdnlq"]
@@ -27,6 +27,7 @@
 [ext_resource type="Texture2D" uid="uid://dkc0mbm6t3spg" path="res://assets/models/Env/dessert/ruina_3.png" id="26_7k868"]
 [ext_resource type="Texture2D" uid="uid://ce7wb1pivkhec" path="res://assets/models/Env/dessert/ruina_4.png" id="27_hpc6h"]
 [ext_resource type="PackedScene" uid="uid://dvyja22s5013t" path="res://Scenes/Characters/Slime.tscn" id="29_6vcvc"]
+[ext_resource type="PackedScene" uid="uid://ccfyp16616bhf" path="res://Scenes/Characters/fly.tscn" id="30_7k868"]
 [ext_resource type="PackedScene" uid="uid://dw5b4tl08ch8v" path="res://assets/models/Env/Mesh forest/Tree_Bare_1_C_Color1.fbx" id="121_37usx"]
 [ext_resource type="PackedScene" uid="uid://deittkak2qa6u" path="res://assets/models/Env/Mesh forest/Tree_Bare_2_C_Color1.fbx" id="124_4q4m1"]
 
@@ -737,6 +738,9 @@ transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 6.726567, 1.0969105,
 [node name="Enemy2" parent="." instance=ExtResource("4_wsu2k")]
 transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0.45940083, 0.4502649, -6.001363)
 
+[node name="Enemy9" parent="." instance=ExtResource("4_wsu2k")]
+transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0.45940083, 0.68884337, -10.989125)
+
 [node name="WaterSurface13" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.046987534, -0.02450794, 2.9086988)
 script = ExtResource("5_ueoa1")
@@ -791,7 +795,15 @@ transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-0
 loot_scene = ExtResource("10_pdsj5")
 
 [node name="TreasureChest2" parent="." instance=ExtResource("11_ee4r6")]
-transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-09, 4.884998, 0.59627455, -6.6177797)
+transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-09, 4.884998, 0.6039116, -6.6177797)
+loot_scene = ExtResource("9_hibaj")
+
+[node name="TreasureChest4" parent="." instance=ExtResource("11_ee4r6")]
+transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-09, 1.4637098, 0.7291701, -9.248571)
+loot_scene = ExtResource("10_pdsj5")
+
+[node name="TreasureChest3" parent="." instance=ExtResource("11_ee4r6")]
+transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-09, 2.7758152, 0.1007787, -2.3540297)
 loot_scene = ExtResource("9_hibaj")
 
 [node name="CinematicManager" type="CanvasLayer" parent="."]
@@ -867,8 +879,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0400269, 0.19486102, -4.42
 [node name="LevelExits" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.99193, 1.1433257, -15.331361)
 script = ExtResource("19_fevyy")
-target_level = "uid://b1rt6auxlkhy"
-spawn_point_id = "entrada_desde_nivel1"
+target_level = "uid://co2ekmqwgekau"
 auto_trigger = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="LevelExits"]
@@ -975,7 +986,7 @@ skeleton = NodePath("")
 shape = SubResource("ConcavePolygonShape3D_1w6v2")
 
 [node name="Rock_3_R_Color2" type="MeshInstance3D" parent="Env"]
-transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 5.953123, 1.3833452, -17.491966)
+transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 5.953123, 1.1099442, -16.6666)
 mesh = SubResource("ArrayMesh_ekr8u")
 skeleton = NodePath("")
 
@@ -2302,6 +2313,16 @@ transform = Transform3D(-1.3458589, 0, 0.096990034, 0, 3.895771, 0, -1.4806886, 
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
+[node name="CSGMesh3D49" type="CSGMesh3D" parent="Collision"]
+transform = Transform3D(-0.59691864, 0, 0.1645196, 0, 3.4842777, 0, -0.8967702, 0, -0.10950945, 4.334787, 0.23447365, -8.676089)
+use_collision = true
+mesh = SubResource("BoxMesh_ee4r6")
+
+[node name="CSGMesh3D50" type="CSGMesh3D" parent="Collision"]
+transform = Transform3D(-0.59691864, 0, 0.1645196, 0, 3.4842777, 0, -0.8967702, 0, -0.10950945, 3.8717227, 0.23447353, -9.506068)
+use_collision = true
+mesh = SubResource("BoxMesh_ee4r6")
+
 [node name="CSGMesh3D18" type="CSGMesh3D" parent="Collision"]
 transform = Transform3D(-0.31336182, 0, -0.12945122, 0, 3.8957715, 0, 1.9762539, 0, -0.020526249, 4.4751253, 0.23447365, -11.519491)
 use_collision = true
@@ -2484,3 +2505,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.192603, 1.0646228, -11.9659
 
 [node name="Slime5" parent="." instance=ExtResource("29_6vcvc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1667566, 0.68876636, -6.6181555)
+
+[node name="FloatingEnemy" parent="." instance=ExtResource("30_7k868")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9356675, 0.60650074, -4.697193)
+
+[node name="FloatingEnemy2" parent="." instance=ExtResource("30_7k868")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9336417, 0.4942733, -4.004216)
+
+[node name="FloatingEnemy4" parent="." instance=ExtResource("30_7k868")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8644154, 0.86482036, -7.4734817)
+
+[node name="FloatingEnemy5" parent="." instance=ExtResource("30_7k868")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.203002, 0.73253894, -7.4734817)
+
+[node name="FloatingEnemy3" parent="." instance=ExtResource("30_7k868")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8665106, 0.661549, -5.0418153)
