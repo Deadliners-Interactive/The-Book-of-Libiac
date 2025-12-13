@@ -1,6 +1,8 @@
 extends CharacterBody3D
 
+# ==============================================================================
 # --- CONFIGURACIÓN ---
+# ==============================================================================
 @export_group("Movement")
 @export var move_speed: float = 1.0
 @export var jump_speed: float = 2.0
@@ -16,15 +18,19 @@ extends CharacterBody3D
 var current_health: float
 
 @export_group("Roll")
-@export var roll_speed: float = 4.0
+@export var roll_speed: float = 3.0
 @export var roll_duration: float = 0.4
 @export var roll_cooldown: float = 0.2
 
+# ==============================================================================
 # --- ESTADOS (FSM) ---
+# ==============================================================================
 enum State { NORMAL, ATTACKING, ROLLING, DAMAGE }
 var current_state: State = State.NORMAL
 
+# ==============================================================================
 # --- VARIABLES INTERNAS ---
+# ==============================================================================
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var is_facing_right = true
 var attack_combo_step = 0
@@ -39,18 +45,28 @@ var is_invulnerable: bool = false
 @export var invulnerability_time: float = 1.0
 @export var damage_visual_time: float = 0.5
 
+# Referencias a Nodos
 @onready var animated_sprite = $Sprite3D
 @onready var attack_area = $AttackArea
 @onready var attack_collision = $AttackArea/CollisionShape3D
 @onready var roll_cooldown_timer: Timer = Timer.new()
 
+# ==============================================================================
+# --- INICIALIZACIÓN ---
+# ==============================================================================
 func _ready():
 	current_health = max_health
 	attack_collision.disabled = true
 	
-	add_to_group("player")
+	# --- GRUPOS IMPORTANTES ---
+	add_to_group("player") # El cuerpo del player
 	
-	# Timers
+	# [CORRECCIÓN PRINCIPAL]
+	# Añadimos el área de la espada al grupo que busca el cofre
+	attack_area.add_to_group("hitbox_player") 
+	# -----------------------
+	
+	# Configuración de Timers
 	add_child(roll_cooldown_timer)
 	roll_cooldown_timer.one_shot = true
 	
@@ -68,10 +84,13 @@ func _ready():
 		is_invulnerable = false 
 	)
 	
+	# Señales
 	animated_sprite.animation_finished.connect(_on_animation_finished)
+	
 	if not attack_area.body_entered.is_connected(_on_attack_hit):
 		attack_area.body_entered.connect(_on_attack_hit)
 	
+	# Buscar UI al inicio
 	call_deferred("_find_ui")
 
 func _physics_process(delta):
@@ -87,8 +106,9 @@ func _physics_process(delta):
 		State.ROLLING:
 			_apply_roll_physics()
 		State.DAMAGE:
-			pass
+			pass # Knockback controlado por timer
 
+	# Gravedad
 	if not is_on_floor():
 		velocity.y -= gravity * gravity_multiplier * delta
 	else:
@@ -143,18 +163,29 @@ func _handle_jump():
 
 func _apply_roll_physics():
 	if current_state == State.ROLLING:
+		# Aseguramos que ruede aunque estuviera quieto (hacia donde mira)
 		var current_vel_xz = Vector3(velocity.x, 0, velocity.z).length()
-		if current_vel_xz < roll_speed * 0.95:
+		
+		if current_vel_xz < 0.1:
+			# Si estaba quieto, forzar velocidad en dirección de la mirada
+			var facing_dir = 1.0 if is_facing_right else -1.0
+			velocity.x = facing_dir * roll_speed
+			velocity.z = 0
+		else:
+			# Mantener dirección actual pero a velocidad de roll
 			var roll_dir_xz = Vector3(velocity.x, 0, velocity.z).normalized()
 			velocity.x = roll_dir_xz.x * roll_speed
 			velocity.z = roll_dir_xz.z * roll_speed
 
 func _flip_sprite(_x_velocity: float):
-	if _x_velocity == 0: return
+	if abs(_x_velocity) < 0.1: return
+	
 	var moving_right = _x_velocity > 0
 	if moving_right != is_facing_right:
 		is_facing_right = moving_right
 		animated_sprite.flip_h = not is_facing_right
+		
+		# Ajustar hitbox de ataque si es necesario (si tiene offset)
 		attack_area.scale.x = 1.0 if is_facing_right else -1.0
 
 # ==============================================================================
@@ -162,12 +193,15 @@ func _flip_sprite(_x_velocity: float):
 # ==============================================================================
 
 func set_state(new_state: State):
+	# Salir del estado anterior
 	if current_state == State.ATTACKING:
+		# Usamos set_deferred para evitar errores de físicas
 		attack_collision.set_deferred("disabled", true) 
 		animated_sprite.speed_scale = 1.0
 		
 	current_state = new_state
 	
+	# Entrar al nuevo estado
 	match new_state:
 		State.NORMAL:
 			if damage_knockback_timer.is_stopped():
@@ -185,49 +219,54 @@ func set_state(new_state: State):
 			_start_damage()
 
 # ==============================================================================
-# --- ACCIONES ---
+# --- ACCIONES DE COMBATE ---
 # ==============================================================================
 
 func _start_attack():
 	enemies_hit.clear()
-	animated_sprite.speed_scale = 2.0
+	animated_sprite.speed_scale = 2.0 # Ataque más rápido visualmente
+	
 	if attack_combo_step == 0:
 		animated_sprite.play("attack")
 		attack_combo_step = 1
 	else:
-		animated_sprite.play_backwards("attack")
+		animated_sprite.play_backwards("attack") # Combo simple alternando animación
 		attack_combo_step = 0
+	
+	# Activar hitbox con delay para coincidir con la animación
 	get_tree().create_timer(attack_hit_delay).timeout.connect(_on_hitbox_activate)
 
 func _on_hitbox_activate():
 	if current_state != State.ATTACKING: return
-	attack_collision.disabled = false
-	get_tree().create_timer(0.1).timeout.connect(func(): attack_collision.disabled = true)
+	
+	# [CORRECCIÓN] Usar set_deferred es vital para evitar errores
+	attack_collision.set_deferred("disabled", false)
+	
+	# Desactivar hitbox automáticamente tras un instante
+	get_tree().create_timer(0.15).timeout.connect(func(): 
+		if current_state == State.ATTACKING:
+			attack_collision.set_deferred("disabled", true)
+	)
 
 func _on_attack_hit(body):
+	# Si la colisión está deshabilitada lógicamente, ignorar
 	if attack_collision.disabled: return
+	
+	# Evitar golpearse a sí mismo y golpear dos veces al mismo enemigo
 	if body.has_method("take_damage") and body != self and not body in enemies_hit:
 		enemies_hit.append(body)
 		body.take_damage(attack_damage)
+		# Aquí podrías añadir un efecto de sonido o partículas de golpe
 
 func _start_roll():
 	is_invulnerable = true
 	input_buffer = ""
 	animated_sprite.speed_scale = 2.0
+	
 	if animated_sprite.sprite_frames.has_animation("roll"):
 		animated_sprite.play("roll")
 	
-	var input_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	var roll_dir = Vector3.ZERO
-	
-	if input_dir.length() > 0:
-		roll_dir = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	else:
-		roll_dir = Vector3(1 if is_facing_right else -1, 0, 0)
-		
-	velocity.x = roll_dir.x * roll_speed
-	velocity.z = roll_dir.z * roll_speed
-	
+	# Si no hay animación de roll, usamos un timer
 	if not animated_sprite.sprite_frames.has_animation("roll"):
 		var roll_timer = get_tree().create_timer(roll_duration)
 		roll_timer.timeout.connect(func():
@@ -239,7 +278,7 @@ func _start_roll():
 func _start_damage():
 	is_invulnerable = true 
 	damage_visual_timer.start(invulnerability_time) 
-	animated_sprite.modulate = Color(1, 0.5, 0.5, 1)
+	animated_sprite.modulate = Color(1, 0.5, 0.5, 1) # Rojo claro
 	
 	get_tree().create_timer(damage_visual_time).timeout.connect(func():
 		if is_invulnerable:
@@ -255,13 +294,13 @@ func take_damage_hearts(damage_amount: float):
 
 func take_damage_hearts_with_knockback(damage_amount: float, knockback_direction: Vector3, knockback_force: float):
 	if current_state == State.ROLLING or is_invulnerable:
-		print("🛡️ Player: Daño bloqueado por roll o invulnerabilidad.")
+		# print("🛡️ Player: Daño bloqueado.")
 		return
 	
 	current_health -= damage_amount
 	current_health = max(0, current_health)
 	
-	print("💔 Player: Recibió %.1f de daño. HP: %.1f/%.1f" % [damage_amount, current_health, max_health])
+	# print("💔 Player: Recibió daño. HP: ", current_health)
 	
 	if current_state != State.DAMAGE:
 		set_state(State.DAMAGE)
@@ -269,6 +308,7 @@ func take_damage_hearts_with_knockback(damage_amount: float, knockback_direction
 	if ui_ref and ui_ref.has_method("update_hearts_display"):
 		ui_ref.update_hearts_display()
 	
+	# Aplicar empuje (Knockback)
 	if knockback_force > 0:
 		var KB_MULTIPLIER = 5.0
 		if damage_knockback_timer.is_stopped():
@@ -284,7 +324,7 @@ func take_damage_hearts_with_knockback(damage_amount: float, knockback_direction
 		die()
 
 # ==============================================================================
-# --- FUNCIONES DE CURACIÓN Y SALUD ---
+# --- FUNCIONES DE CURACIÓN Y VIDA ---
 # ==============================================================================
 
 func heal(amount: float):
@@ -293,7 +333,7 @@ func heal(amount: float):
 		if current_health > max_health:
 			current_health = max_health
 			
-		print("💚 Player: Curado %.1f HP. Total: %.1f/%.1f" % [amount, current_health, max_health])
+		print("💚 Player: Curado. Total: ", current_health)
 		
 		if ui_ref and ui_ref.has_method("update_hearts_display"):
 			ui_ref.update_hearts_display()
@@ -302,13 +342,12 @@ func increase_max_health(amount: float):
 	max_health += amount
 	current_health = max_health
 	
-	print("💚 Player: Max HP aumentado a %.1f" % max_health)
-	
 	if ui_ref and ui_ref.has_method("update_max_hearts_display"):
 		ui_ref.update_max_hearts_display()
 
 func die():
 	print("💀 Player: ¡Has muerto!")
+	# Reiniciar escena
 	get_tree().call_deferred("reload_current_scene")
 
 # ==============================================================================
@@ -340,17 +379,16 @@ func _on_animation_finished():
 		set_state(State.NORMAL)
 
 func _find_ui():
+	# Intenta encontrar UI por grupo
 	ui_ref = get_tree().get_first_node_in_group("ui")
+	
+	# Fallback: buscar hijo directo en root
 	if not ui_ref:
 		for child in get_tree().root.get_children():
 			if child.name == "Player_UI" or child is CanvasLayer:
 				ui_ref = child
 				break
-	if not ui_ref:
-		var canvas_layers = get_tree().get_nodes_in_group("ui")
-		if canvas_layers.size() > 0:
-			ui_ref = canvas_layers[0]
-			
+				
 	if ui_ref:
 		print("💚 Player: UI encontrada - ", ui_ref.name)
 		if ui_ref.has_method("update_max_hearts_display"):
@@ -366,18 +404,15 @@ var key_count: int = 0
 
 func add_key():
 	key_count += 1
-	print("🔑 Player: Llaves actuales =", key_count)
-	
+	print("🔑 Player: Llaves =", key_count)
 	if ui_ref and ui_ref.has_method("update_keys_display"):
 		ui_ref.update_keys_display()
 
 func use_key() -> bool:
 	if key_count > 0:
 		key_count -= 1
-		print("🚪 Player: Usó 1 llave. Restantes =", key_count)
-		
+		print("🚪 Player: Usó llave. Restantes =", key_count)
 		if ui_ref and ui_ref.has_method("update_keys_display"):
 			ui_ref.update_keys_display()
-			
 		return true
 	return false

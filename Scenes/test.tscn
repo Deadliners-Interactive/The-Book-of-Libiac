@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://d331kdwddgjef"]
+[gd_scene load_steps=17 format=3 uid="uid://d331kdwddgjef"]
 
 [ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="1_de4c4"]
 [ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="2_1tbx8"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://c28ty3qhpxyb2" path="res://Scenes/key.tscn" id="8_qpfo2"]
 [ext_resource type="PackedScene" uid="uid://bwxjoiqfqe6b3" path="res://Scenes/pluma_vida.tscn" id="9_2cgwh"]
 [ext_resource type="PackedScene" uid="uid://7vlbrdwk8dwl" path="res://Scenes/Health_pickup.tscn" id="10_iaow0"]
+[ext_resource type="PackedScene" uid="uid://3jhl25skambw" path="res://treasure_chest.tscn" id="11_qpfo2"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_un8ce"]
 panorama = ExtResource("2_1tbx8")
@@ -92,3 +93,7 @@ transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.44319764, 0.24036443,
 
 [node name="HealthPickup" parent="." instance=ExtResource("10_iaow0")]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.75314605, 0.24089986, -0.9486137)
+
+[node name="TreasureChest" parent="." instance=ExtResource("11_qpfo2")]
+transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-09, -1.8991733, 0.10093778, -3.6675897)
+loot_scene = ExtResource("9_2cgwh")
