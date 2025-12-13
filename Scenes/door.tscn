@@ -15,6 +15,10 @@ material = SubResource("StandardMaterial3D_p0e35")
 
 [node name="Door" type="Node3D"]
 script = ExtResource("1_w6aom")
+open_distance = null
+open_speed = null
+shake_duration = null
+shake_intensity = null
 
 [node name="AnimatableBody3D" type="AnimatableBody3D" parent="."]
 unique_name_in_owner = true

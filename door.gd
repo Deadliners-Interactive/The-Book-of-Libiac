@@ -55,6 +55,11 @@ func _on_body_entered(body: Node):
 	if body.use_key():
 		is_opening = true
 		print("🔓 Door: Llave usada, iniciando secuencia...")
+		
+		# Mostrar notificación de puerta abierta
+		if body.has_method("show_notification"):
+			body.show_notification("¡Puerta abierta!")
+		
 		_shake_and_open()
 	else:
 		print("⛔ Necesitas una llave para abrir esta puerta.")

@@ -329,18 +329,28 @@ func take_damage_hearts_with_knockback(damage_amount: float, knockback_direction
 
 func heal(amount: float):
 	if current_health < max_health:
+		var previous_health = current_health
 		current_health += amount
 		if current_health > max_health:
 			current_health = max_health
-			
+		
 		print("💚 Player: Curado. Total: ", current_health)
+		
+		# Mostrar notificación de curación
+		show_notification("Vida recuperada: +%.0f HP" % (current_health - previous_health))
 		
 		if ui_ref and ui_ref.has_method("update_hearts_display"):
 			ui_ref.update_hearts_display()
+	else:
+		# Mostrar notificación de vida llena
+		show_notification("¡Ya tienes la vida llena!")
 
 func increase_max_health(amount: float):
 	max_health += amount
 	current_health = max_health
+	
+	# Mostrar notificación de vida máxima aumentada
+	show_notification("¡Vida máxima aumentada! +%.0f HP" % amount)
 	
 	if ui_ref and ui_ref.has_method("update_max_hearts_display"):
 		ui_ref.update_max_hearts_display()
@@ -405,6 +415,10 @@ var key_count: int = 0
 func add_key():
 	key_count += 1
 	print("🔑 Player: Llaves =", key_count)
+	
+	# Mostrar notificación de llave conseguida
+	show_notification("¡Llave conseguida! (%d)" % key_count)
+	
 	if ui_ref and ui_ref.has_method("update_keys_display"):
 		ui_ref.update_keys_display()
 
@@ -412,7 +426,29 @@ func use_key() -> bool:
 	if key_count > 0:
 		key_count -= 1
 		print("🚪 Player: Usó llave. Restantes =", key_count)
+		
+		# Mostrar notificación de llave usada
+		show_notification("Llave usada (%d restantes)" % key_count)
+		
 		if ui_ref and ui_ref.has_method("update_keys_display"):
 			ui_ref.update_keys_display()
 		return true
-	return false
+	else:
+		# Mostrar notificación de que no hay llaves
+		show_notification("¡Necesitas una llave!")
+		return false
+# ==============================================================================
+# --- FUNCIONES DE NOTIFICACIONES ---
+# ==============================================================================
+
+func show_notification(message: String):
+	if ui_ref and ui_ref.has_method("show_notification"):
+		ui_ref.show_notification(message)
+	else:
+		print("📢 (UI no disponible): ", message)
+
+func show_immediate_notification(message: String):
+	if ui_ref and ui_ref.has_method("show_immediate_notification"):
+		ui_ref.show_immediate_notification(message)
+	else:
+		print("📢 (UI no disponible): ", message)
