@@ -39,3 +39,4 @@ func reset_player_state():
 	player_key_count = 0
 	player_position = Vector3.ZERO
 	spawn_point_name = "default"
+	print("🔄 GameState: Estado reiniciado a valores por defecto")
