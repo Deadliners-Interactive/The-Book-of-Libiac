@@ -37,7 +37,6 @@ func _on_body_entered(body):
 			trigger_level_change(body)
 
 func _on_area_entered(area):
-	# Detectar si el Area3D hijo del player (DetectionArea) entró
 	if area.get_parent() and area.get_parent().is_in_group("player"):
 		var body = area.get_parent()
 		player_inside = true
@@ -63,7 +62,6 @@ func trigger_level_change(player):
 		push_warning("⚠️ LevelTrigger: No se especificó nivel de destino")
 		return
 	
-	# Verificar si requiere llave
 	if require_key:
 		if not player.has_method("use_key") or not player.use_key():
 			if player.has_method("show_notification"):
@@ -77,7 +75,6 @@ func trigger_level_change(player):
 	
 	print("🚪 LevelTrigger: Cambiando a nivel:", target_level)
 	
-	# Usar TransitionManager para cambiar de escena
 	TransitionManager.transition_to_scene(target_level, spawn_point_id)
 
 func _show_prompt(player):
@@ -88,5 +85,4 @@ func _show_prompt(player):
 		player.show_immediate_notification(message)
 
 func _hide_prompt(player):
-	# Limpiar notificación si es necesario
 	pass

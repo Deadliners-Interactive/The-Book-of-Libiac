@@ -26,7 +26,7 @@ var is_opening: bool = false
 
 func _ready() -> void:
 	if not tapa:
-		push_error("💰 TreasureChest: Falta el nodo 'tapa'")
+		push_error("Falta el nodo 'tapa'")
 		return
 	
 	if not area.area_entered.is_connected(_on_area_entered):
@@ -39,7 +39,7 @@ func _on_area_entered(area_hit: Area3D) -> void:
 	if not area_hit.is_in_group("hitbox_player"):
 		return
 	
-	print("💰 TreasureChest: ¡Golpeado por el jugador! Abriendo...")
+	print("¡Golpeado por el jugador! Abriendo...")
 	_open_chest()
 
 func _open_chest() -> void:
@@ -63,32 +63,25 @@ func _open_chest() -> void:
 	await tween.finished
 	is_open = true
 	is_opening = false
-	print("✅ TreasureChest: Abierto completamente.")
+	print("Abierto completamente.")
 
 func _spawn_loot() -> void:
 	if not loot_scene:
-		print("💰 TreasureChest: Abierto pero sin loot configurado.")
+		print("Abierto pero sin loot configurado.")
 		return
 
 	var item = loot_scene.instantiate()
 	
-	# --- CAMBIO CLAVE 1: Ajustar la escala inmediatamente después de instanciar ---
-	# Esto soluciona el problema de que el ítem sea demasiado pequeño (0.3).
 	item.scale = loot_scale
-	
-	# Adjuntar el objeto al cofre para que flote
+
 	add_child(item)
 
-	# --- Cálculo de la Posición Final (Local) ---
 	var final_local_position = Vector3.ZERO
 	
-	# 1. Aplicar altura (spawn_offset.y)
 	final_local_position.y += spawn_offset.y
 	
-	# 2. Aplicar desplazamiento frontal (jump_distance)
 	final_local_position.z += jump_distance
 	
-	# --- Colocar el objeto en la posición local final ---
 	item.position = final_local_position
 	
 	print("Item aparecido, escala ajustada y flotando sobre el cofre.")

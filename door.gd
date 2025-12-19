@@ -3,13 +3,13 @@ extends Node3D
 @export var open_distance: float = 2.0
 @export var open_speed: float = 1.5
 @export var shake_duration: float = 1.0
-@export var shake_intensity: float = 0.05  # Reducido para menos empuje
+@export var shake_intensity: float = 0.05  
 
 var is_open: bool = false
 var is_opening: bool = false
-var player_nearby: bool = false  # Para controlar si el jugador está cerca
-var last_notification_time: float = 0.0  # Tiempo de la última notificación
-var notification_cooldown: float = 2.0  # 2 segundos entre notificaciones
+var player_nearby: bool = false  
+var last_notification_time: float = 0.0  
+var notification_cooldown: float = 2.0  
 
 @onready var area: Area3D = %Area3D
 @onready var animatable_body: AnimatableBody3D = %AnimatableBody3D
@@ -21,15 +21,14 @@ func _ready():
 	print("🚪 Door: Inicializando...")
 	
 	if not animatable_body:
-		push_error("⚠️ Door: No se encontró AnimatableBody3D!")
+		push_error("No se encontró AnimatableBody3D!")
 		return
 	
 	if not area:
-		push_error("⚠️ Door: No se encontró Area3D!")
+		push_error("No se encontró Area3D!")
 		return
 	
-	# IMPORTANTE: Configurar el AnimatableBody3D para movimiento por código
-	animatable_body.sync_to_physics = false  # Desactivar sincronización automática
+	animatable_body.sync_to_physics = false  
 	
 	# Configurar Area3D
 	area.monitoring = true
@@ -61,9 +60,8 @@ func _on_body_entered(body: Node):
 	
 	if body.use_key():
 		is_opening = true
-		print("🔓 Door: Llave usada, iniciando secuencia...")
+		print("Llave usada")
 		
-		# Mostrar notificación mejorada (sin emojis)
 		if body.has_method("show_notification"):
 			body.show_notification("Puerta abierta! (usaste una llave)")
 		
@@ -71,10 +69,9 @@ func _on_body_entered(body: Node):
 	else:
 		var current_time = Time.get_unix_time_from_system()
 		
-		# Verificar cooldown para evitar spam
 		if current_time - last_notification_time >= notification_cooldown:
 			last_notification_time = current_time
-			print("⛔ Necesitas una llave para abrir esta puerta.")
+			print("Necesitas una llave para abrir esta puerta.")
 			
 			# Notificación con cooldown
 			if body.has_method("show_notification"):
@@ -85,7 +82,6 @@ func _on_body_exited(body: Node):
 		player_nearby = false
 			
 func _shake_and_open():
-	# Desactivar el área de forma segura (deferred)
 	area.set_deferred("monitoring", false)
 	
 	print("🔔 Door: Temblando...")
@@ -109,7 +105,6 @@ func _shake_and_open():
 			var offset_z = randf_range(-shake_intensity, shake_intensity)
 			var offset_rot = randf_range(-0.03, 0.03)
 			
-			# Solo mover el mesh, NO el AnimatableBody completo
 			mesh_instance.position = original_mesh_pos + Vector3(offset_x, 0, offset_z)
 			mesh_instance.rotation.y = offset_rot
 			
@@ -122,9 +117,9 @@ func _shake_and_open():
 		# Fallback: esperar el tiempo del temblor
 		await get_tree().create_timer(shake_duration).timeout
 	
-	print("⬇️ Door: Bajando...")
+	print("Bajando...")
 	
-	# AHORA desactivar colisión para que baje sin problemas
+	# desactivar colisión para que baje sin problemas
 	if animatable_body:
 		animatable_body.collision_layer = 0
 		animatable_body.collision_mask = 0
@@ -148,19 +143,16 @@ func _shake_and_open():
 		is_opening = false
 		print("✅ Door: Completamente abierta en Y:", global_position.y)
 		
-		# === FASE 3: DESAPARECER ===
+		# === FASE 3: DESAPARECE ===
 		_fade_and_free()
 	)
 
 func _fade_and_free():
-	print("👻 Door: Desapareciendo para ahorrar recursos...")
+	print("Desapareciendo para ahorrar recursosxdD")
 	
-	# Hacer invisible inmediatamente para evitar que se vea
 	visible = false
 	
-	# Esperar un frame para asegurar que todo está procesado
 	await get_tree().process_frame
 	
-	# Eliminar directamente
-	print("🗑️ Door: Liberada de memoria")
+	print("chau puerta")
 	queue_free()

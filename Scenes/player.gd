@@ -47,14 +47,14 @@ var is_invulnerable: bool = false
 
 # Sistema de prevención de notificaciones repetidas
 var notification_cooldown: Dictionary = {}
-var notification_cooldown_time: float = 1.0  # 1 segundo de cooldown
+var notification_cooldown_time: float = 1.0
 
 # Referencias a Nodos
 @onready var animated_sprite = $Sprite3D
 @onready var attack_area = $AttackArea
 @onready var attack_collision = $AttackArea/CollisionShape3D
 @onready var roll_cooldown_timer: Timer = Timer.new()
-@onready var detection_area = $DetectionArea  # NUEVO: Para detectar triggers de nivel
+@onready var detection_area = $DetectionArea
 
 # ==============================================================================
 # --- INICIALIZACIÓN ---
@@ -64,12 +64,12 @@ func _ready():
 	attack_collision.disabled = true
 	
 	# --- GRUPOS IMPORTANTES ---
-	add_to_group("player") # El cuerpo del player
+	add_to_group("player")
 	
-	# Añadimos el área de la espada al grupo que busca el cofre
+	# área de la espada al grupo que busca el cofre
 	attack_area.add_to_group("hitbox_player") 
 	
-	# Configuración de Timers
+	# Timers
 	add_child(roll_cooldown_timer)
 	roll_cooldown_timer.one_shot = true
 	
@@ -102,7 +102,7 @@ func _ready():
 	if has_node("DetectionArea"):
 		detection_area.area_entered.connect(_on_area_entered_player)
 	else:
-		push_warning("⚠️ Player: Falta nodo DetectionArea para cambio de nivel")
+		push_warning("Falta nodo DetectionArea para cambio de nivel")
 	# ====================================================
 	
 	# Buscar UI al inicio
@@ -121,7 +121,7 @@ func _physics_process(delta):
 		State.ROLLING:
 			_apply_roll_physics()
 		State.DAMAGE:
-			pass # Knockback controlado por timer
+			pass 
 
 	# Gravedad
 	if not is_on_floor():
@@ -271,7 +271,6 @@ func _on_attack_hit(body):
 	if body.has_method("take_damage") and body != self and not body in enemies_hit:
 		enemies_hit.append(body)
 		body.take_damage(attack_damage)
-		# Aquí podrías añadir un efecto de sonido o partículas de golpe
 
 func _start_roll():
 	is_invulnerable = true
@@ -281,7 +280,6 @@ func _start_roll():
 	if animated_sprite.sprite_frames.has_animation("roll"):
 		animated_sprite.play("roll")
 	
-	# Si no hay animación de roll, usamos un timer
 	if not animated_sprite.sprite_frames.has_animation("roll"):
 		var roll_timer = get_tree().create_timer(roll_duration)
 		roll_timer.timeout.connect(func():
@@ -293,7 +291,7 @@ func _start_roll():
 func _start_damage():
 	is_invulnerable = true 
 	damage_visual_timer.start(invulnerability_time) 
-	animated_sprite.modulate = Color(1, 0.5, 0.5, 1) # Rojo claro
+	animated_sprite.modulate = Color(1, 0.5, 0.5, 1) 
 	
 	get_tree().create_timer(damage_visual_time).timeout.connect(func():
 		if is_invulnerable:
@@ -309,13 +307,11 @@ func take_damage_hearts(damage_amount: float):
 
 func take_damage_hearts_with_knockback(damage_amount: float, knockback_direction: Vector3, knockback_force: float):
 	if current_state == State.ROLLING or is_invulnerable:
-		# print("🛡️ Player: Daño bloqueado.")
 		return
 	
 	current_health -= damage_amount
 	current_health = max(0, current_health)
-	
-	# print("💔 Player: Recibió daño. HP: ", current_health)
+
 	
 	if current_state != State.DAMAGE:
 		set_state(State.DAMAGE)
@@ -323,7 +319,6 @@ func take_damage_hearts_with_knockback(damage_amount: float, knockback_direction
 	if ui_ref and ui_ref.has_method("update_hearts_display"):
 		ui_ref.update_hearts_display()
 	
-	# Aplicar empuje (Knockback)
 	if knockback_force > 0:
 		var KB_MULTIPLIER = 5.0
 		if damage_knockback_timer.is_stopped():
@@ -347,21 +342,16 @@ func heal(amount: float):
 		var previous_health = current_health
 		current_health += amount
 		
-		# Asegurar que no exceda el máximo
 		if current_health > max_health:
 			current_health = max_health
 		
-		# Calcular cuántos corazones completos se curaron
-		# Cada corazón es 10 HP, así que calculamos cuántos corazones completos
 		var actual_heal = current_health - previous_health
 		var heart_containers = floor(actual_heal / 10.0)
 		
-		# CORRECCIÓN: Usar fmod() en lugar del operador %
 		var partial_heart = fmod(actual_heal, 10.0)
 		
-		print("💚 Player: Curado. Total: ", current_health)
+		print("Player: Curado. Total: ", current_health)
 		
-		# Mostrar notificación temática de curación
 		if actual_heal > 0:
 			if heart_containers >= 1:
 				show_notification("Recuperaste %d pluma(s) de vida" % heart_containers)
@@ -375,10 +365,8 @@ func increase_max_health(amount: float):
 	max_health += amount
 	current_health = max_health
 	
-	# Calcular cuántos corazones extra se obtuvieron
 	var extra_hearts = amount / 10.0
 	
-	# Mostrar notificación temática de vida extra
 	show_notification("Obtuviste una vida extra!")
 	
 	if ui_ref and ui_ref.has_method("update_max_hearts_display"):
@@ -387,7 +375,6 @@ func increase_max_health(amount: float):
 func die():
 	print("💀 Player: ¡Has muerto!")
 	
-	# 💥 LLAMAR AL MANEJADOR DE GAME OVER (REQUIERE AUTOLOAD)
 	if is_instance_valid(GameOverHandler):
 		GameOverHandler.handle_player_death(self)
 	else:
@@ -423,10 +410,8 @@ func _on_animation_finished():
 		set_state(State.NORMAL)
 
 func _find_ui():
-	# Intenta encontrar UI por grupo
 	ui_ref = get_tree().get_first_node_in_group("ui")
 	
-	# Fallback: buscar hijo directo en root
 	if not ui_ref:
 		for child in get_tree().root.get_children():
 			if child.name == "Player_UI" or child is CanvasLayer:
@@ -434,11 +419,11 @@ func _find_ui():
 				break
 				
 	if ui_ref:
-		print("💚 Player: UI encontrada - ", ui_ref.name)
+		print("Player: UI encontrada - ", ui_ref.name)
 		if ui_ref.has_method("update_max_hearts_display"):
 			ui_ref.update_max_hearts_display()
 	else:
-		push_warning("⚠️ Player: No se encontró UI.")
+		push_warning("Player: No se encontró UI.")
 
 # ==============================================================================
 # --- SISTEMA DE LLAVES ---
@@ -448,9 +433,8 @@ var key_count: int = 0
 
 func add_key():
 	key_count += 1
-	print("🔑 Player: Llaves =", key_count)
+	print("Player: Llaves =", key_count)
 	
-	# Mostrar notificación temática de llave conseguida
 	show_notification("Llave conseguida (%d)" % key_count)
 	
 	if ui_ref and ui_ref.has_method("update_keys_display"):
@@ -459,16 +443,13 @@ func add_key():
 func use_key() -> bool:
 	if key_count > 0:
 		key_count -= 1
-		print("🚪 Player: Usó llave. Restantes =", key_count)
+		print("Player: Usó llave. Restantes =", key_count)
 		
-		# IMPORTANTE: NO mostramos notificación aquí porque la puerta lo hará
-		# Solo actualizamos la UI silenciosamente
 		
 		if ui_ref and ui_ref.has_method("update_keys_display"):
 			ui_ref.update_keys_display()
 		return true
 	else:
-		# Mostrar notificación temática cuando no tiene llaves (con cooldown)
 		show_notification("Necesitas una llave!")
 		return false
 
@@ -479,27 +460,23 @@ func use_key() -> bool:
 func show_notification(message: String):
 	var current_time = Time.get_ticks_msec()
 	
-	# Verificar si esta notificación está en cooldown
 	if notification_cooldown.has(message):
 		var last_shown_time = notification_cooldown[message]
 		if current_time - last_shown_time < notification_cooldown_time * 1000:
-			# Aún está en cooldown, no mostrar
 			return
 	
-	# Actualizar el tiempo de la última notificación
 	notification_cooldown[message] = current_time
 	
-	# Mostrar la notificación
 	if ui_ref and ui_ref.has_method("show_notification"):
 		ui_ref.show_notification(message)
 	else:
-		print("📢 (UI no disponible): ", message)
+		print("(UI no disponible): ", message)
 
 func show_immediate_notification(message: String):
 	if ui_ref and ui_ref.has_method("show_immediate_notification"):
 		ui_ref.show_immediate_notification(message)
 	else:
-		print("📢 (UI no disponible): ", message)
+		print("(UI no disponible): ", message)
 
 # ==============================================================================
 # --- SISTEMA DE CAMBIO DE NIVEL ---

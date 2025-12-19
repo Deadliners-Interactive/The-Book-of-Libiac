@@ -24,7 +24,7 @@ extends CharacterBody3D
 # **NUEVA CONFIGURACIÓN**
 @export_group("Damage")
 @export var damage_duration: float = 0.3 # Tiempo que dura el estado DAMAGE/stun.
-@export var post_damage_recovery_pause: float = 0.5 # **NUEVA VARIABLE:** Pausa extra después de salir de DAMAGE.
+@export var post_damage_recovery_pause: float = 0.5 #Pausa extra después de salir de DAMAGE.
 
 # ================================
 # ESTADOS
@@ -41,7 +41,6 @@ var player_ref: CharacterBody3D = null
 var cooldown_timer: float = 0.0
 var wander_target: Vector3
 var hit_registered: bool = false
-# **NUEVA VARIABLE:** Temporizador para salir del estado DAMAGE
 var damage_recovery_timer: Timer = Timer.new()
 
 @onready var animated_sprite = $AnimatedSprite3D
@@ -61,11 +60,9 @@ func _ready():
 	if col:
 		col.set_deferred("disabled", true)
 
-	# **NUEVA LÓGICA DE TIMER**
 	add_child(damage_recovery_timer)
 	damage_recovery_timer.one_shot = true
 	damage_recovery_timer.timeout.connect(_on_damage_recovery_timeout)
-	# **FIN NUEVA LÓGICA**
 
 	set_state(State.WANDER)
 
@@ -79,8 +76,6 @@ func _physics_process(delta):
 	if not is_on_floor():
 		velocity.y -= gravity * gravity_multiplier * delta
 	else:
-		# Aseguramos que la velocidad Y se resetee cuando no estemos en un estado
-		# donde se espere movimiento vertical forzado (como un knockback)
 		if current_state not in [State.ATTACKING, State.ATTACK_COOLDOWN, State.DAMAGE]:
 			velocity.y = 0
 
@@ -103,9 +98,6 @@ func _state_machine(delta):
 		_process_chase()
 		return
 	
-	# **CAMBIO CLAVE**: Si está en ATTACKING, COOLDOWN, o DAMAGE, simplemente regresa 
-	# sin hacer lógica de movimiento/ataque adicional. Esto ya está en tu código, 
-	# pero es clave para evitar ataques durante el stun.
 	if current_state in [State.ATTACKING, State.ATTACK_COOLDOWN]:
 		return
 
@@ -226,25 +218,18 @@ func _on_detection_exit(body):
 # DAÑO
 # ================================
 func take_damage(amount: int):
-	# 1. Reducir el HP inmediatamente.
 	current_hp -= max(amount - defense, 1)
 	
-	# 2. Aplicar un pequeño rebote si el enemigo no está muerto.
 	if current_hp > 0:
-		velocity.y = 1.0 # Pequeño rebote al ser golpeado
-
-	# 3. TRANSICIÓN DE ESTADO (Permitir el combo)
+		velocity.y = 1.0 
 	if current_hp <= 0:
 		set_state(State.DEAD)
 	else:
 		set_state(State.DAMAGE)
 
-# **LÓGICA DE SALIDA DEL DAÑO (MODIFICADA)**
+# **LÓGICA DE SALIDA DEL DAÑO **
 func _on_damage_recovery_timeout():
 	if current_state == State.DAMAGE:
-		# **CAMBIO CLAVE:** Al salir de DAMAGE, impón el cooldown del ataque, 
-		# incluso si no era el momento de atacar. Esto evita ataques instantáneos 
-		# inmediatamente después de la recuperación.
 		cooldown_timer = max(cooldown_timer, post_damage_recovery_pause)
 		
 		# Decidir a dónde volver
@@ -273,11 +258,8 @@ func set_state(s: State):
 			_start_post_attack_wait()
 
 		State.DAMAGE:
-			# Detener el temporizador de recuperación si ya estaba corriendo
-			# y reiniciarlo para la nueva duración del golpe (stun).
 			damage_recovery_timer.start(damage_duration) 
 			
-			# Detener el movimiento actual
 			velocity.x = move_toward(velocity.x, 0, 10.0) 
 			velocity.z = move_toward(velocity.z, 0, 10.0)
 			

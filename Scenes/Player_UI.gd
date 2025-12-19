@@ -49,7 +49,6 @@ var player_ref: CharacterBody3D = null
 func _ready():
 	add_to_group("ui")
 	
-	# --- FORZAR QUE EL ICONO DE LA LLAVE SIEMPRE SE VEA ---
 	key_icon.visible = true
 	key_icon.texture = key_texture if key_texture else key_icon.texture
 	key_icon.custom_minimum_size = Vector2(32, 32)
@@ -57,7 +56,6 @@ func _ready():
 	
 	key_label.text = "x0"
 	
-	# --- CONFIGURACIÓN DE NOTIFICACIONES ---
 	notification_container.visible = false
 	notification_label.text = ""
 	
@@ -75,7 +73,6 @@ func _ready():
 	call_deferred("_find_player")
 
 func _on_viewport_size_changed():
-	# Reajustar posición cuando cambie el tamaño de la ventana
 	notification_container.position = Vector2(20, get_viewport().size.y - 100)
 
 # =============================================================
@@ -201,7 +198,7 @@ func update_max_hearts_display():
 	update_hearts_display()
 
 # =============================================================
-#  SISTEMA DE LLAVES  🔑
+#  SISTEMA DE LLAVES 
 # =============================================================
 func update_keys_display():
 	if not is_instance_valid(player_ref):

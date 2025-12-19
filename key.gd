@@ -1,10 +1,8 @@
-# Key.gd
 extends Node3D
 
 @onready var area: Area3D = $Area3D
 
 func _ready():
-	# asegurar que el Area3D monitorice
 	area.monitoring = true
 	area.monitorable = true
 	if not area.body_entered.is_connected(_on_body_entered):
@@ -18,7 +16,6 @@ func _on_body_entered(body: Node):
 		body.add_key()
 		print("Key: recogida por ", body.name)
 		
-		# El jugador ya muestra la notificación en add_key()
 		queue_free()
 	else:
 		push_warning("Key: player no tiene add_key()")

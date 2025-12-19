@@ -20,7 +20,7 @@ extends CharacterBody3D
 		if is_inside_tree():
 			_update_visual_scale()
 
-@export_group("Loot Settings") # <--- NUEVA SECCIÓN DE LOOT
+@export_group("Loot Settings") # <---  LOOT
 @export var loot_scale: Vector3 = Vector3(2.0, 2.0, 2.0) # Escala forzada al aparecer
 @export var loot_drop_chance: float = 0.6 # Probabilidad (0.0 a 1.0)
 @export var possible_loot_scenes: Array[PackedScene] # Array de escenas a soltar
@@ -142,27 +142,26 @@ func _ready():
 func _activate_spawn_invulnerability():
 	is_invulnerable_spawn = true
 	invulnerability_timer.start(spawn_invulnerability_time)
-	print("🛡️ Slime pequeño: Invulnerable por %.1f segundos" % spawn_invulnerability_time)
+	print("Slime pequeño: Invulnerable por %.1f segundos" % spawn_invulnerability_time)
 
 func _startup_delay():
 	can_attack = false
 	startup_timer.start(startup_attack_delay)
-	print("⏱️ Slime pequeño: Esperando %.1f segundos para atacar" % startup_attack_delay)
+	print("Slime pequeño: Esperando %.1f segundos para atacar" % startup_attack_delay)
 
 func _on_invulnerability_timeout():
 	is_invulnerable_spawn = false
-	print("✅ Slime pequeño: Invulnerabilidad terminada")
+	print("Slime pequeño: Invulnerabilidad terminada")
 
 func _on_startup_timeout():
 	can_attack = true
-	print("✅ Slime pequeño: ¡Listo para atacar!")
+	print("Slime pequeño: ¡Listo para atacar!")
 
 func _physics_process(delta):
 	if current_state == State.DEAD or is_splitting:
 		return
 
 	if current_state not in [State.DAMAGE, State.ATTACKING]:
-		# Aplicar gravedad solo si no está en DAMAGE o ATTACKING
 		if not is_on_floor():
 			velocity.y -= gravity * gravity_multiplier * delta
 		else:
@@ -171,7 +170,6 @@ func _physics_process(delta):
 	if is_jumping_to_attack and current_state != State.APPROACH:
 		is_jumping_to_attack = false
 		
-	# Salto de movimiento continuo
 	if can_jump and current_state not in [State.APPROACH, State.RETREAT, State.DAMAGE, State.ATTACKING]:
 		_start_movement_jump()
 
@@ -403,12 +401,9 @@ func set_state(new_state: State):
 			can_jump = false
 
 		State.DEAD:
-			# IMPORTANTE: Solo slimes pequeños van directo a _start_dead
-			# Slimes grandes manejamos su muerte diferente
 			if size < 1.0:
 				_start_dead()
 			else:
-				# Slime grande: hacer animación de muerte primero
 				_start_death_animation_and_split()
 			can_jump = false
 			if jump_timer:
@@ -477,7 +472,6 @@ func _start_damage():
 	if animated_sprite.sprite_frames.has_animation("damage"):
 		animated_sprite.play("damage")
 	else:
-		# Aplica el color rojo/naranja solo si NO hay animación de daño
 		animated_sprite.modulate = Color(1, 0.5, 0.5, 1)
 		damage_color_applied = true
 
@@ -486,7 +480,6 @@ func _start_damage():
 	if is_splitting or current_state == State.DEAD:
 		return
 		
-	# Restaura el color si se aplicó
 	if damage_color_applied:
 		animated_sprite.modulate = Color.WHITE
 		
@@ -498,14 +491,12 @@ func _start_damage():
 			set_state(State.IDLE)
 		can_jump = true
 
-func _start_dead(): # <--- FUNCIÓN MODIFICADA
+func _start_dead(): 
 	velocity = Vector3.ZERO
 	
-	# 1. Spawnear loot (solo para slime pequeño)
 	if size < 1.0:
 		_spawn_random_loot()
 	
-	# 2. Reproducir animación de muerte y liberar
 	if animated_sprite.sprite_frames.has_animation("death"):
 		animated_sprite.play("death")
 		await animated_sprite.animation_finished
@@ -513,46 +504,35 @@ func _start_dead(): # <--- FUNCIÓN MODIFICADA
 	queue_free()
 
 # ==============================================================================
-# --- FUNCIÓN NUEVA: SPAWN DE LOOT ALEATORIO ---
+# --- SPAWN DE LOOT ALEATORIO ---
 # ==============================================================================
 
 func _spawn_random_loot():
-	# 1. Verificar si la probabilidad se cumple
 	if randf() > loot_drop_chance:
 		print("💰 Slime: No se soltó loot (Probabilidad no cumplida).")
 		return
 
-	# 2. Verificar si hay loot configurado
 	if possible_loot_scenes.is_empty():
-		print("❌ ERROR: possible_loot_scenes está vacío, no se puede soltar loot.")
+		print("possible_loot_scenes está vacío, no se puede soltar loot.")
 		return
 		
-	# 3. Elegir una escena de loot aleatoria
 	var loot_scene_to_spawn = possible_loot_scenes.pick_random()
 	if not loot_scene_to_spawn:
-		print("❌ ERROR: El objeto de loot elegido no es válido.")
+		print("El objeto de loot elegido no es válido.")
 		return
 
-	# 4. Instanciar y configurar
 	var item = loot_scene_to_spawn.instantiate()
 	var parent_node = get_parent()
 	if not is_instance_valid(parent_node):
-		# Usar el árbol actual si el slime no tiene padre (debería tenerlo)
 		parent_node = get_tree().current_scene 
 
 	parent_node.add_child(item)
-
-	# --- Posición y Escala (Asegurando que flote y tenga la escala 2.0) ---
 	
-	# Usamos la posición global del slime
 	var spawn_pos = global_position 
 	
-	# Ajuste de posición: 
-	# X, Z: Pequeña variación para que no aparezca exactamente en el centro
-	# Y: Un poco arriba para que parezca que sale disparado y flote
 	var offset_x = randf_range(-0.1, 0.1) * size
 	var offset_z = randf_range(-0.1, 0.1) * size
-	var spawn_offset_y = 0.15 # 15 cm de elevación, debe ser suficiente para un slime pequeño
+	var spawn_offset_y = 0.15 
 
 	var final_position = spawn_pos + Vector3(offset_x, spawn_offset_y, offset_z)
 
@@ -643,7 +623,7 @@ func _update_animations():
 		animated_sprite.play(target_animation)
 
 # ==============================================================================
-# --- DIVISIÓN MEJORADA: REBOTE MÁS FUERTE Y ALEJADO ---
+# --- DIVISIÓN---
 # ==============================================================================
 
 func _split_into_smaller_slimes():
@@ -651,7 +631,7 @@ func _split_into_smaller_slimes():
 		return
 	
 	is_splitting = true
-	print("🔄 Slime grande: Dividiéndose después de muerte...")
+	print("Dividiéndose después de muerte...")
 	
 	if jump_timer:
 		jump_timer.stop()
@@ -661,7 +641,7 @@ func _split_into_smaller_slimes():
 	velocity = Vector3.ZERO
 	
 	if not small_slime_scene:
-		print("❌ ERROR: small_slime_scene no asignado")
+		print("small_slime_scene no asignado")
 		queue_free()
 		return
 	
@@ -675,25 +655,20 @@ func _split_into_smaller_slimes():
 		new_slime.max_hp = 10
 		new_slime.current_hp = 10
 		
-		# Calcular dirección OPUESTA al jugador (alejarse)
 		var direction_away_from_player: Vector3
 		if player_ref and is_instance_valid(player_ref):
 			direction_away_from_player = (spawn_position - player_ref.global_position).normalized()
 		else:
-			# Si no hay jugador, dirección aleatoria
 			var random_angle = randf() * 2 * PI
 			direction_away_from_player = Vector3(cos(random_angle), 0, sin(random_angle)).normalized()
 		
-		# Variar la dirección para que no todos vayan igual
 		var base_angle = atan2(direction_away_from_player.z, direction_away_from_player.x)
 		var angle_variation = randf_range(-0.5, 0.5)  # ±30 grados
 		var final_angle = base_angle + angle_variation
 		
-		# Crear vector de dirección final
 		var final_direction = Vector3(cos(final_angle), 0, sin(final_angle)).normalized()
 		
-		# Aumentar la distancia de offset
-		var offset_distance = split_rebound_distance  # Nueva variable exportada
+		var offset_distance = split_rebound_distance  
 		var offset = final_direction * offset_distance
 		
 		if player_ref and is_instance_valid(player_ref):
@@ -701,22 +676,20 @@ func _split_into_smaller_slimes():
 			new_slime.has_detected_player = true
 			
 		# Aplicar rebote MÁS FUERTE para alejarlos
-		var impulse_strength = split_rebound_force  # Nueva variable exportada
+		var impulse_strength = split_rebound_force 
 		new_slime.velocity = final_direction * impulse_strength
-		new_slime.velocity.y = impulse_strength * 0.6  # 60% de la fuerza horizontal
+		new_slime.velocity.y = impulse_strength * 0.6  
 		
 		parent_node.call_deferred("add_child", new_slime)
 		
-		# Posicionar con altura mínima para evitar atravesar el piso
 		var final_position = spawn_position + offset
-		final_position.y = spawn_position.y + 0.1  # Pequeña elevación
+		final_position.y = spawn_position.y + 0.1  
 		
 		await get_tree().process_frame
 		new_slime.global_position = final_position
 		
 		print("✅ Slime pequeño %d creado - Rebote: %s" % [i + 1, str(new_slime.velocity)])
 	
-	# Ahora eliminar el slime grande
 	queue_free()
 
 func take_damage(damage_amount: int):
@@ -732,8 +705,6 @@ func take_damage(damage_amount: int):
 	print("💔 Slime HP: %d/%d (Daño: %d)" % [current_hp, max_hp, actual_damage])
 	
 	if current_hp <= 0:
-		# Para slime grande, ir a estado DEAD (que hará animación y división)
-		# Para slime pequeño, ir a estado DEAD directo
 		call_deferred("set_state", State.DEAD)
 	else:
 		if current_state not in [State.DEAD, State.RETREAT]:

@@ -3,8 +3,8 @@ extends Node
 # ================================
 # CONFIGURACIÓN
 # ================================
-@export var text_speed: float = 0.05  # Segundos por carácter
-@export var auto_advance_delay: float = 2.0  # Segundos antes de avanzar automáticamente
+@export var text_speed: float = 0.05  
+@export var auto_advance_delay: float = 2.0  
 
 # ================================
 # REFERENCIAS UI
@@ -24,7 +24,6 @@ var current_text: String = ""
 var displayed_chars: int = 0
 var type_timer: float = 0.0
 
-# Callback cuando termine la cinemática
 var on_cinematic_finished: Callable
 
 # ================================
@@ -38,11 +37,9 @@ signal dialogue_finished()
 # INICIALIZACIÓN
 # ==============================================================================
 func _ready():
-	# Ocultar UI al inicio
 	cinematic_container.visible = false
 	skip_label.visible = false
 	
-	# Configurar el label para que soporte texto largo
 	cinematic_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	cinematic_label.text = ""
 
@@ -50,19 +47,16 @@ func _process(delta):
 	if not is_playing:
 		return
 	
-	# Si está escribiendo, animar el texto
 	if is_typing:
 		_animate_text(delta)
 	
-	# Input para avanzar o skipear
 	if Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("jump"):
 		_handle_advance_input()
 
 # ==============================================================================
-# FUNCIONES PÚBLICAS - INICIAR CINEMÁTICA
+#  CINEMÁTICA
 # ==============================================================================
 
-# Iniciar una cinemática con múltiples líneas de diálogo
 func play_cinematic(dialogue_data: Array, callback: Callable = Callable()):
 	"""
 	dialogue_data: Array de diccionarios con esta estructura:
@@ -83,7 +77,6 @@ func play_cinematic(dialogue_data: Array, callback: Callable = Callable()):
 	current_dialogue_index = 0
 	on_cinematic_finished = callback
 	
-	# Pausar el juego (detener player y enemigos)
 	_pause_game_entities()
 	
 	# Mostrar UI
@@ -106,7 +99,7 @@ func play_single_message(speaker: String, text: String, callback: Callable = Cal
 	play_cinematic(dialogue, callback)
 
 # ==============================================================================
-# FUNCIONES INTERNAS - LÓGICA DE DIÁLOGO
+# LÓGICA DE DIÁLOGO
 # ==============================================================================
 
 func _show_next_dialogue():
@@ -114,18 +107,16 @@ func _show_next_dialogue():
 		_end_cinematic()
 		return
 	
-	# Obtener línea actual
 	var dialogue_line = current_dialogue_queue[current_dialogue_index]
 	var speaker = dialogue_line.get("speaker", "")
 	var text = dialogue_line.get("text", "")
 	
-	# Formatear texto con nombre del personaje si existe (SIN BBCode)
 	if speaker != "":
 		current_text = speaker + ": " + text
 	else:
 		current_text = text
 	
-	# Iniciar animación de escritura
+	# animación de escritura
 	is_typing = true
 	displayed_chars = 0
 	type_timer = 0.0
@@ -138,12 +129,11 @@ func _animate_text(delta: float):
 	
 	type_timer += delta
 	
-	# Escribir caracteres progresivamente
+	# Escribir progresivamente
 	if type_timer >= text_speed:
 		type_timer = 0.0
 		displayed_chars += 1
 		
-		# Actualizar texto visible
 		cinematic_label.text = current_text
 		cinematic_label.visible_characters = displayed_chars
 		
@@ -159,10 +149,8 @@ func _finish_typing():
 
 func _handle_advance_input():
 	if is_typing:
-		# Si está escribiendo, completar instantáneamente
 		_finish_typing()
 	else:
-		# Si ya terminó de escribir, avanzar a siguiente línea
 		current_dialogue_index += 1
 		_show_next_dialogue()
 
@@ -173,7 +161,6 @@ func _end_cinematic():
 	cinematic_container.visible = false
 	skip_label.visible = false
 	
-	# Reanudar el juego
 	_resume_game_entities()
 	
 	# Emitir señal de finalización
@@ -188,7 +175,7 @@ func _end_cinematic():
 	current_dialogue_index = 0
 
 # ==============================================================================
-# PAUSAR/REANUDAR ENTIDADES DEL JUEGO
+# ENTIDADES DEL JUEGO
 # ==============================================================================
 
 func _pause_game_entities():

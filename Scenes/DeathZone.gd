@@ -3,12 +3,11 @@ extends Area3D
 # ==============================================================================
 # DEATH ZONE - Detecta al jugador y reinicia el juego
 # ==============================================================================
-# Úsalo para abismos, lava, trampas letales, etc.
 
 @export var death_message: String = "¡Has caído al vacío!"
 @export var show_message: bool = true
 @export var fade_duration: float = 1.0
-@export var restart_delay: float = 0.5  # Tiempo antes de reiniciar después del fade
+@export var restart_delay: float = 0.5 
 
 var has_triggered: bool = false
 
@@ -33,14 +32,12 @@ func _trigger_death(player):
 	
 	has_triggered = true
 	
-	print("💀 DeathZone: Jugador entró en zona de muerte")
+	print("Jugador entró en zona de muerte")
 	
-	# Detener al jugador
 	player.set_physics_process(false)
 	player.set_process(false)
 	player.velocity = Vector3.ZERO
 	
-	# Mostrar mensaje si está habilitado
 	if show_message and player.has_method("show_immediate_notification"):
 		player.show_immediate_notification(death_message)
 	
@@ -48,7 +45,7 @@ func _trigger_death(player):
 	_start_death_sequence()
 
 func _start_death_sequence():
-	# Crear fade a negro
+	# fade a negro
 	var fade = ColorRect.new()
 	fade.color = Color.BLACK
 	fade.modulate.a = 0

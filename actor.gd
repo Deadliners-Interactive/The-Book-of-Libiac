@@ -1,6 +1,4 @@
 # Actor.gd
-# Ladrón que se mueve durante la cinemática
-# Extiende CharacterBody3D
 
 extends CharacterBody3D
 
@@ -31,7 +29,6 @@ signal movement_finished
 # INICIALIZACIÓN
 # ==============================================================================
 func _ready() -> void:
-	# Añadir al grupo enemy (para pausar en cinemáticas)
 	add_to_group("enemy")
 
 	# Buscar AnimatedSprite3D
@@ -46,7 +43,6 @@ func _ready() -> void:
 # UTILIDADES
 # ==============================================================================
 
-# Buscar AnimatedSprite3D de forma recursiva
 func _find_animated_sprite(node: Node) -> AnimatedSprite3D:
 	if node is AnimatedSprite3D:
 		return node
@@ -74,7 +70,6 @@ func _physics_process(delta: float) -> void:
 		velocity.x = direction.x * move_speed
 		velocity.z = direction.z * move_speed
 
-		# Voltear sprite según dirección
 		if animated_sprite and abs(direction.x) > 0.1:
 			animated_sprite.flip_h = direction.x < 0
 
