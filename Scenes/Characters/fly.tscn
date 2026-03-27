@@ -1,8 +1,8 @@
 [gd_scene load_steps=16 format=3 uid="uid://ccfyp16616bhf"]
 
-[ext_resource type="Script" uid="uid://d3qriw03ix63y" path="res://Scenes/Characters/FloatingEnemy.gd" id="1_u6e0l"]
+[ext_resource type="Script" uid="uid://d3qriw03ix63y" path="res://Scenes/Characters/floating_enemy.gd" id="1_u6e0l"]
 [ext_resource type="Texture2D" uid="uid://crn3fm011v65o" path="res://assets/Sprites/Characters/Fly/fly_anim_spritesheet.png" id="2_csn2e"]
-[ext_resource type="PackedScene" uid="uid://dib67lssin171" path="res://projectile.tscn" id="2_o35it"]
+[ext_resource type="PackedScene" uid="uid://dib67lssin171" path="res://Scenes/Props/projectile.tscn" id="2_o35it"]
 [ext_resource type="Texture2D" uid="uid://cw7k5htg5qsxj" path="res://assets/Sprites/Effects/enemy_afterdead_explosion_anim_spritesheet.png" id="3_cij7b"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a4six"]

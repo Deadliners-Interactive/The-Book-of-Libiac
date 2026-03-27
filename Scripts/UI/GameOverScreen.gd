@@ -1,7 +1,7 @@
 extends Control
 
 # Ruta a la escena del primer nivel o el nivel al que deseas volver
-const START_LEVEL_PATH = "res://Scenes/main.tscn"# ¡Asegúrate de que esta ruta sea correcta!
+const START_LEVEL_PATH = "res://Scenes/Levels/main.tscn"# ¡Asegúrate de que esta ruta sea correcta!
 
 func _ready():
 	# 1. Hacer el ratón visible

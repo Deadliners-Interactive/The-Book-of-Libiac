@@ -1,12 +1,12 @@
 [gd_scene load_steps=6 format=3 uid="uid://bj6troapr0vx4"]
 
 [ext_resource type="Texture2D" uid="uid://d26psj5ygphuv" path="res://assets/Sprites/UI/pluma.png" id="1_0axo5"]
-[ext_resource type="Script" uid="uid://5nlaq2kwgco6" path="res://Scenes/Player_UI.gd" id="1_j5qct"]
+[ext_resource type="Script" uid="uid://5nlaq2kwgco6" path="res://Scenes/UI/player_ui.gd" id="1_j5qct"]
 [ext_resource type="Texture2D" uid="uid://bir40puveha5i" path="res://assets/Sprites/UI/pluma_half.png" id="3_bsti6"]
 [ext_resource type="Texture2D" uid="uid://dwtgm545f3f1p" path="res://assets/Sprites/UI/pluma_empty.png" id="4_rffj1"]
 [ext_resource type="Texture2D" uid="uid://cp7pe1rwy8i4n" path="res://assets/Sprites/objects/key.png" id="5_rffj1"]
 
-[node name="Player_UI" type="CanvasLayer" groups=["ui"]]
+[node name="player_ui" type="CanvasLayer" groups=["ui"]]
 script = ExtResource("1_j5qct")
 full_heart = ExtResource("1_0axo5")
 half_heart = ExtResource("3_bsti6")

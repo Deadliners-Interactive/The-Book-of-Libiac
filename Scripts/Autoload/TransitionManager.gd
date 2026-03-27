@@ -3,7 +3,7 @@
 # ==============================================================================
 # Este script debe configurarse como Autoload:
 # Project > Project Settings > Autoload
-# Path: res://TransitionManager.gd
+# Path: res://Scripts/Autoload/TransitionManager.gd
 # Node Name: TransitionManager
 
 extends Node

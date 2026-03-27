@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://co2ekmqwgekau"]
 
-[ext_resource type="Script" uid="uid://b3oquyca2ivl7" path="res://GameOverScreen.gd" id="1_q64km"]
+[ext_resource type="Script" uid="uid://b3oquyca2ivl7" path="res://Scripts/UI/GameOverScreen.gd" id="1_q64km"]
 [ext_resource type="Texture2D" uid="uid://ciuh2rbop3smt" path="res://gracias.png" id="2_c4xnp"]
 
 [node name="GameOverScreen" type="Control"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=4 uid="uid://3jhl25skambw"]
 
-[ext_resource type="Script" uid="uid://jos7q7w27kk0" path="res://treasure_chest.gd" id="1_pc4nq"]
+[ext_resource type="Script" uid="uid://jos7q7w27kk0" path="res://Scripts/Interactables/treasure_chest.gd" id="1_pc4nq"]
 [ext_resource type="Texture2D" uid="uid://b4x8oas4us1ys" path="res://assets/Meshlibs/Treasure_0.png" id="2_tmlhf"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tmlhf"]

@@ -1,16 +1,16 @@
 [gd_scene load_steps=17 format=3 uid="uid://c8xtsg5ropwcn"]
 
-[ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="1_de4c4"]
+[ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/Characters/player.tscn" id="1_de4c4"]
 [ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="2_1tbx8"]
-[ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/Player_UI.tscn" id="4_ys1qc"]
+[ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/UI/player_ui.tscn" id="4_ys1qc"]
 [ext_resource type="MeshLibrary" uid="uid://pa2ivlnek4an" path="res://assets/Meshlibs/dessertmesh.tres" id="7_0c07c"]
-[ext_resource type="PackedScene" uid="uid://bjy3djarvtqb2" path="res://Scenes/door.tscn" id="7_2cgwh"]
-[ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/Enemy.tscn" id="7_5wyu1"]
-[ext_resource type="Shader" uid="uid://bo5k6vcboghsw" path="res://water.gdshader" id="8_iaow0"]
-[ext_resource type="PackedScene" uid="uid://c28ty3qhpxyb2" path="res://Scenes/key.tscn" id="8_qpfo2"]
-[ext_resource type="PackedScene" uid="uid://bwxjoiqfqe6b3" path="res://Scenes/pluma_vida.tscn" id="9_2cgwh"]
-[ext_resource type="PackedScene" uid="uid://7vlbrdwk8dwl" path="res://Scenes/Health_pickup.tscn" id="10_iaow0"]
-[ext_resource type="PackedScene" uid="uid://3jhl25skambw" path="res://treasure_chest.tscn" id="11_qpfo2"]
+[ext_resource type="PackedScene" uid="uid://bjy3djarvtqb2" path="res://Scenes/Props/door.tscn" id="7_2cgwh"]
+[ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/enemy.tscn" id="7_5wyu1"]
+[ext_resource type="Shader" uid="uid://bo5k6vcboghsw" path="res://assets/Shaders/water.gdshader" id="8_iaow0"]
+[ext_resource type="PackedScene" uid="uid://c28ty3qhpxyb2" path="res://Scenes/Props/key.tscn" id="8_qpfo2"]
+[ext_resource type="PackedScene" uid="uid://bwxjoiqfqe6b3" path="res://Scenes/Props/Pickups/pluma_vida.tscn" id="9_2cgwh"]
+[ext_resource type="PackedScene" uid="uid://7vlbrdwk8dwl" path="res://Scenes/Props/Pickups/health_pickup.tscn" id="10_iaow0"]
+[ext_resource type="PackedScene" uid="uid://3jhl25skambw" path="res://Scenes/Props/treasure_chest.tscn" id="11_qpfo2"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_un8ce"]
 panorama = ExtResource("2_1tbx8")
@@ -49,7 +49,7 @@ size = Vector2(200, 200)
 
 [node name="Main" type="Node3D"]
 
-[node name="Player_UI" parent="." instance=ExtResource("4_ys1qc")]
+[node name="player_ui" parent="." instance=ExtResource("4_ys1qc")]
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("1_de4c4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.20059, 0.2712614, -1.1096586)

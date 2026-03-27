@@ -1,6 +1,6 @@
 [gd_scene load_steps=43 format=3 uid="uid://dl1ki8dhwoa1f"]
 
-[ext_resource type="Script" uid="uid://examvqnqwji0" path="res://Scenes/player.gd" id="1_viyiy"]
+[ext_resource type="Script" uid="uid://examvqnqwji0" path="res://Scenes/Characters/player.gd" id="1_viyiy"]
 [ext_resource type="Texture2D" uid="uid://cj2e17bog4y7c" path="res://assets/Sprites/Characters/Player/Gallito_idle_spritesheet.png" id="2_0cqtj"]
 [ext_resource type="Texture2D" uid="uid://bi318idsaxcaq" path="res://assets/Sprites/Characters/Player/Gallito_sword-Sheet.png" id="2_3smsa"]
 [ext_resource type="Texture2D" uid="uid://b57o7evfye650" path="res://assets/Sprites/Characters/Player/gallito_fall.png" id="2_545oy"]

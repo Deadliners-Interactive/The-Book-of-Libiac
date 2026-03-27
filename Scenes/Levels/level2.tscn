@@ -1,24 +1,21 @@
 [gd_scene load_steps=37 format=3 uid="uid://b1rt6auxlkhy"]
 
-[ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="1_5flq6"]
+[ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/Characters/player.tscn" id="1_5flq6"]
 [ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="2_051s1"]
-[ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/Enemy.tscn" id="3_in4v8"]
-[ext_resource type="Shader" uid="uid://bo5k6vcboghsw" path="res://water.gdshader" id="4_mu7lp"]
+[ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/enemy.tscn" id="3_in4v8"]
+[ext_resource type="Shader" uid="uid://bo5k6vcboghsw" path="res://assets/Shaders/water.gdshader" id="4_mu7lp"]
 [ext_resource type="MeshLibrary" uid="uid://pa2ivlnek4an" path="res://assets/Meshlibs/dessertmesh.tres" id="5_5qi50"]
 [ext_resource type="MeshLibrary" uid="uid://diyct5fl5qcs0" path="res://assets/Meshlibs/grassmesh.tres" id="6_1apgh"]
-[ext_resource type="PackedScene" uid="uid://c28ty3qhpxyb2" path="res://Scenes/key.tscn" id="7_ue4po"]
-[ext_resource type="PackedScene" uid="uid://bjy3djarvtqb2" path="res://Scenes/door.tscn" id="8_uoomo"]
-[ext_resource type="PackedScene" uid="uid://bwxjoiqfqe6b3" path="res://Scenes/pluma_vida.tscn" id="9_4jqg0"]
-[ext_resource type="PackedScene" uid="uid://7vlbrdwk8dwl" path="res://Scenes/Health_pickup.tscn" id="10_7k4fu"]
-[ext_resource type="PackedScene" uid="uid://3jhl25skambw" path="res://treasure_chest.tscn" id="11_tp0ft"]
-[ext_resource type="Script" uid="uid://cublxvhnkaeha" path="res://Scenes/cinematic_manager.gd" id="12_yjaoa"]
-[ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/Player_UI.tscn" id="13_o1sn7"]
-[ext_resource type="Script" uid="uid://bejt2poaduo8x" path="res://Scenes/intro_game_cinematic.gd" id="14_u1na6"]
-[ext_resource type="Script" uid="uid://c1rbpt7gb3wa0" path="res://actor.gd" id="15_se7y5"]
+[ext_resource type="PackedScene" uid="uid://c28ty3qhpxyb2" path="res://Scenes/Props/key.tscn" id="7_ue4po"]
+[ext_resource type="PackedScene" uid="uid://bjy3djarvtqb2" path="res://Scenes/Props/door.tscn" id="8_uoomo"]
+[ext_resource type="PackedScene" uid="uid://bwxjoiqfqe6b3" path="res://Scenes/Props/Pickups/pluma_vida.tscn" id="9_4jqg0"]
+[ext_resource type="PackedScene" uid="uid://7vlbrdwk8dwl" path="res://Scenes/Props/Pickups/health_pickup.tscn" id="10_7k4fu"]
+[ext_resource type="PackedScene" uid="uid://3jhl25skambw" path="res://Scenes/Props/treasure_chest.tscn" id="11_tp0ft"]
+[ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/UI/player_ui.tscn" id="13_o1sn7"]
 [ext_resource type="Texture2D" uid="uid://nw3nau1oyi0c" path="res://assets/Sprites/Characters/muki/muki_idle.png" id="16_uvwjj"]
 [ext_resource type="Texture2D" uid="uid://ca4voa1kl2b0d" path="res://assets/Sprites/Characters/muki/muki_attack.png" id="17_ukdoj"]
 [ext_resource type="Texture2D" uid="uid://cw7k5htg5qsxj" path="res://assets/Sprites/Effects/enemy_afterdead_explosion_anim_spritesheet.png" id="18_5mqgo"]
-[ext_resource type="Script" uid="uid://6n7tnpsow16v" path="res://Scenes/spawn_point.gd" id="19_051s1"]
+[ext_resource type="Script" uid="uid://6n7tnpsow16v" path="res://Scenes/Gameplay/Triggers/spawn_point.gd" id="19_051s1"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_un8ce"]
 panorama = ExtResource("2_051s1")
@@ -222,73 +219,7 @@ use_billboard = false
 transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-09, -1.8991733, 0.10093778, -3.6675897)
 loot_scene = ExtResource("9_4jqg0")
 
-[node name="CinematicManager" type="CanvasLayer" parent="."]
-script = ExtResource("12_yjaoa")
-
-[node name="SkipLabel" type="Label" parent="CinematicManager"]
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -388.0
-offset_top = -45.0
-grow_horizontal = 0
-grow_vertical = 0
-size_flags_horizontal = 8
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 15
-theme_override_font_sizes/font_size = 32
-text = "ESPACIO para continuar"
-horizontal_alignment = 1
-
-[node name="CinematicContainer" type="PanelContainer" parent="CinematicManager"]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -370.5
-offset_top = -119.0
-offset_right = 370.5
-offset_bottom = -74.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="CinematicLabel" type="Label" parent="CinematicManager/CinematicContainer"]
-layout_mode = 2
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 15
-theme_override_font_sizes/font_size = 32
-horizontal_alignment = 1
-
-[node name="Player_UI" parent="CinematicManager" instance=ExtResource("13_o1sn7")]
-
-[node name="IntroGameCinematic" type="Node" parent="."]
-script = ExtResource("14_u1na6")
-actor_path = NodePath("../Actor")
-waypoint_path = NodePath("../ActorEscape")
-
-[node name="Actor" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4582734, 0.16463944, 0.36663786)
-script = ExtResource("15_se7y5")
-move_speed = 3.0
-run_animation = "walk"
-
-[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Actor"]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 0.7071067, 0.7071067, 0, -0.7071067, 0.7071067, 0, 0, 0)
-alpha_cut = 1
-texture_filter = 0
-sprite_frames = SubResource("SpriteFrames_tmpr7")
-animation = &"idle"
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Actor"]
-transform = Transform3D(0.11, 0, 0, 0, 0.11, 0, 0, 0, 0.11, 0, 0, 0)
-shape = SubResource("BoxShape3D_h1bgf")
-
-[node name="ActorEscape" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0400269, 0.19486102, -4.105335)
+[node name="player_ui" parent="." instance=ExtResource("13_o1sn7")]
 
 [node name="entrada_desde_nivel1" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2166222, -0.2766015)

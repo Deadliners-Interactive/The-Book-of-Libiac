@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dib67lssin171"]
 
 [ext_resource type="Texture2D" uid="uid://dg3xli3ax0vhp" path="res://assets/Sprites/Characters/Fly/projectile.png" id="1_a85iw"]
-[ext_resource type="Script" uid="uid://cusv47lckl41d" path="res://Scenes/Characters/EnemyProjectile.gd" id="1_qxf0c"]
+[ext_resource type="Script" uid="uid://cusv47lckl41d" path="res://Scenes/Characters/enemy_projectile.gd" id="1_qxf0c"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qxf0c"]
 

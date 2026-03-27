@@ -31,6 +31,10 @@ El juego se encuentra en la fase inicial de pruebas. Actualmente, estamos evalua
 
 El juego está en fase inicial de desarrollo. Puedes ver una versión anterior del prototipo para el programa GameLab de Endless Studios en el siguiente enlace: [Supay's Gates en Itch.io](https://gatorrante.itch.io/supai).
 
+### Estructura del Proyecto
+
+Para mantener una organización profesional de carpetas y recursos, revisa [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md).
+
 ### Licencia
 
 Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.

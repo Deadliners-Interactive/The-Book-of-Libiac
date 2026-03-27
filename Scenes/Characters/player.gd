@@ -414,7 +414,7 @@ func _find_ui():
 	
 	if not ui_ref:
 		for child in get_tree().root.get_children():
-			if child.name == "Player_UI" or child is CanvasLayer:
+			if child.name == "player_ui" or child.name == "Player_UI" or child is CanvasLayer:
 				ui_ref = child
 				break
 				

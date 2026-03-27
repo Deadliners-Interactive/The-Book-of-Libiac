@@ -1,33 +1,30 @@
 [gd_scene load_steps=96 format=4 uid="uid://d331kdwddgjef"]
 
-[ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/Player_UI.tscn" id="1_6iyac"]
-[ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/player.tscn" id="2_fdnlq"]
+[ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/UI/player_ui.tscn" id="1_6iyac"]
+[ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/Characters/player.tscn" id="2_fdnlq"]
 [ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="3_jkdf5"]
-[ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/Enemy.tscn" id="4_wsu2k"]
-[ext_resource type="Shader" uid="uid://bo5k6vcboghsw" path="res://water.gdshader" id="5_k12tt"]
-[ext_resource type="Script" uid="uid://byk2ut37tal0a" path="res://Scenes/DeathZone.gd" id="5_ueoa1"]
+[ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/enemy.tscn" id="4_wsu2k"]
+[ext_resource type="Shader" uid="uid://bo5k6vcboghsw" path="res://assets/Shaders/water.gdshader" id="5_k12tt"]
+[ext_resource type="Script" uid="uid://byk2ut37tal0a" path="res://Scenes/Gameplay/Triggers/DeathZone.gd" id="5_ueoa1"]
 [ext_resource type="MeshLibrary" uid="uid://diyct5fl5qcs0" path="res://assets/Meshlibs/grassmesh.tres" id="6_b3802"]
 [ext_resource type="MeshLibrary" uid="uid://pa2ivlnek4an" path="res://assets/Meshlibs/dessertmesh.tres" id="6_h1bgf"]
-[ext_resource type="PackedScene" uid="uid://c28ty3qhpxyb2" path="res://Scenes/key.tscn" id="7_b3802"]
-[ext_resource type="PackedScene" uid="uid://bjy3djarvtqb2" path="res://Scenes/door.tscn" id="8_fevyy"]
-[ext_resource type="PackedScene" uid="uid://bwxjoiqfqe6b3" path="res://Scenes/pluma_vida.tscn" id="9_hibaj"]
-[ext_resource type="PackedScene" uid="uid://7vlbrdwk8dwl" path="res://Scenes/Health_pickup.tscn" id="10_pdsj5"]
-[ext_resource type="PackedScene" uid="uid://3jhl25skambw" path="res://treasure_chest.tscn" id="11_ee4r6"]
-[ext_resource type="Script" uid="uid://cublxvhnkaeha" path="res://Scenes/cinematic_manager.gd" id="12_gt3je"]
-[ext_resource type="Script" uid="uid://c1rbpt7gb3wa0" path="res://actor.gd" id="14_h1bgf"]
-[ext_resource type="Script" uid="uid://bejt2poaduo8x" path="res://Scenes/intro_game_cinematic.gd" id="14_wsu2k"]
+[ext_resource type="PackedScene" uid="uid://c28ty3qhpxyb2" path="res://Scenes/Props/key.tscn" id="7_b3802"]
+[ext_resource type="PackedScene" uid="uid://bjy3djarvtqb2" path="res://Scenes/Props/door.tscn" id="8_fevyy"]
+[ext_resource type="PackedScene" uid="uid://bwxjoiqfqe6b3" path="res://Scenes/Props/Pickups/pluma_vida.tscn" id="9_hibaj"]
+[ext_resource type="PackedScene" uid="uid://7vlbrdwk8dwl" path="res://Scenes/Props/Pickups/health_pickup.tscn" id="10_pdsj5"]
+[ext_resource type="PackedScene" uid="uid://3jhl25skambw" path="res://Scenes/Props/treasure_chest.tscn" id="11_ee4r6"]
 [ext_resource type="Texture2D" uid="uid://nw3nau1oyi0c" path="res://assets/Sprites/Characters/muki/muki_idle.png" id="15_b3802"]
 [ext_resource type="Texture2D" uid="uid://ca4voa1kl2b0d" path="res://assets/Sprites/Characters/muki/muki_attack.png" id="16_fevyy"]
 [ext_resource type="Texture2D" uid="uid://cw7k5htg5qsxj" path="res://assets/Sprites/Effects/enemy_afterdead_explosion_anim_spritesheet.png" id="17_hibaj"]
 [ext_resource type="Texture2D" uid="uid://cqkss8tkjeqt5" path="res://assets/Sprites/Characters/muki/muki_ratero_idle.png" id="17_ueoa1"]
-[ext_resource type="Script" uid="uid://ci2i6cnjhx751" path="res://Scenes/LevelTrigger.gd" id="19_fevyy"]
+[ext_resource type="Script" uid="uid://ci2i6cnjhx751" path="res://Scenes/Gameplay/Triggers/level_trigger.gd" id="19_fevyy"]
 [ext_resource type="Texture2D" uid="uid://bvaeqn2o16tcv" path="res://assets/models/Env/Mesh forest/forest_texture.png" id="22_ee4r6"]
 [ext_resource type="Texture2D" uid="uid://b7bqq0e6w31dt" path="res://assets/models/Env/dessert/ruina_0.png" id="23_1w6v2"]
 [ext_resource type="Texture2D" uid="uid://bw407eqdhvhq5" path="res://assets/models/Env/dessert/ruina_1.png" id="24_ueoa1"]
 [ext_resource type="Texture2D" uid="uid://c6nhlcegliyba" path="res://assets/models/Env/dessert/ruina_2.png" id="25_6vcvc"]
 [ext_resource type="Texture2D" uid="uid://dkc0mbm6t3spg" path="res://assets/models/Env/dessert/ruina_3.png" id="26_7k868"]
 [ext_resource type="Texture2D" uid="uid://ce7wb1pivkhec" path="res://assets/models/Env/dessert/ruina_4.png" id="27_hpc6h"]
-[ext_resource type="PackedScene" uid="uid://dvyja22s5013t" path="res://Scenes/Characters/Slime.tscn" id="29_6vcvc"]
+[ext_resource type="PackedScene" uid="uid://dvyja22s5013t" path="res://Scenes/Characters/slime.tscn" id="29_6vcvc"]
 [ext_resource type="PackedScene" uid="uid://ccfyp16616bhf" path="res://Scenes/Characters/fly.tscn" id="30_7k868"]
 [ext_resource type="PackedScene" uid="uid://dw5b4tl08ch8v" path="res://assets/models/Env/Mesh forest/Tree_Bare_1_C_Color1.fbx" id="121_37usx"]
 [ext_resource type="PackedScene" uid="uid://deittkak2qa6u" path="res://assets/models/Env/Mesh forest/Tree_Bare_2_C_Color1.fbx" id="124_4q4m1"]
@@ -815,75 +812,9 @@ loot_scene = ExtResource("10_pdsj5")
 transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-09, 2.7758152, 0.1007787, -2.3540297)
 loot_scene = ExtResource("9_hibaj")
 
-[node name="CinematicManager" type="CanvasLayer" parent="."]
-script = ExtResource("12_gt3je")
-
-[node name="SkipLabel" type="Label" parent="CinematicManager"]
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -388.0
-offset_top = -45.0
-grow_horizontal = 0
-grow_vertical = 0
-size_flags_horizontal = 8
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 15
-theme_override_font_sizes/font_size = 32
-text = "ESPACIO para continuar"
-horizontal_alignment = 1
-
-[node name="CinematicContainer" type="PanelContainer" parent="CinematicManager"]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -370.5
-offset_top = -119.0
-offset_right = 370.5
-offset_bottom = -74.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="CinematicLabel" type="Label" parent="CinematicManager/CinematicContainer"]
-layout_mode = 2
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 15
-theme_override_font_sizes/font_size = 32
-horizontal_alignment = 1
-
-[node name="Player_UI" parent="CinematicManager" instance=ExtResource("1_6iyac")]
+[node name="player_ui" parent="." instance=ExtResource("1_6iyac")]
 notification_fade_speed = 0.5
 max_notifications = 5
-
-[node name="IntroGameCinematic" type="Node" parent="."]
-script = ExtResource("14_wsu2k")
-actor_path = NodePath("../Actor")
-waypoint_path = NodePath("../ActorEscape")
-
-[node name="Actor" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4582734, 0.16463944, 0.36663786)
-script = ExtResource("14_h1bgf")
-move_speed = 3.0
-run_animation = "walk"
-
-[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Actor"]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 0.7071067, 0.7071067, 0, -0.7071067, 0.7071067, 0, 0.023578495, 0)
-alpha_cut = 1
-texture_filter = 0
-sprite_frames = SubResource("SpriteFrames_tmpr7")
-animation = &"walk"
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Actor"]
-transform = Transform3D(0.11, 0, 0, 0, 0.11, 0, 0, 0, 0.11, 0, 0, 0)
-shape = SubResource("BoxShape3D_h1bgf")
-
-[node name="ActorEscape" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0400269, 0.19486102, -4.4240594)
 
 [node name="LevelExits" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.99193, 1.1433257, -15.331361)
