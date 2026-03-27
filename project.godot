@@ -14,7 +14,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="Supai's Gates"
+config/name="The Book of Libiac"
 run/main_scene="uid://d331kdwddgjef"
 config/features=PackedStringArray("4.6", "Forward Plus")
 run/max_fps=60
@@ -22,9 +22,9 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-GameState="*res://GameState.gd"
-TransitionManager="*res://TransitionManager.gd"
-GameOverHandler="*res://GameOverHandler.gd"
+GameState="*res://Scripts/Autoload/GameState.gd"
+TransitionManager="*res://Scripts/Autoload/TransitionManager.gd"
+GameOverHandler="*res://Scripts/Autoload/GameOverHandler.gd"
 
 [display]
 
