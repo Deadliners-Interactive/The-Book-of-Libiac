@@ -1,219 +1,238 @@
+## Player HUD UI displaying health, keys, and notifications.
+## Manages heart container display, key counter, and notification queue system.
 extends CanvasLayer
 
-# ================================
-# CONFIGURACIÓN: ICONOS DE VIDA
-# ================================
+# ==============================================================================
+# Exports - Heart Icons
+# ==============================================================================
+
 @export var full_heart: Texture2D
 @export var half_heart: Texture2D
 @export var empty_heart: Texture2D
 
-# ================================
-# CONFIGURACIÓN: ICONO DE LLAVE
-# ================================
+# ==============================================================================
+# Exports - Key Icon
+# ==============================================================================
+
 @export var key_texture: Texture2D
 
-# ================================
-# CONFIGURACIÓN: NOTIFICACIONES
-# ================================
-@export var notification_duration: float = 3.0  # Duración de cada notificación
-@export var notification_fade_speed: float = 0.5  # Velocidad de desvanecimiento
-@export var max_notifications: int = 5  # Máximo de notificaciones visibles
+# ==============================================================================
+# Exports - Notifications
+# ==============================================================================
 
-# ================================
-# CONSTANTES DEL SISTEMA DE VIDA
-# ================================
+@export var notification_duration: float = 3.0
+@export var notification_fade_speed: float = 0.5
+@export var max_notifications: int = 5
+
+# ==============================================================================
+# Constants
+# ==============================================================================
+
 const HP_PER_CONTAINER: float = 10.0
 const HALF_CONTAINER_HP: float = 5.0
+const NOTIFICATION_COOLDOWN: float = 0.5
 
-# ================================
-# REFERENCIAS A LA UI
-# ================================
-@onready var hearts_container: HBoxContainer = $HeartsContainer
-@onready var keys_container: HBoxContainer = $KeysContainer
-@onready var key_icon: TextureRect = $KeysContainer/TextureRect
-@onready var key_label: Label = $KeysContainer/Label
-@onready var notification_container: PanelContainer = $Notification
-@onready var notification_label: Label = $Notification/NotificationLabel
+# ==============================================================================
+# Member Variables
+# ==============================================================================
 
-var heart_nodes: Array[TextureRect] = []
-var notification_queue: Array[String] = []
-var is_showing_notification: bool = false
-var last_notification_message: String = ""  # Para evitar notificaciones duplicadas
-var notification_cooldown: float = 0.5  # 0.5 segundos entre notificaciones iguales
-var last_notification_time: float = 0.0
-# ================================
-# REFERENCIA AL JUGADOR
-# ================================
-var player_ref: CharacterBody3D = null
+var _heart_nodes: Array[TextureRect] = []
+var _notification_queue: Array[String] = []
+var _is_showing_notification: bool = false
+var _last_notification_message: String = ""
+var _last_notification_time: float = 0.0
 
-func _ready():
+# ==============================================================================
+# Onready Variables
+# ==============================================================================
+
+@onready var _hearts_container: HBoxContainer = $HeartsContainer
+@onready var _key_icon: TextureRect = $KeysContainer/TextureRect
+@onready var _key_label: Label = $KeysContainer/Label
+@onready var _notification_container: PanelContainer = $Notification
+@onready var _notification_label: Label = $Notification/NotificationLabel
+
+var _player_ref: CharacterBody3D = null
+
+
+# ==============================================================================
+# Lifecycle
+# ==============================================================================
+
+func _ready() -> void:
 	add_to_group("ui")
-	
-	key_icon.visible = true
-	key_icon.texture = key_texture if key_texture else key_icon.texture
-	key_icon.custom_minimum_size = Vector2(32, 32)
-	key_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	
-	key_label.text = "x0"
-	
-	notification_container.visible = false
-	notification_label.text = ""
-	
-	# Ajustar posición del panel de notificaciones (inferior izquierda)
-	notification_container.position = Vector2(20, get_viewport().size.y - 100)
-	
-	# Escuchar cambios de tamaño de ventana
+
+	_key_icon.visible = true
+	_key_icon.texture = key_texture if key_texture else _key_icon.texture
+	_key_icon.custom_minimum_size = Vector2(32, 32)
+	_key_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+
+	_key_label.text = "x0"
+
+	_notification_container.visible = false
+	_notification_label.text = ""
+
+	# Position notification panel (bottom left)
+	_notification_container.position = Vector2(20, get_viewport().size.y - 100)
+
+	# Listen for viewport resize
 	get_viewport().size_changed.connect(_on_viewport_size_changed)
-	
-	# --- LIMPIAR CORAZONES ---
-	for child in hearts_container.get_children():
+
+	# Clear hearts
+	for child in _hearts_container.get_children():
 		child.queue_free()
-	heart_nodes.clear()
-	
+	_heart_nodes.clear()
+
 	call_deferred("_find_player")
 
-func _on_viewport_size_changed():
-	notification_container.position = Vector2(20, get_viewport().size.y - 100)
 
-# =============================================================
-#  SISTEMA DE NOTIFICACIONES
-# =============================================================
-func show_notification(message: String):
-	var current_time = Time.get_unix_time_from_system()
-	
-	# Verificar si es la misma notificación reciente
-	if message == last_notification_message and current_time - last_notification_time < notification_cooldown:
-		return  # No mostrar notificaciones duplicadas muy seguidas
-	
-	print("📢 Notificación: ", message)
-	
-	# Guardar la última notificación
-	last_notification_message = message
-	last_notification_time = current_time
-	
-	# Agregar mensaje a la cola
-	notification_queue.append(message)
-	
-	# Si no se está mostrando ninguna notificación, mostrar la siguiente
-	if not is_showing_notification and notification_queue.size() > 0:
-		_show_next_notification()
+# ==============================================================================
+# Public Methods - Notifications
+# ==============================================================================
 
-func _show_next_notification():
-	if notification_queue.size() == 0:
+func show_notification(message: String) -> void:
+	var current_time: float = Time.get_unix_time_from_system()
+
+	# Check for duplicate notification
+	if message == _last_notification_message and current_time - _last_notification_time < NOTIFICATION_COOLDOWN:
 		return
-	
-	is_showing_notification = true
-	
-	# Obtener el siguiente mensaje de la cola
-	var message = notification_queue.pop_front()
-	notification_label.text = message
-	
-	# Hacer visible el panel con animación de entrada
-	notification_container.visible = true
-	notification_container.modulate = Color(1, 1, 1, 0)  # Inicio transparente
-	
-	# Animación de entrada (fade in)
-	var tween_in = create_tween()
-	tween_in.tween_property(notification_container, "modulate", 
-						   Color(1, 1, 1, 1), notification_fade_speed)
-	tween_in.set_ease(Tween.EASE_OUT)
-	
-	# Esperar la duración configurada
-	await get_tree().create_timer(notification_duration).timeout
-	
-	# Animación de salida (fade out)
-	var tween_out = create_tween()
-	tween_out.tween_property(notification_container, "modulate", 
-							Color(1, 1, 1, 0), notification_fade_speed)
-	tween_out.set_ease(Tween.EASE_IN)
-	
-	# Esperar que termine la animación
-	await tween_out.finished
-	
-	# Ocultar el panel
-	notification_container.visible = false
-	is_showing_notification = false
-	
-	# Mostrar la siguiente notificación si hay más en la cola
-	if notification_queue.size() > 0:
-		# Pequeña pausa entre notificaciones
-		await get_tree().create_timer(0.2).timeout
+
+	# Save notification
+	_last_notification_message = message
+	_last_notification_time = current_time
+
+	# Add to queue
+	_notification_queue.append(message)
+
+	# Show if not already showing
+	if not _is_showing_notification and _notification_queue.size() > 0:
 		_show_next_notification()
 
-# Función para mostrar notificación inmediata (sin cola)
-func show_immediate_notification(message: String):
-	# Limpiar la cola actual
-	notification_queue.clear()
-	is_showing_notification = false
-	
-	# Mostrar notificación inmediata
+
+func show_immediate_notification(message: String) -> void:
+	# Clear queue and stop current notification
+	_notification_queue.clear()
+	_is_showing_notification = false
+
+	# Show immediately
 	show_notification(message)
 
-# =============================================================
-#  SISTEMA DE VIDA
-# =============================================================
-func update_hearts_display():
-	if not is_instance_valid(player_ref):
-		return
-	
-	var current_hp = player_ref.current_health
-	var num_containers = heart_nodes.size()
-	
-	for i in range(num_containers):
-		var container_index = i
-		var container_start_hp = container_index * HP_PER_CONTAINER
-		var container_end_hp = (container_index + 1) * HP_PER_CONTAINER
-		
-		if current_hp >= container_end_hp:
-			heart_nodes[i].texture = full_heart
-		elif current_hp >= container_start_hp + HALF_CONTAINER_HP:
-			heart_nodes[i].texture = half_heart
-		else:
-			heart_nodes[i].texture = empty_heart
 
-func update_max_hearts_display():
-	if not is_instance_valid(player_ref):
+# ==============================================================================
+# Public Methods - Hearts
+# ==============================================================================
+
+func update_hearts_display() -> void:
+	if not is_instance_valid(_player_ref):
 		return
-	
-	var max_hp = player_ref.max_health
-	var needed_containers = int(ceil(max_hp / HP_PER_CONTAINER))
-	var current_containers = heart_nodes.size()
-	
-	# Crear contenedores faltantes
+
+	var current_hp: int = _player_ref.current_health
+	var num_containers: int = _heart_nodes.size()
+
+	for i in range(num_containers):
+		var container_index: int = i
+		var container_start_hp: float = container_index * HP_PER_CONTAINER
+		var container_end_hp: float = (container_index + 1) * HP_PER_CONTAINER
+
+		if current_hp >= container_end_hp:
+			_heart_nodes[i].texture = full_heart
+		elif current_hp >= container_start_hp + HALF_CONTAINER_HP:
+			_heart_nodes[i].texture = half_heart
+		else:
+			_heart_nodes[i].texture = empty_heart
+
+
+func update_max_hearts_display() -> void:
+	if not is_instance_valid(_player_ref):
+		return
+
+	var max_hp: int = _player_ref.max_health
+	var needed_containers: int = int(ceil(max_hp / HP_PER_CONTAINER))
+	var current_containers: int = _heart_nodes.size()
+
+	# Create missing containers
 	if current_containers < needed_containers:
 		for i in range(needed_containers - current_containers):
-			var new_heart = TextureRect.new()
+			var new_heart: TextureRect = TextureRect.new()
 			new_heart.texture = full_heart
 			new_heart.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			new_heart.custom_minimum_size = Vector2(32, 32)
-			hearts_container.add_child(new_heart)
-			heart_nodes.append(new_heart)
-	
-	# Eliminar contenedores sobrantes
+			_hearts_container.add_child(new_heart)
+			_heart_nodes.append(new_heart)
+
+	# Remove excess containers
 	elif current_containers > needed_containers:
 		for i in range(current_containers - needed_containers):
-			var heart_to_remove = heart_nodes.pop_back()
+			var heart_to_remove: TextureRect = _heart_nodes.pop_back()
 			heart_to_remove.queue_free()
-	
+
 	update_hearts_display()
 
-# =============================================================
-#  SISTEMA DE LLAVES 
-# =============================================================
-func update_keys_display():
-	if not is_instance_valid(player_ref):
-		return
-	
-	key_label.text = "x" + str(player_ref.key_count)
 
-# =============================================================
-# BÚSQUEDA DE PLAYER
-# =============================================================
-func _find_player():
-	var players = get_tree().get_nodes_in_group("player")
+# ==============================================================================
+# Public Methods - Keys
+# ==============================================================================
+
+func update_keys_display() -> void:
+	if not is_instance_valid(_player_ref):
+		return
+
+	_key_label.text = "x" + str(_player_ref.key_count)
+
+
+# ==============================================================================
+# Private Methods
+# ==============================================================================
+
+func _show_next_notification() -> void:
+	if _notification_queue.size() == 0:
+		return
+
+	_is_showing_notification = true
+
+	# Get next message from queue
+	var message: String = _notification_queue.pop_front()
+	_notification_label.text = message
+
+	# Show with fade in animation
+	_notification_container.visible = true
+	_notification_container.modulate = Color(1, 1, 1, 0)
+
+	var tween_in: Tween = create_tween()
+	tween_in.tween_property(_notification_container, "modulate",
+							Color(1, 1, 1, 1), notification_fade_speed)
+	tween_in.set_ease(Tween.EASE_OUT)
+
+	# Wait for notification duration
+	await get_tree().create_timer(notification_duration).timeout
+
+	# Fade out animation
+	var tween_out: Tween = create_tween()
+	tween_out.tween_property(_notification_container, "modulate",
+							 Color(1, 1, 1, 0), notification_fade_speed)
+	tween_out.set_ease(Tween.EASE_IN)
+
+	await tween_out.finished
+
+	# Hide container
+	_notification_container.visible = false
+	_is_showing_notification = false
+
+	# Show next notification if available
+	if _notification_queue.size() > 0:
+		await get_tree().create_timer(0.2).timeout
+		_show_next_notification()
+
+
+func _on_viewport_size_changed() -> void:
+	_notification_container.position = Vector2(20, get_viewport().size.y - 100)
+
+
+func _find_player() -> void:
+	var players: Array[Node] = get_tree().get_nodes_in_group("player")
 	if players.size() > 0:
-		player_ref = players[0]
-		
+		_player_ref = players[0]
+
 		update_max_hearts_display()
 		update_hearts_display()
 		update_keys_display()

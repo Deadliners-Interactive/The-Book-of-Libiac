@@ -1,230 +1,416 @@
+## Player character controller with state machine (FSM).
+##
+## Handles movement, combat, rolling, health, and level transitions.
+## Uses a finite state machine for state management.
 extends CharacterBody3D
 
+
 # ==============================================================================
-# --- CONFIGURACIÓN ---
+# Signals
 # ==============================================================================
+# (None currently)
+
+
+# ==============================================================================
+# Enums
+# ==============================================================================
+
+enum State {
+	NORMAL,
+	ATTACKING,
+	ROLLING,
+	DAMAGE,
+}
+
+
+# ==============================================================================
+# Constants
+# ==============================================================================
+
+const KB_MULTIPLIER: float = 5.0
+
+
+# ==============================================================================
+# Export variables - Movement
+# ==============================================================================
+
 @export_group("Movement")
 @export var move_speed: float = 1.0
 @export var jump_speed: float = 2.0
 @export var gravity_multiplier: float = 1.0
+
+
+# ==============================================================================
+# Export variables - Combat
+# ==============================================================================
 
 @export_group("Combat")
 @export var attack_damage: int = 10
 @export var attack_movement_multiplier: float = 0.6
 @export var attack_hit_delay: float = 0.1
 
+
+# ==============================================================================
+# Export variables - Health
+# ==============================================================================
+
 @export_group("Health")
 @export var max_health: float = 30.0
-var current_health: float
+@export var invulnerability_time: float = 1.0
+@export var damage_visual_time: float = 0.5
+
+
+# ==============================================================================
+# Export variables - Roll
+# ==============================================================================
 
 @export_group("Roll")
 @export var roll_speed: float = 3.0
 @export var roll_duration: float = 0.4
 @export var roll_cooldown: float = 0.2
 
+
 # ==============================================================================
-# --- ESTADOS (FSM) ---
+# Regular variables
 # ==============================================================================
-enum State { NORMAL, ATTACKING, ROLLING, DAMAGE }
+
+var current_health: float
 var current_state: State = State.NORMAL
+var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
+var key_count: int = 0
+
+var _is_facing_right: bool = true
+var _attack_combo_step: int = 0
+var _input_buffer: String = ""
+var _enemies_hit: Array = []
+var _is_invulnerable: bool = false
+var _ui_ref: CanvasLayer = null
+
+var _damage_knockback_timer: Timer = Timer.new()
+var _damage_visual_timer: Timer = Timer.new()
+var _roll_cooldown_timer: Timer = Timer.new()
+var _notification_cooldown: Dictionary = {}
+var _notification_cooldown_time: float = 1.0
+
 
 # ==============================================================================
-# --- VARIABLES INTERNAS ---
+# Onready variables
 # ==============================================================================
-var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
-var is_facing_right = true
-var attack_combo_step = 0
-var input_buffer = ""
-var enemies_hit = []
-var damage_knockback_timer = Timer.new()
-var ui_ref: CanvasLayer = null
 
-# Sistema de invulnerabilidad
-var damage_visual_timer = Timer.new()
-var is_invulnerable: bool = false
-@export var invulnerability_time: float = 1.0
-@export var damage_visual_time: float = 0.5
+@onready var _animated_sprite: AnimatedSprite3D = $Sprite3D
+@onready var _attack_area: Area3D = $AttackArea
+@onready var _attack_collision: CollisionShape3D = $AttackArea/CollisionShape3D
+@onready var _detection_area: Area3D = $DetectionArea
 
-# Sistema de prevención de notificaciones repetidas
-var notification_cooldown: Dictionary = {}
-var notification_cooldown_time: float = 1.0
-
-# Referencias a Nodos
-@onready var animated_sprite = $Sprite3D
-@onready var attack_area = $AttackArea
-@onready var attack_collision = $AttackArea/CollisionShape3D
-@onready var roll_cooldown_timer: Timer = Timer.new()
-@onready var detection_area = $DetectionArea
 
 # ==============================================================================
-# --- INICIALIZACIÓN ---
+# Built-in methods
 # ==============================================================================
-func _ready():
+
+func _ready() -> void:
 	current_health = max_health
-	attack_collision.disabled = true
+	_attack_collision.disabled = true
 	
-	# --- GRUPOS IMPORTANTES ---
 	add_to_group("player")
+	_attack_area.add_to_group("hitbox_player")
 	
-	# área de la espada al grupo que busca el cofre
-	attack_area.add_to_group("hitbox_player") 
+	# Setup timers
+	add_child(_roll_cooldown_timer)
+	_roll_cooldown_timer.one_shot = true
 	
-	# Timers
-	add_child(roll_cooldown_timer)
-	roll_cooldown_timer.one_shot = true
-	
-	add_child(damage_knockback_timer)
-	damage_knockback_timer.one_shot = true
-	damage_knockback_timer.timeout.connect(func():
+	add_child(_damage_knockback_timer)
+	_damage_knockback_timer.one_shot = true
+	_damage_knockback_timer.timeout.connect(func() -> void:
 		if current_state == State.DAMAGE:
 			velocity = Vector3.ZERO
-			call_deferred("set_state", State.NORMAL) 
+			call_deferred("set_state", State.NORMAL)
 	)
 	
-	add_child(damage_visual_timer)
-	damage_visual_timer.one_shot = true
-	damage_visual_timer.timeout.connect(func():
-		is_invulnerable = false 
+	add_child(_damage_visual_timer)
+	_damage_visual_timer.one_shot = true
+	_damage_visual_timer.timeout.connect(func() -> void:
+		_is_invulnerable = false
 	)
 	
-	# Señales
-	animated_sprite.animation_finished.connect(_on_animation_finished)
+	# Connect signals
+	_animated_sprite.animation_finished.connect(_on_animation_finished)
 	
-	if not attack_area.body_entered.is_connected(_on_attack_hit):
-		attack_area.body_entered.connect(_on_attack_hit)
+	if not _attack_area.body_entered.is_connected(_on_attack_hit):
+		_attack_area.body_entered.connect(_on_attack_hit)
 	
-	# ============ SISTEMA DE CAMBIO DE NIVEL ============
-	# Cargar estado guardado si existe
+	# Load saved state if exists
 	if GameState.player_health > 0:
 		GameState.load_player_state(self)
 	
-	# Conectar señal para detectar áreas desde el Area3D hijo
+	# Connect level change detection
 	if has_node("DetectionArea"):
-		detection_area.area_entered.connect(_on_area_entered_player)
+		_detection_area.area_entered.connect(_on_area_entered_player)
 	else:
 		push_warning("Falta nodo DetectionArea para cambio de nivel")
-	# ====================================================
 	
-	# Buscar UI al inicio
 	call_deferred("_find_ui")
 
-func _physics_process(delta):
+
+func _physics_process(delta: float) -> void:
 	match current_state:
 		State.NORMAL:
-			_handle_move(delta)
+			_handle_move()
 			_handle_jump()
 			_handle_actions_input()
 		State.ATTACKING:
-			if damage_knockback_timer.is_stopped():
-				_handle_move(delta, attack_movement_multiplier)
+			if _damage_knockback_timer.is_stopped():
+				_handle_move(attack_movement_multiplier)
 			_handle_buffer_input()
 		State.ROLLING:
 			_apply_roll_physics()
 		State.DAMAGE:
-			pass 
-
-	# Gravedad
+			pass
+	
+	# Apply gravity
 	if not is_on_floor():
 		velocity.y -= gravity * gravity_multiplier * delta
 	else:
-		if current_state == State.DAMAGE and damage_knockback_timer.is_stopped():
+		if current_state == State.DAMAGE and _damage_knockback_timer.is_stopped():
 			velocity.y = 0
 	
 	move_and_slide()
 	_update_animations()
 
+
 # ==============================================================================
-# --- MANEJO DE INPUTS ---
+# Public methods - Input handling
 # ==============================================================================
 
-func _handle_actions_input():
+func add_key() -> void:
+	key_count += 1
+	show_notification("Llave conseguida (%d)" % key_count)
+	
+	if _ui_ref and _ui_ref.has_method("update_keys_display"):
+		_ui_ref.update_keys_display()
+
+
+func use_key() -> bool:
+	if key_count > 0:
+		key_count -= 1
+		
+		if _ui_ref and _ui_ref.has_method("update_keys_display"):
+			_ui_ref.update_keys_display()
+		return true
+	else:
+		show_notification("Necesitas una llave!")
+		return false
+
+
+# ==============================================================================
+# Public methods - Health & Combat
+# ==============================================================================
+
+func take_damage_hearts(damage_amount: float) -> void:
+	take_damage_hearts_with_knockback(damage_amount, Vector3.ZERO, 0.0)
+
+
+func take_damage_hearts_with_knockback(
+		damage_amount: float,
+		knockback_direction: Vector3,
+		knockback_force: float
+) -> void:
+	if current_state == State.ROLLING or _is_invulnerable:
+		return
+	
+	current_health -= damage_amount
+	current_health = max(0.0, current_health)
+	
+	if current_state != State.DAMAGE:
+		set_state(State.DAMAGE)
+	
+	if _ui_ref and _ui_ref.has_method("update_hearts_display"):
+		_ui_ref.update_hearts_display()
+	
+	if knockback_force > 0:
+		if _damage_knockback_timer.is_stopped():
+			velocity.x = knockback_direction.x * knockback_force * KB_MULTIPLIER
+			velocity.z = knockback_direction.z * knockback_force * KB_MULTIPLIER
+			velocity.y = min(velocity.y + knockback_force * 3.0, 5.0)
+		
+		_damage_knockback_timer.start(0.35)
+	else:
+		_damage_knockback_timer.start(0.1)
+	
+	if current_health <= 0:
+		die()
+
+
+func heal(amount: float) -> void:
+	if current_health < max_health:
+		var previous_health: float = current_health
+		current_health += amount
+		
+		if current_health > max_health:
+			current_health = max_health
+		
+		var actual_heal: float = current_health - previous_health
+		var heart_containers: int = int(floor(actual_heal / 10.0))
+		var partial_heart: float = fmod(actual_heal, 10.0)
+		
+		if actual_heal > 0:
+			if heart_containers >= 1:
+				show_notification("Recuperaste %d pluma(s) de vida" % heart_containers)
+			elif partial_heart > 0:
+				show_notification("Medio corazon recuperado")
+		
+		if _ui_ref and _ui_ref.has_method("update_hearts_display"):
+			_ui_ref.update_hearts_display()
+
+
+func increase_max_health(amount: float) -> void:
+	max_health += amount
+	current_health = max_health
+	
+	show_notification("Obtuviste una vida extra!")
+	
+	if _ui_ref and _ui_ref.has_method("update_max_hearts_display"):
+		_ui_ref.update_max_hearts_display()
+
+
+func die() -> void:
+	if is_instance_valid(GameOverHandler):
+		GameOverHandler.handle_player_death(self)
+	else:
+		get_tree().call_deferred("reload_current_scene")
+
+
+# ==============================================================================
+# Public methods - UI notifications
+# ==============================================================================
+
+func refresh_ui_state() -> void:
+	if _ui_ref and _ui_ref.has_method("update_max_hearts_display"):
+		_ui_ref.update_max_hearts_display()
+	if _ui_ref and _ui_ref.has_method("update_hearts_display"):
+		_ui_ref.update_hearts_display()
+	if _ui_ref and _ui_ref.has_method("update_keys_display"):
+		_ui_ref.update_keys_display()
+
+
+func show_notification(message: String) -> void:
+	var current_time: int = Time.get_ticks_msec()
+	
+	if _notification_cooldown.has(message):
+		var last_shown_time: int = _notification_cooldown[message]
+		if current_time - last_shown_time < int(_notification_cooldown_time * 1000):
+			return
+	
+	_notification_cooldown[message] = current_time
+	
+	if _ui_ref and _ui_ref.has_method("show_notification"):
+		_ui_ref.show_notification(message)
+
+
+func show_immediate_notification(message: String) -> void:
+	if _ui_ref and _ui_ref.has_method("show_immediate_notification"):
+		_ui_ref.show_immediate_notification(message)
+
+
+# ==============================================================================
+# Private methods - Input handling
+# ==============================================================================
+
+func _handle_actions_input() -> void:
 	if Input.is_action_just_pressed("attack"):
 		set_state(State.ATTACKING)
-	elif Input.is_action_just_pressed("roll") and roll_cooldown_timer.is_stopped():
+	elif Input.is_action_just_pressed("roll") and _roll_cooldown_timer.is_stopped():
 		set_state(State.ROLLING)
 
-func _handle_buffer_input():
+
+func _handle_buffer_input() -> void:
 	if Input.is_action_just_pressed("attack"):
-		input_buffer = "attack"
+		_input_buffer = "attack"
 	elif Input.is_action_just_pressed("roll"):
-		input_buffer = "roll"
-		if roll_cooldown_timer.is_stopped():
+		_input_buffer = "roll"
+		if _roll_cooldown_timer.is_stopped():
 			set_state(State.ROLLING)
 
+
 # ==============================================================================
-# --- LÓGICA DE MOVIMIENTO ---
+# Private methods - Movement
 # ==============================================================================
 
-func _handle_move(_delta: float, speed_mult: float = 1.0):
-	if not damage_knockback_timer.is_stopped(): 
+func _handle_move(speed_mult: float = 1.0) -> void:
+	if not _damage_knockback_timer.is_stopped():
 		return
 
-	var input_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	var input_dir: Vector2 = Input.get_vector(
+			"move_left",
+			"move_right",
+			"move_up",
+			"move_down"
+	)
+	var direction: Vector3 = (
+			transform.basis * Vector3(input_dir.x, 0, input_dir.y)
+	).normalized()
 	
-	var final_speed = move_speed * speed_mult
+	var final_speed: float = move_speed * speed_mult
 	
 	if direction:
 		velocity.x = direction.x * final_speed
 		velocity.z = direction.z * final_speed
 		_flip_sprite(velocity.x)
 	else:
-		velocity.x = move_toward(velocity.x, 0, final_speed)
-		velocity.z = move_toward(velocity.z, 0, final_speed)
+		velocity.x = move_toward(velocity.x, 0.0, final_speed)
+		velocity.z = move_toward(velocity.z, 0.0, final_speed)
 
-func _handle_jump():
+
+func _handle_jump() -> void:
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = jump_speed
 
-func _apply_roll_physics():
+
+func _apply_roll_physics() -> void:
 	if current_state == State.ROLLING:
-		# Aseguramos que ruede aunque estuviera quieto (hacia donde mira)
-		var current_vel_xz = Vector3(velocity.x, 0, velocity.z).length()
+		var current_vel_xz: float = Vector3(velocity.x, 0, velocity.z).length()
 		
 		if current_vel_xz < 0.1:
-			# Si estaba quieto, forzar velocidad en dirección de la mirada
-			var facing_dir = 1.0 if is_facing_right else -1.0
+			var facing_dir: float = 1.0 if _is_facing_right else -1.0
 			velocity.x = facing_dir * roll_speed
-			velocity.z = 0
+			velocity.z = 0.0
 		else:
-			# Mantener dirección actual pero a velocidad de roll
-			var roll_dir_xz = Vector3(velocity.x, 0, velocity.z).normalized()
+			var roll_dir_xz: Vector3 = Vector3(velocity.x, 0, velocity.z).normalized()
 			velocity.x = roll_dir_xz.x * roll_speed
 			velocity.z = roll_dir_xz.z * roll_speed
 
-func _flip_sprite(_x_velocity: float):
-	if abs(_x_velocity) < 0.1: return
+
+func _flip_sprite(x_velocity: float) -> void:
+	if abs(x_velocity) < 0.1:
+		return
 	
-	var moving_right = _x_velocity > 0
-	if moving_right != is_facing_right:
-		is_facing_right = moving_right
-		animated_sprite.flip_h = not is_facing_right
-		
-		# Ajustar hitbox de ataque si es necesario (si tiene offset)
-		attack_area.scale.x = 1.0 if is_facing_right else -1.0
+	var moving_right: bool = x_velocity > 0
+	if moving_right != _is_facing_right:
+		_is_facing_right = moving_right
+		_animated_sprite.flip_h = not _is_facing_right
+		_attack_area.scale.x = 1.0 if _is_facing_right else -1.0
+
 
 # ==============================================================================
-# --- GESTIÓN DE ESTADOS (FSM) ---
+# Private methods - State management
 # ==============================================================================
 
-func set_state(new_state: State):
-	# Salir del estado anterior
+func set_state(new_state: State) -> void:
+	# Exit previous state
 	if current_state == State.ATTACKING:
-		# Usamos set_deferred para evitar errores de físicas
-		attack_collision.set_deferred("disabled", true) 
-		animated_sprite.speed_scale = 1.0
-		
+		_attack_collision.set_deferred("disabled", true)
+		_animated_sprite.speed_scale = 1.0
+	
 	current_state = new_state
 	
-	# Entrar al nuevo estado
+	# Enter new state
 	match new_state:
 		State.NORMAL:
-			if damage_knockback_timer.is_stopped():
-				if input_buffer == "attack":
-					input_buffer = ""
+			if _damage_knockback_timer.is_stopped():
+				if _input_buffer == "attack":
+					_input_buffer = ""
 					set_state(State.ATTACKING)
-				elif input_buffer == "roll" and roll_cooldown_timer.is_stopped():
-					input_buffer = ""
+				elif _input_buffer == "roll" and _roll_cooldown_timer.is_stopped():
+					_input_buffer = ""
 					set_state(State.ROLLING)
 		State.ATTACKING:
 			_start_attack()
@@ -233,258 +419,134 @@ func set_state(new_state: State):
 		State.DAMAGE:
 			_start_damage()
 
+
 # ==============================================================================
-# --- ACCIONES DE COMBATE ---
+# Private methods - Combat
 # ==============================================================================
 
-func _start_attack():
-	enemies_hit.clear()
-	animated_sprite.speed_scale = 2.0 # Ataque más rápido visualmente
+func _start_attack() -> void:
+	_enemies_hit.clear()
+	_animated_sprite.speed_scale = 2.0
 	
-	if attack_combo_step == 0:
-		animated_sprite.play("attack")
-		attack_combo_step = 1
+	if _attack_combo_step == 0:
+		_animated_sprite.play("attack")
+		_attack_combo_step = 1
 	else:
-		animated_sprite.play_backwards("attack") # Combo simple alternando animación
-		attack_combo_step = 0
+		_animated_sprite.play_backwards("attack")
+		_attack_combo_step = 0
 	
-	# Activar hitbox con delay para coincidir con la animación
 	get_tree().create_timer(attack_hit_delay).timeout.connect(_on_hitbox_activate)
 
-func _on_hitbox_activate():
-	if current_state != State.ATTACKING: return
+
+func _on_hitbox_activate() -> void:
+	if current_state != State.ATTACKING:
+		return
 	
-	# [CORRECCIÓN] Usar set_deferred es vital para evitar errores
-	attack_collision.set_deferred("disabled", false)
+	_attack_collision.set_deferred("disabled", false)
 	
-	# Desactivar hitbox automáticamente tras un instante
-	get_tree().create_timer(0.15).timeout.connect(func(): 
+	get_tree().create_timer(0.15).timeout.connect(func() -> void:
 		if current_state == State.ATTACKING:
-			attack_collision.set_deferred("disabled", true)
+			_attack_collision.set_deferred("disabled", true)
 	)
 
-func _on_attack_hit(body):
-	# Si la colisión está deshabilitada lógicamente, ignorar
-	if attack_collision.disabled: return
+
+func _on_attack_hit(body: Node3D) -> void:
+	if _attack_collision.disabled:
+		return
 	
-	# Evitar golpearse a sí mismo y golpear dos veces al mismo enemigo
-	if body.has_method("take_damage") and body != self and not body in enemies_hit:
-		enemies_hit.append(body)
+	if (body.has_method("take_damage") and body != self
+			and body not in _enemies_hit):
+		_enemies_hit.append(body)
 		body.take_damage(attack_damage)
 
-func _start_roll():
-	is_invulnerable = true
-	input_buffer = ""
-	animated_sprite.speed_scale = 2.0
+
+func _start_roll() -> void:
+	_is_invulnerable = true
+	_input_buffer = ""
+	_animated_sprite.speed_scale = 2.0
 	
-	if animated_sprite.sprite_frames.has_animation("roll"):
-		animated_sprite.play("roll")
+	if _animated_sprite.sprite_frames.has_animation("roll"):
+		_animated_sprite.play("roll")
 	
-	if not animated_sprite.sprite_frames.has_animation("roll"):
-		var roll_timer = get_tree().create_timer(roll_duration)
-		roll_timer.timeout.connect(func():
-			is_invulnerable = false
-			roll_cooldown_timer.start(roll_cooldown)
+	if not _animated_sprite.sprite_frames.has_animation("roll"):
+		var roll_timer: SceneTreeTimer = get_tree().create_timer(roll_duration)
+		roll_timer.timeout.connect(func() -> void:
+			_is_invulnerable = false
+			_roll_cooldown_timer.start(roll_cooldown)
 			set_state(State.NORMAL)
 		)
 
-func _start_damage():
-	is_invulnerable = true 
-	damage_visual_timer.start(invulnerability_time) 
-	animated_sprite.modulate = Color(1, 0.5, 0.5, 1) 
+
+func _start_damage() -> void:
+	_is_invulnerable = true
+	_damage_visual_timer.start(invulnerability_time)
+	_animated_sprite.modulate = Color(1, 0.5, 0.5, 1)
 	
-	get_tree().create_timer(damage_visual_time).timeout.connect(func():
-		if is_invulnerable:
-			animated_sprite.modulate = Color.WHITE
+	get_tree().create_timer(damage_visual_time).timeout.connect(func() -> void:
+		if _is_invulnerable:
+			_animated_sprite.modulate = Color.WHITE
 	)
 
+
 # ==============================================================================
-# --- SISTEMA DE SALUD Y DAÑO ---
+# Private methods - Animation
 # ==============================================================================
 
-func take_damage_hearts(damage_amount: float):
-	take_damage_hearts_with_knockback(damage_amount, Vector3.ZERO, 0.0)
-
-func take_damage_hearts_with_knockback(damage_amount: float, knockback_direction: Vector3, knockback_force: float):
-	if current_state == State.ROLLING or is_invulnerable:
+func _update_animations() -> void:
+	if current_state in [State.ATTACKING, State.ROLLING, State.DAMAGE]:
 		return
 	
-	current_health -= damage_amount
-	current_health = max(0, current_health)
-
-	
-	if current_state != State.DAMAGE:
-		set_state(State.DAMAGE)
-	
-	if ui_ref and ui_ref.has_method("update_hearts_display"):
-		ui_ref.update_hearts_display()
-	
-	if knockback_force > 0:
-		var KB_MULTIPLIER = 5.0
-		if damage_knockback_timer.is_stopped():
-			velocity.x = knockback_direction.x * knockback_force * KB_MULTIPLIER
-			velocity.z = knockback_direction.z * knockback_force * KB_MULTIPLIER
-			velocity.y = min(velocity.y + knockback_force * 3.0, 5.0)
-		
-		damage_knockback_timer.start(0.35)
-	else:
-		damage_knockback_timer.start(0.1)
-	
-	if current_health <= 0:
-		die()
-
-# ==============================================================================
-# --- FUNCIONES DE CURACIÓN Y VIDA ---
-# ==============================================================================
-
-func heal(amount: float):
-	if current_health < max_health:
-		var previous_health = current_health
-		current_health += amount
-		
-		if current_health > max_health:
-			current_health = max_health
-		
-		var actual_heal = current_health - previous_health
-		var heart_containers = floor(actual_heal / 10.0)
-		
-		var partial_heart = fmod(actual_heal, 10.0)
-		
-		print("Player: Curado. Total: ", current_health)
-		
-		if actual_heal > 0:
-			if heart_containers >= 1:
-				show_notification("Recuperaste %d pluma(s) de vida" % heart_containers)
-			elif partial_heart > 0:
-				show_notification("Medio corazon recuperado")
-		
-		if ui_ref and ui_ref.has_method("update_hearts_display"):
-			ui_ref.update_hearts_display()
-
-func increase_max_health(amount: float):
-	max_health += amount
-	current_health = max_health
-	
-	var extra_hearts = amount / 10.0
-	
-	show_notification("Obtuviste una vida extra!")
-	
-	if ui_ref and ui_ref.has_method("update_max_hearts_display"):
-		ui_ref.update_max_hearts_display()
-
-func die():
-	print("💀 Player: ¡Has muerto!")
-	
-	if is_instance_valid(GameOverHandler):
-		GameOverHandler.handle_player_death(self)
-	else:
-		# Fallback si el Autoload no está configurado (pero es menos limpio)
-		get_tree().call_deferred("reload_current_scene")
-
-# ==============================================================================
-# --- ANIMACIONES Y EVENTOS ---
-# ==============================================================================
-
-func _update_animations():
-	if current_state in [State.ATTACKING, State.ROLLING, State.DAMAGE]: 
-		return
-		
 	if not is_on_floor():
-		animated_sprite.speed_scale = 2.0
-		if velocity.y > 0: animated_sprite.play("jump")
-		else: animated_sprite.play("fall")
+		_animated_sprite.speed_scale = 2.0
+		if velocity.y > 0:
+			_animated_sprite.play("jump")
+		else:
+			_animated_sprite.play("fall")
 		return
-		
-	animated_sprite.speed_scale = 1.0
-	if velocity.x != 0 or velocity.z != 0:
-		animated_sprite.play("run")
-	else:
-		animated_sprite.play("idle")
-
-func _on_animation_finished():
-	if animated_sprite.animation == "attack":
-		set_state(State.NORMAL)
-	elif animated_sprite.animation == "roll":
-		is_invulnerable = false
-		roll_cooldown_timer.start(roll_cooldown)
-		set_state(State.NORMAL)
-
-func _find_ui():
-	ui_ref = get_tree().get_first_node_in_group("ui")
 	
-	if not ui_ref:
+	_animated_sprite.speed_scale = 1.0
+	if velocity.x != 0 or velocity.z != 0:
+		_animated_sprite.play("run")
+	else:
+		_animated_sprite.play("idle")
+
+
+func _on_animation_finished() -> void:
+	if _animated_sprite.animation == "attack":
+		set_state(State.NORMAL)
+	elif _animated_sprite.animation == "roll":
+		_is_invulnerable = false
+		_roll_cooldown_timer.start(roll_cooldown)
+		set_state(State.NORMAL)
+
+
+# ==============================================================================
+# Private methods - UI
+# ==============================================================================
+
+func _find_ui() -> void:
+	_ui_ref = get_tree().get_first_node_in_group("ui")
+	
+	if not _ui_ref:
 		for child in get_tree().root.get_children():
-			if child.name == "player_ui" or child.name == "Player_UI" or child is CanvasLayer:
-				ui_ref = child
+			if (child.name == "player_ui" or child.name == "Player_UI"
+					or child is CanvasLayer):
+				_ui_ref = child
 				break
-				
-	if ui_ref:
-		print("Player: UI encontrada - ", ui_ref.name)
-		if ui_ref.has_method("update_max_hearts_display"):
-			ui_ref.update_max_hearts_display()
+	
+	if _ui_ref:
+		if _ui_ref.has_method("update_max_hearts_display"):
+			_ui_ref.update_max_hearts_display()
 	else:
 		push_warning("Player: No se encontró UI.")
 
-# ==============================================================================
-# --- SISTEMA DE LLAVES ---
-# ==============================================================================
-
-var key_count: int = 0
-
-func add_key():
-	key_count += 1
-	print("Player: Llaves =", key_count)
-	
-	show_notification("Llave conseguida (%d)" % key_count)
-	
-	if ui_ref and ui_ref.has_method("update_keys_display"):
-		ui_ref.update_keys_display()
-
-func use_key() -> bool:
-	if key_count > 0:
-		key_count -= 1
-		print("Player: Usó llave. Restantes =", key_count)
-		
-		
-		if ui_ref and ui_ref.has_method("update_keys_display"):
-			ui_ref.update_keys_display()
-		return true
-	else:
-		show_notification("Necesitas una llave!")
-		return false
 
 # ==============================================================================
-# --- FUNCIONES DE NOTIFICACIONES (CON COOLDOWN) ---
+# Private methods - Level transitions
 # ==============================================================================
 
-func show_notification(message: String):
-	var current_time = Time.get_ticks_msec()
-	
-	if notification_cooldown.has(message):
-		var last_shown_time = notification_cooldown[message]
-		if current_time - last_shown_time < notification_cooldown_time * 1000:
-			return
-	
-	notification_cooldown[message] = current_time
-	
-	if ui_ref and ui_ref.has_method("show_notification"):
-		ui_ref.show_notification(message)
-	else:
-		print("(UI no disponible): ", message)
-
-func show_immediate_notification(message: String):
-	if ui_ref and ui_ref.has_method("show_immediate_notification"):
-		ui_ref.show_immediate_notification(message)
-	else:
-		print("(UI no disponible): ", message)
-
-# ==============================================================================
-# --- SISTEMA DE CAMBIO DE NIVEL ---
-# ==============================================================================
-
-func _on_area_entered_player(area: Area3D):
-	"""Detecta cuando el jugador entra en un Area3D"""
+func _on_area_entered_player(area: Area3D) -> void:
+	"""Detecta cuando el jugador entra en un área de cambio de nivel."""
 	if area.is_in_group("level_trigger"):
-		print("🚪 Player: Entrando a zona de cambio de nivel")
 		if area.has_method("trigger_level_change"):
 			area.trigger_level_change(self)

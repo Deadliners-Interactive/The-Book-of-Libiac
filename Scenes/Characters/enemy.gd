@@ -1,14 +1,27 @@
+## Melee enemy with patrol, chase, and attack behavior.
+## Detects player and pursues to attack. Takes damage and can be stunned.
 extends CharacterBody3D
 
-# ================================
-# CONFIGURACIÓN DEL ENEMIGO
-# ================================
+# ==============================================================================
+# Enums
+# ==============================================================================
+
+enum State { IDLE, WANDER, CHASE, ATTACKING, ATTACK_COOLDOWN, DAMAGE, DEAD }
+
+# ==============================================================================
+# Exports - Enemy Stats
+# ==============================================================================
+
 @export_group("Enemy Stats")
 @export var max_hp: int = 30
 @export var defense: int = 0
 @export var move_speed: float = 0.3
 @export var chase_speed: float = 1.0
 @export var gravity_multiplier: float = 1.0
+
+# ==============================================================================
+# Exports - Attack
+# ==============================================================================
 
 @export_group("Attack")
 @export var melee_range: float = 0.7
@@ -17,239 +30,97 @@ extends CharacterBody3D
 @export var attack_knockback_force: float = 0.2
 @export var post_attack_wait_time: float = 1.0
 
-# @export_group("Patrol")
+# ==============================================================================
+# Exports - Patrol
+# ==============================================================================
+
 @export var wander_radius: float = 2.5
 @export var lost_player_distance: float = 8.0
 
-# **NUEVA CONFIGURACIÓN**
+# ==============================================================================
+# Exports - Damage
+# ==============================================================================
+
 @export_group("Damage")
-@export var damage_duration: float = 0.3 # Tiempo que dura el estado DAMAGE/stun.
-@export var post_damage_recovery_pause: float = 0.5 #Pausa extra después de salir de DAMAGE.
+@export var damage_duration: float = 0.3
+@export var post_damage_recovery_pause: float = 0.5
 
-# ================================
-# ESTADOS
-# ================================
-enum State { IDLE, WANDER, CHASE, ATTACKING, ATTACK_COOLDOWN, DAMAGE, DEAD }
-var current_state: State = State.IDLE
+# ==============================================================================
+# Member Variables
+# ==============================================================================
 
-# ================================
-# VARIABLES INTERNAS
-# ================================
-var current_hp: int
-var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
-var player_ref: CharacterBody3D = null
-var cooldown_timer: float = 0.0
-var wander_target: Vector3
-var hit_registered: bool = false
-var damage_recovery_timer: Timer = Timer.new()
+var _current_state: State = State.IDLE
+var _current_hp: int
+var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
+var _player_ref: CharacterBody3D = null
+var _cooldown_timer: float = 0.0
+var _wander_target: Vector3 = Vector3.ZERO
+var _hit_registered: bool = false
 
-@onready var animated_sprite = $AnimatedSprite3D
-@onready var attack_area = $AttackArea
-@onready var detection_area = $DetectionArea
+# ==============================================================================
+# Onready Variables
+# ==============================================================================
 
-# ================================
-# READY
-# ================================
-func _ready():
-	current_hp = max_hp
-	detection_area.body_entered.connect(_on_detection_enter)
-	detection_area.body_exited.connect(_on_detection_exit)
-	attack_area.body_entered.connect(_on_attack_hit_player)
+@onready var _animated_sprite: AnimatedSprite3D = $AnimatedSprite3D
+@onready var _attack_area: Area3D = $AttackArea
+@onready var _detection_area: Area3D = $DetectionArea
 
-	var col = attack_area.get_node_or_null("CollisionShape3D")
+var _damage_recovery_timer: Timer
+
+
+# ==============================================================================
+# Lifecycle
+# ==============================================================================
+
+func _ready() -> void:
+	_current_hp = max_hp
+	_detection_area.body_entered.connect(_on_detection_enter)
+	_detection_area.body_exited.connect(_on_detection_exit)
+	_attack_area.body_entered.connect(_on_attack_hit_player)
+
+	var col: CollisionShape3D = _attack_area.get_node_or_null("CollisionShape3D")
 	if col:
 		col.set_deferred("disabled", true)
 
-	add_child(damage_recovery_timer)
-	damage_recovery_timer.one_shot = true
-	damage_recovery_timer.timeout.connect(_on_damage_recovery_timeout)
+	_damage_recovery_timer = Timer.new()
+	add_child(_damage_recovery_timer)
+	_damage_recovery_timer.one_shot = true
+	_damage_recovery_timer.timeout.connect(_on_damage_recovery_timeout)
 
 	set_state(State.WANDER)
 
-# ================================
-# PHYSICS
-# ================================
-func _physics_process(delta):
-	if current_state == State.DEAD:
+
+func _physics_process(delta: float) -> void:
+	if _current_state == State.DEAD:
 		return
 
 	if not is_on_floor():
-		velocity.y -= gravity * gravity_multiplier * delta
+		velocity.y -= _gravity * gravity_multiplier * delta
 	else:
-		if current_state not in [State.ATTACKING, State.ATTACK_COOLDOWN, State.DAMAGE]:
+		if _current_state not in [State.ATTACKING, State.ATTACK_COOLDOWN, State.DAMAGE]:
 			velocity.y = 0
 
-	if cooldown_timer > 0:
-		cooldown_timer -= delta
+	if _cooldown_timer > 0:
+		_cooldown_timer -= delta
 
 	_state_machine(delta)
 	move_and_slide()
 	_update_animations()
 
-# ================================
-# STATE MACHINE
-# ================================
-func _state_machine(delta):
-	if current_state == State.WANDER:
-		_process_wander()
-		return
 
-	if current_state == State.CHASE:
-		_process_chase()
-		return
-	
-	if current_state in [State.ATTACKING, State.ATTACK_COOLDOWN]:
-		return
+# ==============================================================================
+# Public Methods
+# ==============================================================================
 
-	if current_state == State.DAMAGE:
-		# Lógica de frenado del knockback
-		velocity.x = move_toward(velocity.x, 0, 3 * delta)
-		velocity.z = move_toward(velocity.z, 0, 3 * delta)
-		return
-
-# ================================
-# COMPORTAMIENTO: WANDER (Se mantiene)
-# ================================
-func _process_wander():
-	if player_ref:
-		set_state(State.CHASE)
-		return
-
-	if wander_target == Vector3.ZERO or global_position.distance_to(wander_target) < 0.3:
-		var angle = randf_range(0, TAU)
-		var dist = randf_range(1.0, wander_radius)
-		wander_target = global_position + Vector3(cos(angle) * dist, 0, sin(angle) * dist)
-
-	var dir = (wander_target - global_position).normalized()
-	velocity.x = dir.x * move_speed
-	velocity.z = dir.z * move_speed
-
-# ================================
-# COMPORTAMIENTO: CHASE (Se mantiene)
-# ================================
-func _process_chase():
-	if not player_ref:
-		set_state(State.WANDER)
-		return
-
-	var dist = global_position.distance_to(player_ref.global_position)
-
-	if dist > lost_player_distance:
-		player_ref = null
-		set_state(State.WANDER)
-		return
-	
-	# El ataque solo ocurre si NO estamos en un estado que debería ser interrumpido por daño,
-	# y si el cooldown_timer <= 0.
-	if current_state not in [State.DAMAGE, State.ATTACK_COOLDOWN] and dist <= melee_range and cooldown_timer <= 0:
-		set_state(State.ATTACKING)
-		return
-
-	var dir = (player_ref.global_position - global_position).normalized()
-	dir.y = 0
-
-	velocity.x = dir.x * chase_speed
-	velocity.z = dir.z * chase_speed
-
-	_look_at_player()
-
-# ================================
-# ATAQUE (Se mantiene)
-# ================================
-func _enable_attack_area():
-	var col = attack_area.get_node_or_null("CollisionShape3D")
-	if col:
-		col.set_deferred("disabled", false)
-
-func _disable_attack_area():
-	var col = attack_area.get_node_or_null("CollisionShape3D")
-	if col:
-		col.set_deferred("disabled", true)
-
-func _execute_attack():
-	hit_registered = false
-	velocity = Vector3.ZERO
-
-	if animated_sprite.sprite_frames.has_animation("attack"):
-		animated_sprite.play("attack")
-	else:
-		animated_sprite.play("idle")
-
-	_enable_attack_area()
-	await get_tree().create_timer(0.15).timeout
-	_disable_attack_area()
-
-	if not hit_registered:
-		cooldown_timer = attack_cooldown
-		set_state(State.CHASE)
-
-func _start_post_attack_wait():
-	velocity = Vector3.ZERO
-	await get_tree().create_timer(post_attack_wait_time).timeout
-	cooldown_timer = attack_cooldown
-	set_state(State.CHASE)
-
-func _on_attack_hit_player(body):
-	if current_state != State.ATTACKING or hit_registered:
-		return
-		
-	if body.is_in_group("player"):
-		var direction = (body.global_position - global_position).normalized()
-		if body.has_method("take_damage_hearts_with_knockback"):
-			body.take_damage_hearts_with_knockback(attack_damage, direction, attack_knockback_force)
-			
-		hit_registered = true
-		set_state(State.ATTACK_COOLDOWN)
-
-# ================================
-# DETECCIÓN (Se mantienen)
-# ================================
-func _on_detection_enter(body):
-	if body.is_in_group("player"):
-		player_ref = body
-		set_state(State.CHASE)
-
-func _on_detection_exit(body):
-	if player_ref == body:
-		player_ref = null
-		set_state(State.WANDER)
-
-# ================================
-# DAÑO
-# ================================
-func take_damage(amount: int):
-	current_hp -= max(amount - defense, 1)
-	
-	if current_hp > 0:
-		velocity.y = 1.0 
-	if current_hp <= 0:
-		set_state(State.DEAD)
-	else:
-		set_state(State.DAMAGE)
-
-# **LÓGICA DE SALIDA DEL DAÑO **
-func _on_damage_recovery_timeout():
-	if current_state == State.DAMAGE:
-		cooldown_timer = max(cooldown_timer, post_damage_recovery_pause)
-		
-		# Decidir a dónde volver
-		if player_ref:
-			set_state(State.CHASE)
-		else:
-			set_state(State.WANDER)
-
-# ================================
-# SET STATE
-# ================================
-func set_state(s: State):
-	current_state = s
+func set_state(s: State) -> void:
+	_current_state = s
 
 	match s:
 		State.IDLE:
 			velocity = Vector3.ZERO
 
 		State.WANDER:
-			wander_target = Vector3.ZERO
+			_wander_target = Vector3.ZERO
 
 		State.ATTACKING:
 			_execute_attack()
@@ -258,36 +129,197 @@ func set_state(s: State):
 			_start_post_attack_wait()
 
 		State.DAMAGE:
-			damage_recovery_timer.start(damage_duration) 
-			
-			velocity.x = move_toward(velocity.x, 0, 10.0) 
+			_damage_recovery_timer.start(damage_duration)
+
+			velocity.x = move_toward(velocity.x, 0, 10.0)
 			velocity.z = move_toward(velocity.z, 0, 10.0)
-			
-			if animated_sprite.sprite_frames.has_animation("damage"):
-				animated_sprite.play("damage")
-			
+
+			if _animated_sprite.sprite_frames.has_animation("damage"):
+				_animated_sprite.play("damage")
+
 		State.DEAD:
 			velocity = Vector3.ZERO
-			if animated_sprite.sprite_frames.has_animation("death"):
-				animated_sprite.play("death")
-				await animated_sprite.animation_finished
+			if _animated_sprite.sprite_frames.has_animation("death"):
+				_animated_sprite.play("death")
+				await _animated_sprite.animation_finished
 			queue_free()
 
-# ================================
-# UTILIDADES (Se mantienen)
-# ================================
-func _look_at_player():
-	if player_ref:
-		var dir = player_ref.global_position - global_position
-		animated_sprite.flip_h = dir.x < 0
 
-func _update_animations():
-	if current_state in [State.DEAD, State.DAMAGE, State.ATTACKING, State.ATTACK_COOLDOWN]:
+func take_damage(amount: int) -> void:
+	_current_hp -= max(amount - defense, 1)
+
+	if _current_hp > 0:
+		velocity.y = 1.0
+
+	if _current_hp <= 0:
+		set_state(State.DEAD)
+	else:
+		set_state(State.DAMAGE)
+
+
+# ==============================================================================
+# Private Methods - State Machine
+# ==============================================================================
+
+func _state_machine(delta: float) -> void:
+	if _current_state == State.WANDER:
+		_process_wander()
 		return
 
-	var anim = "idle"
+	if _current_state == State.CHASE:
+		_process_chase()
+		return
+
+	if _current_state in [State.ATTACKING, State.ATTACK_COOLDOWN]:
+		return
+
+	if _current_state == State.DAMAGE:
+		velocity.x = move_toward(velocity.x, 0, 3 * delta)
+		velocity.z = move_toward(velocity.z, 0, 3 * delta)
+		return
+
+
+func _process_wander() -> void:
+	if _player_ref:
+		set_state(State.CHASE)
+		return
+
+	if _wander_target == Vector3.ZERO or global_position.distance_to(_wander_target) < 0.3:
+		var angle: float = randf_range(0, TAU)
+		var dist: float = randf_range(1.0, wander_radius)
+		_wander_target = global_position + Vector3(cos(angle) * dist, 0, sin(angle) * dist)
+
+	var dir: Vector3 = (_wander_target - global_position).normalized()
+	velocity.x = dir.x * move_speed
+	velocity.z = dir.z * move_speed
+
+
+func _process_chase() -> void:
+	if not _player_ref:
+		set_state(State.WANDER)
+		return
+
+	var dist: float = global_position.distance_to(_player_ref.global_position)
+
+	if dist > lost_player_distance:
+		_player_ref = null
+		set_state(State.WANDER)
+		return
+
+	if _current_state not in [State.DAMAGE, State.ATTACK_COOLDOWN] and dist <= melee_range and _cooldown_timer <= 0:
+		set_state(State.ATTACKING)
+		return
+
+	var dir: Vector3 = (_player_ref.global_position - global_position).normalized()
+	dir.y = 0
+
+	velocity.x = dir.x * chase_speed
+	velocity.z = dir.z * chase_speed
+
+	_look_at_player()
+
+
+# ==============================================================================
+# Private Methods - Attack
+# ==============================================================================
+
+func _execute_attack() -> void:
+	_hit_registered = false
+	velocity = Vector3.ZERO
+
+	if _animated_sprite.sprite_frames.has_animation("attack"):
+		_animated_sprite.play("attack")
+	else:
+		_animated_sprite.play("idle")
+
+	_enable_attack_area()
+	await get_tree().create_timer(0.15).timeout
+	_disable_attack_area()
+
+	if not _hit_registered:
+		_cooldown_timer = attack_cooldown
+		set_state(State.CHASE)
+
+
+func _start_post_attack_wait() -> void:
+	velocity = Vector3.ZERO
+	await get_tree().create_timer(post_attack_wait_time).timeout
+	_cooldown_timer = attack_cooldown
+	set_state(State.CHASE)
+
+
+func _enable_attack_area() -> void:
+	var col: CollisionShape3D = _attack_area.get_node_or_null("CollisionShape3D")
+	if col:
+		col.set_deferred("disabled", false)
+
+
+func _disable_attack_area() -> void:
+	var col: CollisionShape3D = _attack_area.get_node_or_null("CollisionShape3D")
+	if col:
+		col.set_deferred("disabled", true)
+
+
+# ==============================================================================
+# Private Methods - Damage
+# ==============================================================================
+
+func _on_damage_recovery_timeout() -> void:
+	if _current_state == State.DAMAGE:
+		_cooldown_timer = max(_cooldown_timer, post_damage_recovery_pause)
+
+		if _player_ref:
+			set_state(State.CHASE)
+		else:
+			set_state(State.WANDER)
+
+
+# ==============================================================================
+# Private Methods - Utilities
+# ==============================================================================
+
+func _look_at_player() -> void:
+	if _player_ref:
+		var dir: Vector3 = _player_ref.global_position - global_position
+		_animated_sprite.flip_h = dir.x < 0
+
+
+func _update_animations() -> void:
+	if _current_state in [State.DEAD, State.DAMAGE, State.ATTACKING, State.ATTACK_COOLDOWN]:
+		return
+
+	var anim: String = "idle"
 	if velocity.length() > 0.05:
 		anim = "walk"
 
-	if animated_sprite.sprite_frames.has_animation(anim):
-		animated_sprite.play(anim)
+	if _animated_sprite.sprite_frames.has_animation(anim):
+		_animated_sprite.play(anim)
+
+
+# ==============================================================================
+# Private Methods - Signal Handlers
+# ==============================================================================
+
+func _on_detection_enter(body: Node) -> void:
+	if body.is_in_group("player"):
+		_player_ref = body
+		set_state(State.CHASE)
+
+
+func _on_detection_exit(body: Node) -> void:
+	if _player_ref == body:
+		_player_ref = null
+		set_state(State.WANDER)
+
+
+func _on_attack_hit_player(body: Node) -> void:
+	if _current_state != State.ATTACKING or _hit_registered:
+		return
+
+	if body.is_in_group("player"):
+		var direction: Vector3 = (body.global_position - global_position).normalized()
+		if body.has_method("take_damage_hearts_with_knockback"):
+			body.take_damage_hearts_with_knockback(attack_damage, direction, attack_knockback_force)
+
+		_hit_registered = true
+		set_state(State.ATTACK_COOLDOWN)

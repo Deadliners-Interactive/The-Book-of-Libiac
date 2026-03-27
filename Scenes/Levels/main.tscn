@@ -1,9 +1,8 @@
-[gd_scene load_steps=96 format=4 uid="uid://d331kdwddgjef"]
+[gd_scene format=4 uid="uid://d331kdwddgjef"]
 
 [ext_resource type="PackedScene" uid="uid://bj6troapr0vx4" path="res://Scenes/UI/player_ui.tscn" id="1_6iyac"]
 [ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/Characters/player.tscn" id="2_fdnlq"]
 [ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="3_jkdf5"]
-[ext_resource type="PackedScene" uid="uid://b55kh4wuclfnu" path="res://Scenes/Characters/enemy.tscn" id="4_wsu2k"]
 [ext_resource type="Shader" uid="uid://bo5k6vcboghsw" path="res://assets/Shaders/water.gdshader" id="5_k12tt"]
 [ext_resource type="Script" uid="uid://byk2ut37tal0a" path="res://Scenes/Gameplay/Triggers/DeathZone.gd" id="5_ueoa1"]
 [ext_resource type="MeshLibrary" uid="uid://diyct5fl5qcs0" path="res://assets/Meshlibs/grassmesh.tres" id="6_b3802"]
@@ -13,10 +12,6 @@
 [ext_resource type="PackedScene" uid="uid://bwxjoiqfqe6b3" path="res://Scenes/Props/Pickups/pluma_vida.tscn" id="9_hibaj"]
 [ext_resource type="PackedScene" uid="uid://7vlbrdwk8dwl" path="res://Scenes/Props/Pickups/health_pickup.tscn" id="10_pdsj5"]
 [ext_resource type="PackedScene" uid="uid://3jhl25skambw" path="res://Scenes/Props/treasure_chest.tscn" id="11_ee4r6"]
-[ext_resource type="Texture2D" uid="uid://nw3nau1oyi0c" path="res://assets/Sprites/Characters/muki/muki_idle.png" id="15_b3802"]
-[ext_resource type="Texture2D" uid="uid://ca4voa1kl2b0d" path="res://assets/Sprites/Characters/muki/muki_attack.png" id="16_fevyy"]
-[ext_resource type="Texture2D" uid="uid://cw7k5htg5qsxj" path="res://assets/Sprites/Effects/enemy_afterdead_explosion_anim_spritesheet.png" id="17_hibaj"]
-[ext_resource type="Texture2D" uid="uid://cqkss8tkjeqt5" path="res://assets/Sprites/Characters/muki/muki_ratero_idle.png" id="17_ueoa1"]
 [ext_resource type="Script" uid="uid://ci2i6cnjhx751" path="res://Scenes/Gameplay/Triggers/level_trigger.gd" id="19_fevyy"]
 [ext_resource type="Texture2D" uid="uid://bvaeqn2o16tcv" path="res://assets/models/Env/Mesh forest/forest_texture.png" id="22_ee4r6"]
 [ext_resource type="Texture2D" uid="uid://b7bqq0e6w31dt" path="res://assets/models/Env/dessert/ruina_0.png" id="23_1w6v2"]
@@ -24,8 +19,6 @@
 [ext_resource type="Texture2D" uid="uid://c6nhlcegliyba" path="res://assets/models/Env/dessert/ruina_2.png" id="25_6vcvc"]
 [ext_resource type="Texture2D" uid="uid://dkc0mbm6t3spg" path="res://assets/models/Env/dessert/ruina_3.png" id="26_7k868"]
 [ext_resource type="Texture2D" uid="uid://ce7wb1pivkhec" path="res://assets/models/Env/dessert/ruina_4.png" id="27_hpc6h"]
-[ext_resource type="PackedScene" uid="uid://dvyja22s5013t" path="res://Scenes/Characters/slime.tscn" id="29_6vcvc"]
-[ext_resource type="PackedScene" uid="uid://ccfyp16616bhf" path="res://Scenes/Characters/fly.tscn" id="30_7k868"]
 [ext_resource type="PackedScene" uid="uid://dw5b4tl08ch8v" path="res://assets/models/Env/Mesh forest/Tree_Bare_1_C_Color1.fbx" id="121_37usx"]
 [ext_resource type="PackedScene" uid="uid://deittkak2qa6u" path="res://assets/models/Env/Mesh forest/Tree_Bare_2_C_Color1.fbx" id="124_4q4m1"]
 
@@ -66,115 +59,6 @@ shader_parameter/foam_distortion_amount = 0.1
 [sub_resource type="PlaneMesh" id="PlaneMesh_2cgwh"]
 material = SubResource("ShaderMaterial_0c07c")
 size = Vector2(200, 200)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u7jc0"]
-atlas = ExtResource("15_b3802")
-region = Rect2(0, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_4k6ug"]
-atlas = ExtResource("15_b3802")
-region = Rect2(16, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xb08l"]
-atlas = ExtResource("16_fevyy")
-region = Rect2(0, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gdwie"]
-atlas = ExtResource("16_fevyy")
-region = Rect2(16, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_blhco"]
-atlas = ExtResource("17_hibaj")
-region = Rect2(0, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kjg46"]
-atlas = ExtResource("17_hibaj")
-region = Rect2(16, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_17cwd"]
-atlas = ExtResource("17_hibaj")
-region = Rect2(32, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hw8um"]
-atlas = ExtResource("17_hibaj")
-region = Rect2(48, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hpc6h"]
-atlas = ExtResource("17_ueoa1")
-region = Rect2(0, 0, 16, 20)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kltya"]
-atlas = ExtResource("17_ueoa1")
-region = Rect2(16, 0, 16, 20)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_e08e2"]
-atlas = ExtResource("17_ueoa1")
-region = Rect2(0, 0, 16, 20)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_neg2b"]
-atlas = ExtResource("17_ueoa1")
-region = Rect2(16, 0, 16, 20)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_tmpr7"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_u7jc0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_4k6ug")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_xb08l")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_gdwie")
-}],
-"loop": true,
-"name": &"attack",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_blhco")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kjg46")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_17cwd")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hw8um")
-}],
-"loop": false,
-"name": &"death",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hpc6h")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kltya")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_e08e2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_neg2b")
-}],
-"loop": true,
-"name": &"walk",
-"speed": 5.0
-}]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_h1bgf"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fevyy"]
 size = Vector3(0.390625, 0.35931396, 1)
@@ -706,60 +590,33 @@ shadow_mesh = SubResource("ArrayMesh_pbpxh")
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_kltya"]
 data = PackedVector3Array(0.099999994, 0.32999998, 0.28149998, 0, 0.3829, 0.58419997, 0, 0.32999998, 0.28149998, 0.099999994, 0.32999998, 0.28149998, 0.099999994, 0.3829, 0.5837, 0, 0.3829, 0.58419997, 0.19999999, 0.34, 0.3215, 0.099999994, 0.3829, 0.5837, 0.099999994, 0.32999998, 0.28149998, 0.19999999, 0.34, 0.3215, 0.19, 0.37289998, 0.5591, 0.099999994, 0.3829, 0.5837, -0.099999994, 0.3829, 0.5837, -0.099999994, 0.32999998, 0.28149998, 0, 0.32999998, 0.28149998, 0, 0.32999998, 0.28149998, 0, 0.3829, 0.58419997, -0.099999994, 0.3829, 0.5837, -0.099999994, 0.3829, 0.5837, -0.19, 0.37289998, 0.5591, -0.19999999, 0.34, 0.3215, -0.19999999, 0.34, 0.3215, -0.099999994, 0.32999998, 0.28149998, -0.099999994, 0.3829, 0.5837, 0.19, 0.37289998, 0.5591, 0.19999999, 0.34, 0.3215, 0.19999999, 0.14, 0.318, -0.19, 0.37289998, 0.5591, -0.19999999, 0.14, 0.318, -0.19999999, 0.34, 0.3215, 0.27699998, 0.709, 0.21159999, 0.22299999, 0.709, 0.21159999, 0.22299999, 0.709, 0.108399995, 0.22299999, 0.709, 0.108399995, 0.27699998, 0.709, 0.108399995, 0.27699998, 0.709, 0.21159999, 0.22299999, 0.709, 0.21159999, 0.17379999, 0.709, 0.21159999, 0.17379999, 0.709, 0.108399995, 0.17379999, 0.709, 0.108399995, 0.22299999, 0.709, 0.108399995, 0.22299999, 0.709, 0.21159999, 0.3179, 0.709, 0.0116, 0.26389998, 0.709, 0.0116, 0.26389998, 0.709, -0.0916, 0.26389998, 0.709, -0.0916, 0.3179, 0.709, -0.0916, 0.3179, 0.709, 0.0116, 0.26389998, 0.709, 0.0116, 0.2147, 0.709, 0.0116, 0.2147, 0.709, -0.0916, 0.2147, 0.709, -0.0916, 0.26389998, 0.709, -0.0916, 0.26389998, 0.709, 0.0116, 0.0727, 0.74899995, 0.1416, 0.0187, 0.74899995, 0.1416, 0.0187, 0.74899995, 0.038399998, 0.0187, 0.74899995, 0.038399998, 0.0727, 0.74899995, 0.038399998, 0.0727, 0.74899995, 0.1416, 0.0187, 0.74899995, 0.1416, -0.030499998, 0.74899995, 0.1416, -0.030499998, 0.74899995, 0.038399998, -0.030499998, 0.74899995, 0.038399998, 0.0187, 0.74899995, 0.038399998, 0.0187, 0.74899995, 0.1416, -0.1223, 0.719, 0.0116, -0.17629999, 0.719, 0.0116, -0.17629999, 0.719, -0.0916, -0.17629999, 0.719, -0.0916, -0.1223, 0.719, -0.0916, -0.1223, 0.719, 0.0116, -0.17629999, 0.719, 0.0116, -0.22549999, 0.719, 0.0116, -0.22549999, 0.719, -0.0916, -0.22549999, 0.719, -0.0916, -0.17629999, 0.719, -0.0916, -0.17629999, 0.719, 0.0116, -0.2021, 0.709, 0.2216, -0.2561, 0.709, 0.2216, -0.2561, 0.709, 0.1184, -0.2561, 0.709, 0.1184, -0.2021, 0.709, 0.1184, -0.2021, 0.709, 0.2216, -0.2561, 0.709, 0.2216, -0.3053, 0.709, 0.2216, -0.3053, 0.709, 0.1184, -0.3053, 0.709, 0.1184, -0.2561, 0.709, 0.1184, -0.2561, 0.709, 0.2216, -0.35, 0.01, 0.35999998, 0.44799998, 0.01, 0.48, -0.35, 0.01, 0.48, -0.35, 0.01, 0.35999998, -0.35, 0.01, 0.48, -0.47, 0.01, 0.35999998, -0.47, 0.01, -0.19999999, -0.35, 0.01, 0.35999998, -0.47, 0.01, 0.35999998, -0.35, 0.01, 0.35999998, 0.44799998, 0.01, 0.35999998, 0.44799998, 0.01, 0.48, 0.44799998, 0.01, 0.48, 0.44799998, 0.01, 0.35999998, 0.53999996, 0.01, 0.35999998, 0.53999996, 0.01, -0.19999999, 0.53999996, 0.01, 0.35999998, 0.44799998, 0.01, 0.35999998, -0.47, 0.01, -0.19999999, -0.35, 0.01, -0.19999999, -0.35, 0.01, 0.35999998, -0.35, 0.01, -0.19999999, 0.44799998, 0.01, 0.35999998, -0.35, 0.01, 0.35999998, -0.47, 0.01, -0.29999998, -0.35, 0.01, -0.19999999, -0.47, 0.01, -0.19999999, -0.47, 0.01, -0.29999998, -0.35, 0.01, -0.29999998, -0.35, 0.01, -0.19999999, -0.35, 0.01, -0.19999999, 0.44799998, 0.01, -0.19999999, 0.44799998, 0.01, 0.35999998, 0.44799998, 0.01, 0.35999998, 0.44799998, 0.01, -0.19999999, 0.53999996, 0.01, -0.19999999, -0.35, 0.01, -0.29999998, 0.44799998, 0.01, -0.19999999, -0.35, 0.01, -0.19999999, 0.53999996, 0.01, -0.19999999, 0.44799998, 0.01, -0.19999999, 0.44799998, 0.01, -0.29999998, -0.35, 0.01, -0.29999998, 0.44799998, 0.01, -0.29999998, 0.44799998, 0.01, -0.19999999, 0.189, 0.3701, 0.29999998, 0.45, 0.4594, 0.29999998, 0.45, 0.3701, 0.29999998, 0.189, 0.3701, 0.29999998, 0.189, 0.4594, 0.29999998, 0.45, 0.4594, 0.29999998, 0, 0.3698, 0.29999998, 0.189, 0.4594, 0.29999998, 0.189, 0.3701, 0.29999998, 0, 0.3698, 0.29999998, 0, 0.4594, 0.29999998, 0.189, 0.4594, 0.29999998, 0, 0.4594, 0.29999998, 0, 0.3698, 0.29999998, -0.17899999, 0.3701, 0.29999998, 0, 0.4594, 0.29999998, -0.17899999, 0.3701, 0.29999998, -0.17899999, 0.4594, 0.29999998, -0.17899999, 0.4594, 0.29999998, -0.17899999, 0.3701, 0.29999998, -0.45, 0.3701, 0.29999998, -0.17899999, 0.4594, 0.29999998, -0.45, 0.3701, 0.29999998, -0.45, 0.4594, 0.29999998, 0.45, 0.4594, 0.29999998, 0.48999998, 0.4594, 0.21959999, 0.48999998, 0.3701, 0.21959999, 0.48999998, 0.3701, 0.21959999, 0.45, 0.3701, 0.29999998, 0.45, 0.4594, 0.29999998, 0.48999998, 0.4594, 0.21959999, 0.48999998, 0.4594, -0.17999999, 0.48999998, 0.3701, -0.17999999, 0.48999998, 0.3701, -0.17999999, 0.48999998, 0.3701, 0.21959999, 0.48999998, 0.4594, 0.21959999, -0.45, 0.4594, 0.29999998, -0.45, 0.3701, 0.29999998, -0.48999998, 0.3701, 0.21959999, -0.48999998, 0.3701, 0.21959999, -0.48999998, 0.4594, 0.21959999, -0.45, 0.4594, 0.29999998, -0.48999998, 0.4594, 0.21959999, -0.48999998, 0.3701, 0.21959999, -0.48999998, 0.3701, -0.17999999, -0.48999998, 0.3701, -0.17999999, -0.48999998, 0.4594, -0.17999999, -0.48999998, 0.4594, 0.21959999, 0.3597, 0.36969998, 0.3003, 0.4197, 0.030299999, 0.3403, 0.24059999, 0.030299999, 0.3403, 0.24059999, 0.030299999, 0.3403, 0.24059999, 0.36969998, 0.3003, 0.3597, 0.36969998, 0.3003, 0.32, 0.67609996, 0.053999998, 0.16, 0.7066, -0.1792, 0.32, 0.6811, -0.1792, 0.32, 0.67609996, 0.053999998, 0.16, 0.7066, 0.053999998, 0.16, 0.7066, -0.1792, 0.32, 0.67609996, 0.2608, 0.16, 0.7066, 0.053999998, 0.32, 0.67609996, 0.053999998, 0.32, 0.67609996, 0.2608, 0.16, 0.7066, 0.2608, 0.16, 0.7066, 0.053999998, 0.32, 0.6304, 0.31419998, 0.16, 0.7066, 0.2608, 0.32, 0.67609996, 0.2608, 0.32, 0.6304, 0.31419998, 0.16, 0.6454, 0.31419998, 0.16, 0.7066, 0.2608, 0.32, 0.67609996, 0.2608, 0.4219, 0.61039996, 0.3141, 0.32, 0.6304, 0.31419998, 0.32, 0.67609996, 0.2608, 0.48, 0.6081, 0.2608, 0.4219, 0.61039996, 0.3141, 0.32, 0.67609996, 0.053999998, 0.48, 0.6081, 0.2608, 0.32, 0.67609996, 0.2608, 0.32, 0.67609996, 0.053999998, 0.48, 0.6081, 0.053999998, 0.48, 0.6081, 0.2608, 0.32, 0.6811, -0.1792, 0.48, 0.6081, 0.053999998, 0.32, 0.67609996, 0.053999998, 0.32, 0.6811, -0.1792, 0.48, 0.6081, -0.1792, 0.48, 0.6081, 0.053999998, 0, 0.71709996, 0.053999998, -0.16, 0.7066, -0.1792, 0, 0.71709996, -0.1792, 0, 0.71709996, 0.053999998, -0.16, 0.7066, 0.053999998, -0.16, 0.7066, -0.1792, 0, 0.71709996, 0.2608, -0.16, 0.7066, 0.053999998, 0, 0.71709996, 0.053999998, 0, 0.71709996, 0.2608, -0.16, 0.7066, 0.2608, -0.16, 0.7066, 0.053999998, 0, 0.6404, 0.31419998, -0.16, 0.7066, 0.2608, 0, 0.71709996, 0.2608, 0, 0.6404, 0.31419998, -0.16, 0.6454, 0.31419998, -0.16, 0.7066, 0.2608, 0.16, 0.7066, 0.053999998, 0, 0.71709996, -0.1792, 0.16, 0.7066, -0.1792, 0.16, 0.7066, 0.053999998, 0, 0.71709996, 0.053999998, 0, 0.71709996, -0.1792, 0.16, 0.7066, 0.2608, 0, 0.71709996, 0.053999998, 0.16, 0.7066, 0.053999998, 0.16, 0.7066, 0.2608, 0, 0.71709996, 0.2608, 0, 0.71709996, 0.053999998, 0.16, 0.6454, 0.31419998, 0, 0.71709996, 0.2608, 0.16, 0.7066, 0.2608, 0.16, 0.6454, 0.31419998, 0, 0.6404, 0.31419998, 0, 0.71709996, 0.2608, -0.16, 0.7066, 0.053999998, -0.32, 0.67859995, -0.1792, -0.16, 0.7066, -0.1792, -0.16, 0.7066, 0.053999998, -0.32, 0.67609996, 0.053999998, -0.32, 0.67859995, -0.1792, -0.16, 0.7066, 0.2608, -0.32, 0.67609996, 0.053999998, -0.16, 0.7066, 0.053999998, -0.16, 0.7066, 0.2608, -0.32, 0.67609996, 0.2608, -0.32, 0.67609996, 0.053999998, -0.32, 0.67609996, 0.053999998, -0.48, 0.6081, -0.1792, -0.32, 0.67859995, -0.1792, -0.32, 0.67609996, 0.053999998, -0.48, 0.6081, 0.053999998, -0.48, 0.6081, -0.1792, -0.32, 0.67609996, 0.2608, -0.48, 0.6081, 0.053999998, -0.32, 0.67609996, 0.053999998, -0.32, 0.67609996, 0.2608, -0.48, 0.6081, 0.2608, -0.48, 0.6081, 0.053999998, -0.4219, 0.61039996, 0.3141, -0.48, 0.6081, 0.2608, -0.32, 0.67609996, 0.2608, -0.32, 0.67609996, 0.2608, -0.32, 0.6304, 0.31419998, -0.4219, 0.61039996, 0.3141, -0.32, 0.67609996, 0.2608, -0.16, 0.7066, 0.2608, -0.16, 0.6454, 0.31419998, -0.16, 0.6454, 0.31419998, -0.32, 0.6304, 0.31419998, -0.32, 0.67609996, 0.2608, 0.1986, 0.59999996, 0.35999998, 0.28, 0.58, 0.32, 0.28, 0.58, 0.35999998, 0.1986, 0.59999996, 0.35999998, 0.1986, 0.59999996, 0.32, 0.28, 0.58, 0.32, -0.19579999, 0.59999996, 0.35999998, 0.1986, 0.59999996, 0.32, 0.1986, 0.59999996, 0.35999998, -0.19579999, 0.59999996, 0.35999998, -0.19579999, 0.59999996, 0.32, 0.1986, 0.59999996, 0.32, -0.28, 0.52, 0.35999998, -0.19579999, 0.59999996, 0.32, -0.19579999, 0.59999996, 0.35999998, -0.28, 0.52, 0.35999998, -0.28, 0.52, 0.32, -0.19579999, 0.59999996, 0.32, 0.1986, 0.35999998, 0.35999998, 0.28, 0.58, 0.35999998, 0.29999998, 0.35999998, 0.35999998, 0.1986, 0.35999998, 0.35999998, 0.1986, 0.59999996, 0.35999998, 0.28, 0.58, 0.35999998, -0.19579999, 0.35999998, 0.35999998, 0.1986, 0.59999996, 0.35999998, 0.1986, 0.35999998, 0.35999998, -0.19579999, 0.35999998, 0.35999998, -0.19579999, 0.59999996, 0.35999998, 0.1986, 0.59999996, 0.35999998, -0.29999998, 0.39999998, 0.35999998, -0.19579999, 0.59999996, 0.35999998, -0.19579999, 0.35999998, 0.35999998, -0.29999998, 0.39999998, 0.35999998, -0.28, 0.52, 0.35999998, -0.19579999, 0.59999996, 0.35999998, 0.28, 0.53999996, 0.34, 0.48, 0.58, 0.26, 0.48, 0.53999996, 0.34, 0.28, 0.53999996, 0.34, 0.28, 0.64, 0.26, 0.48, 0.58, 0.26, 0, 0.53999996, 0.34, 0.28, 0.64, 0.26, 0.28, 0.53999996, 0.34, 0, 0.53999996, 0.34, 0, 0.65999997, 0.26, 0.28, 0.64, 0.26, 0.28, 0.4594, 0.34, 0.48, 0.53999996, 0.34, 0.48, 0.4594, 0.34, 0.28, 0.4594, 0.34, 0.28, 0.53999996, 0.34, 0.48, 0.53999996, 0.34, 0, 0.4594, 0.34, 0.28, 0.53999996, 0.34, 0.28, 0.4594, 0.34, 0, 0.4594, 0.34, 0, 0.53999996, 0.34, 0.28, 0.53999996, 0.34, 0, 0.53999996, 0.34, 0, 0.4594, 0.34, -0.28, 0.4594, 0.34, 0, 0.53999996, 0.34, -0.28, 0.4594, 0.34, -0.28, 0.53999996, 0.34, -0.28, 0.53999996, 0.34, -0.28, 0.4594, 0.34, -0.48, 0.4594, 0.34, -0.28, 0.53999996, 0.34, -0.48, 0.4594, 0.34, -0.48, 0.53999996, 0.34, 0.259, 0.3401, 0.28, 0.44, 0.057, 0.28, 0.259, 0.057, 0.28, 0.259, 0.3401, 0.28, 0.44, 0.3401, 0.28, 0.44, 0.057, 0.28, 0.259, 0.4594, 0.28, 0.44, 0.3401, 0.28, 0.259, 0.3401, 0.28, 0.259, 0.4594, 0.28, 0.44, 0.4594, 0.28, 0.44, 0.3401, 0.28, 0.53999996, 0.53999996, 0.0339, 0.53999996, 0.4594, 0.26, 0.53999996, 0.53999996, 0.26, 0.53999996, 0.53999996, 0.0339, 0.53999996, 0.4594, 0.0339, 0.53999996, 0.4594, 0.26, 0.53999996, 0.53999996, -0.24, 0.53999996, 0.4594, 0.0339, 0.53999996, 0.53999996, 0.0339, 0.53999996, 0.53999996, -0.24, 0.53999996, 0.4594, -0.24, 0.53999996, 0.4594, 0.0339, -0.44, 0.3401, 0.28, -0.259, 0.057, 0.28, -0.44, 0.057, 0.28, -0.44, 0.3401, 0.28, -0.259, 0.3401, 0.28, -0.259, 0.057, 0.28, -0.44, 0.4594, 0.28, -0.259, 0.3401, 0.28, -0.44, 0.3401, 0.28, -0.44, 0.4594, 0.28, -0.259, 0.4594, 0.28, -0.259, 0.3401, 0.28, -0.48, 0.3401, 0.1996, -0.44, 0.057, 0.28, -0.48, 0.057, 0.1996, -0.48, 0.3401, 0.1996, -0.44, 0.3401, 0.28, -0.44, 0.057, 0.28, -0.48, 0.4594, 0.1996, -0.44, 0.3401, 0.28, -0.48, 0.3401, 0.1996, -0.48, 0.4594, 0.1996, -0.44, 0.4594, 0.28, -0.44, 0.3401, 0.28, -0.28, 0.64, 0.26, -0.48, 0.53999996, 0.34, -0.48, 0.58, 0.26, -0.28, 0.64, 0.26, -0.28, 0.53999996, 0.34, -0.48, 0.53999996, 0.34, 0, 0.65999997, 0.26, -0.28, 0.53999996, 0.34, -0.28, 0.64, 0.26, 0, 0.65999997, 0.26, 0, 0.53999996, 0.34, -0.28, 0.53999996, 0.34, -0.48, 0.58, 0.0339, -0.53999996, 0.53999996, -0.24, -0.48, 0.58, -0.24, -0.48, 0.58, 0.0339, -0.53999996, 0.53999996, 0.0339, -0.53999996, 0.53999996, -0.24, -0.48, 0.58, 0.26, -0.53999996, 0.53999996, 0.0339, -0.48, 0.58, 0.0339, -0.48, 0.58, 0.26, -0.53999996, 0.53999996, 0.26, -0.53999996, 0.53999996, 0.0339, -0.53999996, 0.4594, 0.0339, -0.53999996, 0.53999996, 0.26, -0.53999996, 0.4594, 0.26, -0.53999996, 0.4594, 0.0339, -0.53999996, 0.53999996, 0.0339, -0.53999996, 0.53999996, 0.26, -0.53999996, 0.4594, -0.24, -0.53999996, 0.53999996, 0.0339, -0.53999996, 0.4594, 0.0339, -0.53999996, 0.4594, -0.24, -0.53999996, 0.53999996, -0.24, -0.53999996, 0.53999996, 0.0339, -0.48, 0.3401, -0.20199999, -0.48, 0.057, 0.1996, -0.48, 0.057, -0.20199999, -0.48, 0.3401, -0.20199999, -0.48, 0.3401, 0.1996, -0.48, 0.057, 0.1996, -0.48, 0.4594, -0.20199999, -0.48, 0.3401, 0.1996, -0.48, 0.3401, -0.20199999, -0.48, 0.4594, -0.20199999, -0.48, 0.4594, 0.1996, -0.48, 0.3401, 0.1996, 0.44, 0.3401, 0.28, 0.48, 0.057, 0.1996, 0.44, 0.057, 0.28, 0.44, 0.3401, 0.28, 0.48, 0.3401, 0.1996, 0.48, 0.057, 0.1996, 0.44, 0.4594, 0.28, 0.48, 0.3401, 0.1996, 0.44, 0.3401, 0.28, 0.44, 0.4594, 0.28, 0.48, 0.4594, 0.1996, 0.48, 0.3401, 0.1996, 0.48, 0.3401, 0.1996, 0.48, 0.057, -0.19999999, 0.48, 0.057, 0.1996, 0.48, 0.3401, 0.1996, 0.48, 0.3401, -0.19999999, 0.48, 0.057, -0.19999999, 0.48, 0.4594, 0.1996, 0.48, 0.3401, -0.19999999, 0.48, 0.3401, 0.1996, 0.48, 0.4594, 0.1996, 0.48, 0.4594, -0.19999999, 0.48, 0.3401, -0.19999999, -0.29999998, 0.39999998, 0.32, -0.35999998, 0.057, 0.35999998, -0.35999998, 0.057, 0.32, -0.29999998, 0.39999998, 0.32, -0.29999998, 0.39999998, 0.35999998, -0.35999998, 0.057, 0.35999998, -0.28, 0.52, 0.32, -0.29999998, 0.39999998, 0.35999998, -0.29999998, 0.39999998, 0.32, -0.28, 0.52, 0.32, -0.28, 0.52, 0.35999998, -0.29999998, 0.39999998, 0.35999998, 0.28, 0.64, 0.0339, 0, 0.65999997, -0.24, 0.28, 0.64, -0.24, 0.28, 0.64, 0.0339, 0, 0.65999997, 0.0339, 0, 0.65999997, -0.24, 0.28, 0.64, 0.26, 0, 0.65999997, 0.0339, 0.28, 0.64, 0.0339, 0.28, 0.64, 0.26, 0, 0.65999997, 0.26, 0, 0.65999997, 0.0339, 0.48, 0.58, 0.0339, 0.28, 0.64, -0.24, 0.48, 0.58, -0.24, 0.48, 0.58, 0.0339, 0.28, 0.64, 0.0339, 0.28, 0.64, -0.24, 0.48, 0.58, 0.26, 0.28, 0.64, 0.0339, 0.48, 0.58, 0.0339, 0.48, 0.58, 0.26, 0.28, 0.64, 0.26, 0.28, 0.64, 0.0339, -0.28, 0.64, 0.0339, 0, 0.65999997, -0.24, 0, 0.65999997, 0.0339, -0.28, 0.64, 0.0339, -0.28, 0.64, -0.24, 0, 0.65999997, -0.24, -0.48, 0.58, 0.0339, -0.28, 0.64, -0.24, -0.28, 0.64, 0.0339, -0.48, 0.58, 0.0339, -0.48, 0.58, -0.24, -0.28, 0.64, -0.24, -0.28, 0.64, 0.26, 0, 0.65999997, 0.0339, 0, 0.65999997, 0.26, -0.28, 0.64, 0.26, -0.28, 0.64, 0.0339, 0, 0.65999997, 0.0339, -0.48, 0.58, 0.26, -0.28, 0.64, 0.0339, -0.28, 0.64, 0.26, -0.48, 0.58, 0.26, -0.48, 0.58, 0.0339, -0.28, 0.64, 0.0339, 0.259, 0.057, 0.28, 0.44, 0.057, 0.28, 0.44, 0.02, 0.28, 0.44, 0.02, 0.28, 0.259, 0.02, 0.28, 0.259, 0.057, 0.28, -0.44, 0.057, 0.28, -0.44, 0.02, 0.28, -0.48, 0.02, 0.1996, -0.48, 0.02, 0.1996, -0.48, 0.057, 0.1996, -0.44, 0.057, 0.28, -0.259, 0.3401, 0.28, -0.259, 0.4594, 0.28, 0, 0.4594, 0.28, 0, 0.4594, 0.28, 0, 0.3398, 0.28, -0.259, 0.3401, 0.28, 0.259, 0.3401, 0.28, 0, 0.3398, 0.28, 0, 0.4594, 0.28, 0, 0.4594, 0.28, 0.259, 0.4594, 0.28, 0.259, 0.3401, 0.28, -0.48, 0.057, 0.1996, -0.48, 0.02, 0.1996, -0.48, 0.02, -0.20199999, -0.48, 0.02, -0.20199999, -0.48, 0.057, -0.20199999, -0.48, 0.057, 0.1996, -0.259, 0.057, 0.28, -0.259, 0.02, 0.28, -0.44, 0.02, 0.28, -0.44, 0.02, 0.28, -0.44, 0.057, 0.28, -0.259, 0.057, 0.28, 0.19839999, 0.3398, 0.35999998, 0.19839999, 0.02, 0.35999998, 0.19839999, 0.02, 0.24, 0.19839999, 0.02, 0.24, 0.19839999, 0.3398, 0.24, 0.19839999, 0.3398, 0.35999998, 0.19839999, 0.02, 0.24, 0.19839999, 0.02, 0.35999998, -0.199, 0.02, 0.35999998, -0.199, 0.02, 0.35999998, -0.199, 0.02, 0.23979999, 0.19839999, 0.02, 0.24, -0.199, 0.02, 0.35999998, -0.199, 0.3398, 0.35999998, -0.199, 0.3398, 0.24, -0.199, 0.3398, 0.24, -0.199, 0.02, 0.23979999, -0.199, 0.02, 0.35999998, -0.199, 0.3398, 0.24, 0.19839999, 0.3398, 0.24, 0.19839999, 0.02, 0.24, 0.19839999, 0.02, 0.24, -0.199, 0.02, 0.23979999, -0.199, 0.3398, 0.24, 0.1986, 0.35999998, 0.35999998, 0.1986, 0.057, 0.35999998, 0.1986, 0.057, 0.32, 0.1986, 0.057, 0.32, 0.1986, 0.35999998, 0.32, 0.1986, 0.35999998, 0.35999998, -0.19579999, 0.02, 0.35999998, -0.19579999, 0.057, 0.35999998, -0.19579999, 0.057, 0.32, -0.19579999, 0.057, 0.32, -0.19579999, 0.02, 0.32, -0.19579999, 0.02, 0.35999998, 0.1986, 0.02, 0.35999998, 0.1986, 0.057, 0.35999998, 0.35999998, 0.057, 0.35999998, 0.35999998, 0.057, 0.35999998, 0.35999998, 0.02, 0.35999998, 0.1986, 0.02, 0.35999998, 0.35999998, 0.02, 0.35999998, 0.35999998, 0.057, 0.35999998, 0.35999998, 0.057, 0.32, 0.35999998, 0.057, 0.32, 0.35999998, 0.02, 0.32, 0.35999998, 0.02, 0.35999998, -0.35999998, 0.02, 0.32, -0.35999998, 0.057, 0.32, -0.35999998, 0.057, 0.35999998, -0.35999998, 0.057, 0.35999998, -0.35999998, 0.02, 0.35999998, -0.35999998, 0.02, 0.32, -0.35999998, 0.02, 0.35999998, -0.35999998, 0.057, 0.35999998, -0.19579999, 0.057, 0.35999998, -0.19579999, 0.057, 0.35999998, -0.19579999, 0.02, 0.35999998, -0.35999998, 0.02, 0.35999998, 0.1986, 0.057, 0.32, 0.1986, 0.057, 0.35999998, 0.1986, 0.02, 0.35999998, 0.1986, 0.02, 0.35999998, 0.1986, 0.02, 0.32, 0.1986, 0.057, 0.32, -0.19579999, 0.057, 0.32, -0.19579999, 0.057, 0.35999998, -0.19579999, 0.35999998, 0.35999998, -0.19579999, 0.35999998, 0.35999998, -0.19579999, 0.35999998, 0.32, -0.19579999, 0.057, 0.32, 0.1986, 0.057, 0.35999998, 0.1986, 0.35999998, 0.35999998, 0.29999998, 0.35999998, 0.35999998, 0.29999998, 0.35999998, 0.35999998, 0.35999998, 0.057, 0.35999998, 0.1986, 0.057, 0.35999998, 0.35999998, 0.057, 0.35999998, 0.29999998, 0.35999998, 0.35999998, 0.29999998, 0.35999998, 0.32, 0.29999998, 0.35999998, 0.32, 0.35999998, 0.057, 0.32, 0.35999998, 0.057, 0.35999998, 0.48, 0.58, -0.24, 0.53999996, 0.53999996, -0.24, 0.53999996, 0.53999996, 0.0339, 0.53999996, 0.53999996, 0.0339, 0.48, 0.58, 0.0339, 0.48, 0.58, -0.24, -0.35999998, 0.057, 0.35999998, -0.29999998, 0.39999998, 0.35999998, -0.19579999, 0.35999998, 0.35999998, -0.19579999, 0.35999998, 0.35999998, -0.19579999, 0.057, 0.35999998, -0.35999998, 0.057, 0.35999998, 0.53999996, 0.53999996, 0.26, 0.53999996, 0.4594, 0.26, 0.48, 0.4594, 0.34, 0.48, 0.4594, 0.34, 0.48, 0.53999996, 0.34, 0.53999996, 0.53999996, 0.26, 0.53999996, 0.53999996, 0.0339, 0.53999996, 0.53999996, 0.26, 0.48, 0.58, 0.26, 0.48, 0.58, 0.26, 0.48, 0.58, 0.0339, 0.53999996, 0.53999996, 0.0339, 0.28, 0.58, 0.32, 0.29999998, 0.35999998, 0.32, 0.29999998, 0.35999998, 0.35999998, 0.29999998, 0.35999998, 0.35999998, 0.28, 0.58, 0.35999998, 0.28, 0.58, 0.32, -0.53999996, 0.53999996, 0.26, -0.48, 0.53999996, 0.34, -0.48, 0.4594, 0.34, -0.48, 0.4594, 0.34, -0.53999996, 0.4594, 0.26, -0.53999996, 0.53999996, 0.26, 0.44, 0.057, 0.28, 0.48, 0.057, 0.1996, 0.48, 0.02, 0.1996, 0.48, 0.02, 0.1996, 0.44, 0.02, 0.28, 0.44, 0.057, 0.28, 0.48, 0.057, 0.1996, 0.48, 0.057, -0.19999999, 0.48, 0.02, -0.19999999, 0.48, 0.02, -0.19999999, 0.48, 0.02, 0.1996, 0.48, 0.057, 0.1996, 0.48, 0.58, 0.26, 0.53999996, 0.53999996, 0.26, 0.48, 0.53999996, 0.34, -0.53999996, 0.53999996, 0.26, -0.48, 0.58, 0.26, -0.48, 0.53999996, 0.34)
 
-[node name="Main" type="Node3D"]
+[node name="Main" type="Node3D" unique_id=411485026]
 
-[node name="Player" parent="." groups=["player"] instance=ExtResource("2_fdnlq")]
+[node name="Player" parent="." unique_id=1868634362 groups=["player"] instance=ExtResource("2_fdnlq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1104321, 0.12553698, 1.0885181)
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=77694813]
 environment = SubResource("Environment_u5gxq")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment" unique_id=1026830698]
 transform = Transform3D(1, 0, 0, 0, 0.8120834, 0.5835411, 0, -0.5835411, 0.8120834, 0, 1.18726, 0.775661)
 shadow_enabled = true
 shadow_transmittance_bias = -16.0
 shadow_blur = 0.0
 
-[node name="Enemy" parent="." instance=ExtResource("4_wsu2k")]
-transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0.45940083, 0.2537522, -3.917792)
-
-[node name="Enemy3" parent="." instance=ExtResource("4_wsu2k")]
-transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 2.2290606, 0.2537522, -4.7434464)
-
-[node name="Enemy4" parent="." instance=ExtResource("4_wsu2k")]
-transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 4.181729, 0.67174387, -6.348799)
-
-[node name="Enemy5" parent="." instance=ExtResource("4_wsu2k")]
-transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, -1.7219348, 0.67174387, -6.348799)
-
-[node name="Enemy6" parent="." instance=ExtResource("4_wsu2k")]
-transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 5.853584, 1.0017478, -9.862997)
-
-[node name="Enemy7" parent="." instance=ExtResource("4_wsu2k")]
-transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 5.415408, 1.0969105, -11.904628)
-
-[node name="Enemy8" parent="." instance=ExtResource("4_wsu2k")]
-transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 6.726567, 1.0969105, -11.904628)
-
-[node name="Enemy2" parent="." instance=ExtResource("4_wsu2k")]
-transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0.45940083, 0.4502649, -6.001363)
-
-[node name="Enemy9" parent="." instance=ExtResource("4_wsu2k")]
-transform = Transform3D(0.72, 0, 0, 0, 0.72, 0, 0, 0, 0.72, 0.45940083, 0.68884337, -10.989125)
-
-[node name="WaterSurface13" type="Area3D" parent="."]
+[node name="WaterSurface13" type="Area3D" parent="." unique_id=1925036246]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.046987534, -0.02450794, 2.9086988)
 script = ExtResource("5_ueoa1")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WaterSurface13"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WaterSurface13" unique_id=1263087303]
 transform = Transform3D(49.245, 0, 0, 0, 49.245, 0, 0, 0, 49.245, 0, -0.594935, -9.818293)
 shape = SubResource("BoxShape3D_ueoa1")
 
-[node name="WaterSurface12" type="MeshInstance3D" parent="WaterSurface13"]
+[node name="WaterSurface12" type="MeshInstance3D" parent="WaterSurface13" unique_id=996250100]
 mesh = SubResource("PlaneMesh_2cgwh")
 skeleton = NodePath("../..")
 
-[node name="GridMap" type="GridMap" parent="."]
+[node name="GridMap" type="GridMap" parent="." unique_id=1002371846]
 top_level = true
 mesh_library = ExtResource("6_h1bgf")
 cell_size = Vector3(0.25, 0.125, 0.25)
@@ -770,7 +627,7 @@ data = {
 }
 metadata/_editor_floor_ = Vector3(0, 0, 0)
 
-[node name="GridMap_Grass" type="GridMap" parent="."]
+[node name="GridMap_Grass" type="GridMap" parent="." unique_id=351619877]
 top_level = true
 mesh_library = ExtResource("6_b3802")
 cell_size = Vector3(0.25, 0.125, 0.25)
@@ -781,1682 +638,1647 @@ data = {
 }
 metadata/_editor_floor_ = Vector3(0, 7, 0)
 
-[node name="Key" parent="." instance=ExtResource("7_b3802")]
+[node name="Key" parent="." unique_id=704875833 instance=ExtResource("7_b3802")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5352004, 0.638445, -6.6042814)
 
-[node name="Door" parent="." instance=ExtResource("8_fevyy")]
+[node name="Door" parent="." unique_id=991357660 instance=ExtResource("8_fevyy")]
 transform = Transform3D(0.215, 0, 0, 0, 0.215, 0, 0, 0, 0.215, 5.4877744, 0.6848888, -8.206904)
 open_distance = 2.0
 open_speed = 1.5
 shake_duration = 1.0
 shake_intensity = 0.02
 
-[node name="HealthPickup" parent="." instance=ExtResource("10_pdsj5")]
+[node name="HealthPickup" parent="." unique_id=2061723975 instance=ExtResource("10_pdsj5")]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.8600371, 0.47813773, -2.243822)
 heal_amount = 10.0
 use_billboard = false
 
-[node name="TreasureChest" parent="." instance=ExtResource("11_ee4r6")]
+[node name="TreasureChest" parent="." unique_id=2044665408 instance=ExtResource("11_ee4r6")]
 transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-09, -1.8991733, 0.10093778, -3.6675897)
 loot_scene = ExtResource("10_pdsj5")
 
-[node name="TreasureChest2" parent="." instance=ExtResource("11_ee4r6")]
+[node name="TreasureChest2" parent="." unique_id=264436443 instance=ExtResource("11_ee4r6")]
 transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-09, 4.884998, 0.6039116, -6.6177797)
 loot_scene = ExtResource("9_hibaj")
 
-[node name="TreasureChest4" parent="." instance=ExtResource("11_ee4r6")]
+[node name="TreasureChest4" parent="." unique_id=1359811153 instance=ExtResource("11_ee4r6")]
 transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-09, 1.4637098, 0.7291701, -9.248571)
 loot_scene = ExtResource("10_pdsj5")
 
-[node name="TreasureChest3" parent="." instance=ExtResource("11_ee4r6")]
+[node name="TreasureChest3" parent="." unique_id=1297343106 instance=ExtResource("11_ee4r6")]
 transform = Transform3D(-7.86805e-09, 0, 0.18, 0, 0.18, 0, -0.18, 0, -7.86805e-09, 2.7758152, 0.1007787, -2.3540297)
 loot_scene = ExtResource("9_hibaj")
 
-[node name="player_ui" parent="." instance=ExtResource("1_6iyac")]
+[node name="player_ui" parent="." unique_id=401075745 instance=ExtResource("1_6iyac")]
 notification_fade_speed = 0.5
 max_notifications = 5
 
-[node name="LevelExits" type="Area3D" parent="."]
+[node name="LevelExits" type="Area3D" parent="." unique_id=745003435]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.99193, 1.1433257, -15.331361)
 script = ExtResource("19_fevyy")
-target_level = "uid://co2ekmqwgekau"
-auto_trigger = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="LevelExits"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LevelExits" unique_id=187043072]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0087890625, -9.1552734e-05, 0)
 shape = SubResource("BoxShape3D_fevyy")
 
-[node name="Env" type="Node3D" parent="."]
+[node name="Env" type="Node3D" parent="." unique_id=1374391192]
 
-[node name="Tree_Bare_1_C_Color2" parent="Env" instance=ExtResource("121_37usx")]
+[node name="Tree_Bare_1_C_Color2" parent="Env" unique_id=1332303863 instance=ExtResource("121_37usx")]
 transform = Transform3D(0.095, 0, 0, 0, 0.095, 0, 0, 0, 0.095, 2.2708237, 0.05729288, -0.15855694)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_Bare_1_C_Color2"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_Bare_1_C_Color2" unique_id=908600631]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_Bare_1_C_Color2/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_Bare_1_C_Color2/StaticBody3D" unique_id=781544350]
 transform = Transform3D(1.0000007, 0, 0, 0, 1.0000007, 0, 0, 0, 1.0000007, 0, 2.0498052, 0)
 shape = SubResource("BoxShape3D_ceghn")
 
-[node name="Tree_Bare_1_C_Color3" parent="Env" instance=ExtResource("121_37usx")]
+[node name="Tree_Bare_1_C_Color3" parent="Env" unique_id=1856722813 instance=ExtResource("121_37usx")]
 transform = Transform3D(0.095, 0, 0, 0, 0.095, 0, 0, 0, 0.095, -1.6949856, 0.1818996, -1.0506567)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_Bare_1_C_Color3"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_Bare_1_C_Color3" unique_id=1250763657]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_Bare_1_C_Color3/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_Bare_1_C_Color3/StaticBody3D" unique_id=1371076623]
 transform = Transform3D(1.0000007, 0, 0, 0, 1.0000007, 0, 0, 0, 1.0000007, 0, 2.0498052, 0)
 shape = SubResource("BoxShape3D_ceghn")
 
-[node name="Tree_Bare_2_C_Color1" parent="Env" instance=ExtResource("124_4q4m1")]
+[node name="Tree_Bare_2_C_Color1" parent="Env" unique_id=1055076144 instance=ExtResource("124_4q4m1")]
 transform = Transform3D(0.095, 0, 0, 0, 0.095, 0, 0, 0, 0.095, 1.3391486, 0.450962, -2.231706)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_Bare_2_C_Color1"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_Bare_2_C_Color1" unique_id=1197371746]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_Bare_2_C_Color1/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_Bare_2_C_Color1/StaticBody3D" unique_id=449186217]
 transform = Transform3D(1.0000007, 0, 0, 0, 1.0000007, 0, 0, 0, 1.0000007, 0, 3.730225, 0)
 shape = SubResource("BoxShape3D_gt3je")
 
-[node name="Bush_1_G_Color2" type="MeshInstance3D" parent="Env"]
+[node name="Bush_1_G_Color2" type="MeshInstance3D" parent="Env" unique_id=199822771]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 6.0124326, 0.5706688, -8.176288)
 mesh = SubResource("ArrayMesh_jx3vu")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Bush_1_G_Color2"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Bush_1_G_Color2" unique_id=726770253]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Bush_1_G_Color2/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Bush_1_G_Color2/StaticBody3D" unique_id=525914473]
 shape = SubResource("ConcavePolygonShape3D_3pmx8")
 
-[node name="Bush_1_G_Color3" type="MeshInstance3D" parent="Env"]
+[node name="Bush_1_G_Color3" type="MeshInstance3D" parent="Env" unique_id=218139436]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.6867595, 0.5706688, -8.176288)
 mesh = SubResource("ArrayMesh_jx3vu")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Bush_1_G_Color3"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Bush_1_G_Color3" unique_id=1952700905]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Bush_1_G_Color3/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Bush_1_G_Color3/StaticBody3D" unique_id=130019307]
 shape = SubResource("ConcavePolygonShape3D_3pmx8")
 
-[node name="Rock_1_L_Color2" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color2" type="MeshInstance3D" parent="Env" unique_id=848831664]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 6.043018, 1.1322876, -16.204262)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color2"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color2" unique_id=1037518908]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color2/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color2/StaticBody3D" unique_id=1033810869]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Rock_1_M_Color2" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_M_Color2" type="MeshInstance3D" parent="Env" unique_id=1054857655]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 5.246734, 0.49054766, -8.257414)
 mesh = SubResource("ArrayMesh_l4arf")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_M_Color2"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_M_Color2" unique_id=1228870712]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_M_Color2/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_M_Color2/StaticBody3D" unique_id=47733864]
 shape = SubResource("ConcavePolygonShape3D_cbgmd")
 
-[node name="Rock_1_M_Color3" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_M_Color3" type="MeshInstance3D" parent="Env" unique_id=1459789004]
 transform = Transform3D(-7.9439, -5.210033, -6.210845e-07, 3.014112e-14, -1.1324883e-06, 9.499999, -5.2100334, 7.943898, 9.469866e-07, 5.7683697, 0.49054766, -8.257414)
 mesh = SubResource("ArrayMesh_l4arf")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_M_Color3"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_M_Color3" unique_id=1568458809]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_M_Color3/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_M_Color3/StaticBody3D" unique_id=1428642997]
 shape = SubResource("ConcavePolygonShape3D_cbgmd")
 
-[node name="Rock_3_N_Color2" type="MeshInstance3D" parent="Env"]
+[node name="Rock_3_N_Color2" type="MeshInstance3D" parent="Env" unique_id=1889813886]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -1.8400724, 0.49388742, -5.2768116)
 mesh = SubResource("ArrayMesh_q153e")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_3_N_Color2"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_3_N_Color2" unique_id=196408705]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_3_N_Color2/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_3_N_Color2/StaticBody3D" unique_id=1293181979]
 shape = SubResource("ConcavePolygonShape3D_1w6v2")
 
-[node name="Rock_3_N_Color3" type="MeshInstance3D" parent="Env"]
+[node name="Rock_3_N_Color3" type="MeshInstance3D" parent="Env" unique_id=1659565917]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 1.4875356, 0.3552165, -7.7721066)
 mesh = SubResource("ArrayMesh_q153e")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_3_N_Color3"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_3_N_Color3" unique_id=1481890799]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_3_N_Color3/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_3_N_Color3/StaticBody3D" unique_id=1262952722]
 shape = SubResource("ConcavePolygonShape3D_1w6v2")
 
-[node name="Rock_3_R_Color2" type="MeshInstance3D" parent="Env"]
+[node name="Rock_3_R_Color2" type="MeshInstance3D" parent="Env" unique_id=1395200736]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 5.953123, 1.1099442, -16.6666)
 mesh = SubResource("ArrayMesh_ekr8u")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_3_R_Color2"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_3_R_Color2" unique_id=901518379]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_3_R_Color2/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_3_R_Color2/StaticBody3D" unique_id=2134427305]
 shape = SubResource("ConcavePolygonShape3D_ueoa1")
 
-[node name="Tree_2_D_Color2" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_D_Color2" type="MeshInstance3D" parent="Env" unique_id=419774205]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.6992774, 0.8282815, -8.529942)
 mesh = SubResource("ArrayMesh_6fl3t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_D_Color2"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_D_Color2" unique_id=1552321469]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_D_Color2/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_D_Color2/StaticBody3D" unique_id=1629303374]
 shape = SubResource("ConcavePolygonShape3D_6vcvc")
 
-[node name="Tree_2_D_Color3" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_D_Color3" type="MeshInstance3D" parent="Env" unique_id=243893377]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -1.5353882, 0.5073578, -6.9247847)
 mesh = SubResource("ArrayMesh_6fl3t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_D_Color3"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_D_Color3" unique_id=972149101]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_D_Color3/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_D_Color3/StaticBody3D" unique_id=438810555]
 shape = SubResource("ConcavePolygonShape3D_6vcvc")
 
-[node name="Tree_2_D_Color5" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_D_Color5" type="MeshInstance3D" parent="Env" unique_id=1721216427]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -4.269787, 0.72186106, -6.9247847)
 mesh = SubResource("ArrayMesh_6fl3t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_D_Color5"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_D_Color5" unique_id=1395971766]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_D_Color5/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_D_Color5/StaticBody3D" unique_id=806230447]
 shape = SubResource("ConcavePolygonShape3D_6vcvc")
 
-[node name="Tree_2_D_Color4" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_D_Color4" type="MeshInstance3D" parent="Env" unique_id=1407222472]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 1.7054594, 0.2727142, -5.880368)
 mesh = SubResource("ArrayMesh_6fl3t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_D_Color4"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_D_Color4" unique_id=1496561668]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_D_Color4/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_D_Color4/StaticBody3D" unique_id=341463158]
 shape = SubResource("ConcavePolygonShape3D_6vcvc")
 
-[node name="Tree_2_D_Color6" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_D_Color6" type="MeshInstance3D" parent="Env" unique_id=505373801]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 2.583056, 0.30299157, -7.4656878)
 mesh = SubResource("ArrayMesh_6fl3t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_D_Color6"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_D_Color6" unique_id=1931015505]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_D_Color6/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_D_Color6/StaticBody3D" unique_id=1799468678]
 shape = SubResource("ConcavePolygonShape3D_6vcvc")
 
-[node name="Tree_2_D_Color7" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_D_Color7" type="MeshInstance3D" parent="Env" unique_id=1030417100]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 6.330047, 0.5482606, -7.6489887)
 mesh = SubResource("ArrayMesh_6fl3t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_D_Color7"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_D_Color7" unique_id=1226529940]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_D_Color7/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_D_Color7/StaticBody3D" unique_id=129932152]
 shape = SubResource("ConcavePolygonShape3D_6vcvc")
 
-[node name="Tree_2_E_Color2" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color2" type="MeshInstance3D" parent="Env" unique_id=1325288124]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -0.74391544, 0.8068441, -13.45917)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color2"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color2" unique_id=1393487451]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color2/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color2/StaticBody3D" unique_id=1455331542]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color3" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color3" type="MeshInstance3D" parent="Env" unique_id=780650003]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -1.2934293, 0.8068441, -13.45917)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color3"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color3" unique_id=1342978610]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color3/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color3/StaticBody3D" unique_id=780645371]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color4" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color4" type="MeshInstance3D" parent="Env" unique_id=98507684]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -1.8429427, 0.8068441, -13.158383)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color4"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color4" unique_id=1127811349]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color4/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color4/StaticBody3D" unique_id=700694367]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color5" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color5" type="MeshInstance3D" parent="Env" unique_id=1869741688]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -2.3403976, 0.8068441, -12.828675)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color5"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color5" unique_id=2049546536]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color5/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color5/StaticBody3D" unique_id=1734540386]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color6" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color6" type="MeshInstance3D" parent="Env" unique_id=1554064946]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -2.7800088, 0.8068441, -12.504751)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color6"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color6" unique_id=639284117]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color6/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color6/StaticBody3D" unique_id=1351140788]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color7" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color7" type="MeshInstance3D" parent="Env" unique_id=1726835909]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -2.8841271, 0.8068441, -11.903178)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color7"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color7" unique_id=643178161]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color7/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color7/StaticBody3D" unique_id=1915118163]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color8" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color8" type="MeshInstance3D" parent="Env" unique_id=1661602493]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -3.0887353, 0.8068441, -11.407396)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color8"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color8" unique_id=384722389]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color8/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color8/StaticBody3D" unique_id=757352726]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color9" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color9" type="MeshInstance3D" parent="Env" unique_id=917485716]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -3.2933435, 0.8068441, -10.927354)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color9"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color9" unique_id=1386260535]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color9/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color9/StaticBody3D" unique_id=1911547489]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color10" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color10" type="MeshInstance3D" parent="Env" unique_id=344288292]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -3.4035172, 0.8068441, -10.187616)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color10"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color10" unique_id=1050033812]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color10/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color10/StaticBody3D" unique_id=1301045924]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color11" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color11" type="MeshInstance3D" parent="Env" unique_id=104292750]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -3.623865, 0.8068441, -9.5974)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color11"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color11" unique_id=939388832]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color11/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color11/StaticBody3D" unique_id=810660443]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color12" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color12" type="MeshInstance3D" parent="Env" unique_id=1325913450]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -3.7497776, 0.8068441, -8.991444)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color12"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color12" unique_id=1971820614]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color12/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color12/StaticBody3D" unique_id=1754224602]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color13" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color13" type="MeshInstance3D" parent="Env" unique_id=2095723140]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -4.06456, 0.8068441, -8.267445)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color13"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color13" unique_id=1562671567]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color13/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color13/StaticBody3D" unique_id=477085071]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color14" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color14" type="MeshInstance3D" parent="Env" unique_id=24465443]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -4.351784, 0.8068441, -8.891846)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color14"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color14" unique_id=1110504553]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color14/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color14/StaticBody3D" unique_id=430781010]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color15" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color15" type="MeshInstance3D" parent="Env" unique_id=501397326]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -4.201928, 0.8068441, -9.566197)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color15"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color15" unique_id=991201985]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color15/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color15/StaticBody3D" unique_id=560055503]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color16" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color16" type="MeshInstance3D" parent="Env" unique_id=1673196071]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -3.9147043, 0.8068441, -10.091654)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color16"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color16" unique_id=2044738675]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color16/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color16/StaticBody3D" unique_id=203632593]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color17" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color17" type="MeshInstance3D" parent="Env" unique_id=2117476218]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -3.7898245, 0.8068441, -10.853421)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color17"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color17" unique_id=113526783]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color17/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color17/StaticBody3D" unique_id=538790030]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color18" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color18" type="MeshInstance3D" parent="Env" unique_id=1853545973]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -3.7773366, 0.8068441, -11.540261)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color18"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color18" unique_id=2110510788]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color18/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color18/StaticBody3D" unique_id=1748706226]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color19" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color19" type="MeshInstance3D" parent="Env" unique_id=1826057300]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -3.527577, 0.8068441, -12.014805)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color19"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color19" unique_id=1918537398]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color19/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color19/StaticBody3D" unique_id=311626185]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color20" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color20" type="MeshInstance3D" parent="Env" unique_id=1659294137]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -3.302793, 0.8068441, -12.651692)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color20"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color20" unique_id=770000276]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color20/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color20/StaticBody3D" unique_id=1341174058]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color21" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color21" type="MeshInstance3D" parent="Env" unique_id=1541844240]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -2.9156651, 0.8068441, -13.126236)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color21"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color21" unique_id=672339732]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color21/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color21/StaticBody3D" unique_id=1241246399]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color22" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color22" type="MeshInstance3D" parent="Env" unique_id=954836150]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -2.403658, 0.8068441, -13.450924)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color22"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color22" unique_id=571247019]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color22/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color22/StaticBody3D" unique_id=1831925784]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color23" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color23" type="MeshInstance3D" parent="Env" unique_id=1401906320]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -1.8791624, 0.8068441, -13.650732)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color23"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color23" unique_id=351942429]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color23/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color23/StaticBody3D" unique_id=49681987]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color24" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color24" type="MeshInstance3D" parent="Env" unique_id=46169891]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -1.5294982, 0.8068441, -14.112788)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color24"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color24" unique_id=2038936493]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color24/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color24/StaticBody3D" unique_id=1673455150]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color25" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color25" type="MeshInstance3D" parent="Env" unique_id=1621586856]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -0.9675385, 0.8068441, -14.050348)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color25"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color25" unique_id=1100092507]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color25/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color25/StaticBody3D" unique_id=1920900878]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color26" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color26" type="MeshInstance3D" parent="Env" unique_id=360878392]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -1.067443, 0.8068441, -14.574844)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color26"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color26" unique_id=1811209445]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color26/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color26/StaticBody3D" unique_id=1510035815]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color27" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color27" type="MeshInstance3D" parent="Env" unique_id=51781742]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -0.18079484, 0.8068441, -13.375997)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color27"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color27" unique_id=167660962]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color27/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color27/StaticBody3D" unique_id=1505741397]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color28" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color28" type="MeshInstance3D" parent="Env" unique_id=2000996302]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, -0.3306514, 0.8068441, -14.012884)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color28"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color28" unique_id=1930330343]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color28/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color28/StaticBody3D" unique_id=61946381]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color29" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color29" type="MeshInstance3D" parent="Env" unique_id=1088668284]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 0.38116443, 0.8068441, -14.050348)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color29"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color29" unique_id=486882512]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color29/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color29/StaticBody3D" unique_id=1286840411]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color30" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color30" type="MeshInstance3D" parent="Env" unique_id=1935322407]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 0.5684842, 0.8068441, -13.138724)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color30"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color30" unique_id=1652748980]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color30/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color30/StaticBody3D" unique_id=823162289]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color31" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color31" type="MeshInstance3D" parent="Env" unique_id=1049536528]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 1.0680045, 0.8068441, -13.513364)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color31"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color31" unique_id=2100897933]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color31/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color31/StaticBody3D" unique_id=1610893178]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color32" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color32" type="MeshInstance3D" parent="Env" unique_id=1221719993]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 1.2553242, 0.8068441, -12.66418)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color32"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color32" unique_id=1369658151]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color32/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color32/StaticBody3D" unique_id=1214361955]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color33" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color33" type="MeshInstance3D" parent="Env" unique_id=1371174885]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 1.7923079, 0.8068441, -12.901452)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color33"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color33" unique_id=1971986323]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color33/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color33/StaticBody3D" unique_id=1915182406]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color34" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color34" type="MeshInstance3D" parent="Env" unique_id=287774681]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 1.7298689, 0.8068441, -12.152172)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color34"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color34" unique_id=1607355877]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color34/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color34/StaticBody3D" unique_id=1624379546]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color35" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color35" type="MeshInstance3D" parent="Env" unique_id=1927667126]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 2.2793407, 0.8068441, -12.364469)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color35"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color35" unique_id=1569932432]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color35/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color35/StaticBody3D" unique_id=1666250524]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color36" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color36" type="MeshInstance3D" parent="Env" unique_id=956657892]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 2.254365, 0.8068441, -11.715094)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color36"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color36" unique_id=1764575063]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color36/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color36/StaticBody3D" unique_id=1342076956]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color37" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color37" type="MeshInstance3D" parent="Env" unique_id=1977912727]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 2.9911566, 0.8068441, -11.790022)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color37"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color37" unique_id=1957816237]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color37/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color37/StaticBody3D" unique_id=1804950675]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color38" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color38" type="MeshInstance3D" parent="Env" unique_id=818289117]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 2.6040287, 0.8068441, -11.253038)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color38"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color38" unique_id=1659448681]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color38/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color38/StaticBody3D" unique_id=1467287696]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color39" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color39" type="MeshInstance3D" parent="Env" unique_id=660213610]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 3.4032602, 0.8068441, -11.215574)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color39"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color39" unique_id=1613641556]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color39/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color39/StaticBody3D" unique_id=1420184016]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color40" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color40" type="MeshInstance3D" parent="Env" unique_id=827768198]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 3.0411081, 0.8068441, -10.790982)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color40"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color40" unique_id=406131985]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color40/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color40/StaticBody3D" unique_id=1231242182]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color41" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color41" type="MeshInstance3D" parent="Env" unique_id=987689964]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 3.7279472, 0.8068441, -10.591174)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color41"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color41" unique_id=668286611]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color41/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color41/StaticBody3D" unique_id=2070601361]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color42" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color42" type="MeshInstance3D" parent="Env" unique_id=1196014900]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 3.6655064, 0.8068441, -9.979262)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color42"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color42" unique_id=774230264]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color42/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color42/StaticBody3D" unique_id=1569820436]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color43" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color43" type="MeshInstance3D" parent="Env" unique_id=2132554634]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.402299, 0.8068441, -10.341414)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color43"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color43" unique_id=1220871656]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color43/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color43/StaticBody3D" unique_id=1498557459]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color44" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color44" type="MeshInstance3D" parent="Env" unique_id=440469968]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.722335, 0.8068441, -11.172339)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color44"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color44" unique_id=2047752343]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color44/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color44/StaticBody3D" unique_id=1191723218]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color45" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color45" type="MeshInstance3D" parent="Env" unique_id=1302868896]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.841168, 0.8068441, -10.811225)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color45"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color45" unique_id=1856752620]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color45/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color45/StaticBody3D" unique_id=459533795]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color46" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color46" type="MeshInstance3D" parent="Env" unique_id=190605626]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.718838, 0.8068441, -10.537456)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color46"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color46" unique_id=1046302097]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color46/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color46/StaticBody3D" unique_id=445028015]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color47" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color47" type="MeshInstance3D" parent="Env" unique_id=1817240618]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.2060175, 0.8068441, -10.993868)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color47"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color47" unique_id=622402083]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color47/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color47/StaticBody3D" unique_id=650315481]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color48" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color48" type="MeshInstance3D" parent="Env" unique_id=1887104711]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.354989, 0.8068441, -10.664997)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color48"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color48" unique_id=1553609732]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color48/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color48/StaticBody3D" unique_id=1920122267]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color49" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color49" type="MeshInstance3D" parent="Env" unique_id=1657033441]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.52971, 0.8068441, -10.3258915)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color49"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color49" unique_id=710065484]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color49/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color49/StaticBody3D" unique_id=257937569]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color50" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color50" type="MeshInstance3D" parent="Env" unique_id=976398217]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.3300805, 0.8068441, -9.884248)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color50"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color50" unique_id=976868319]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color50/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color50/StaticBody3D" unique_id=1798260060]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color51" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color51" type="MeshInstance3D" parent="Env" unique_id=912152863]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.1231823, 0.8068441, -9.482088)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color51"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color51" unique_id=1826665472]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color51/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color51/StaticBody3D" unique_id=2071473774]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color52" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color52" type="MeshInstance3D" parent="Env" unique_id=1036943335]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.5132723, 0.8068441, -11.896693)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color52"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color52" unique_id=31979631]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color52/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color52/StaticBody3D" unique_id=1173585632]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color53" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color53" type="MeshInstance3D" parent="Env" unique_id=208546]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.353273, 0.8068441, -12.655465)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color53"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color53" unique_id=1806455685]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color53/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color53/StaticBody3D" unique_id=730111311]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color54" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color54" type="MeshInstance3D" parent="Env" unique_id=2135641053]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.662457, 0.8068441, -13.297282)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color54"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color54" unique_id=1036034380]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color54/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color54/StaticBody3D" unique_id=313053854]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color55" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color55" type="MeshInstance3D" parent="Env" unique_id=906493157]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.328438, 0.8068441, -11.49625)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color55"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color55" unique_id=1623512534]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color55/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color55/StaticBody3D" unique_id=1391688759]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color56" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color56" type="MeshInstance3D" parent="Env" unique_id=1911335583]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.5855827, 0.80684435, -11.911414)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color56"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color56" unique_id=615497366]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color56/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color56/StaticBody3D" unique_id=1685759518]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color57" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color57" type="MeshInstance3D" parent="Env" unique_id=2129483871]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.8166075, 0.80684435, -12.378516)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color57"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color57" unique_id=58090732]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color57/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color57/StaticBody3D" unique_id=1536400286]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color58" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color58" type="MeshInstance3D" parent="Env" unique_id=1420115541]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.8526278, 0.80684435, -12.88609)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color58"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color58" unique_id=1347421328]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color58/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color58/StaticBody3D" unique_id=778572078]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color59" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color59" type="MeshInstance3D" parent="Env" unique_id=1581184884]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.7457304, 1.0152026, -13.567024)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color59"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color59" unique_id=399974499]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color59/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color59/StaticBody3D" unique_id=620633730]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color60" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color60" type="MeshInstance3D" parent="Env" unique_id=678621553]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.8977156, 1.0152026, -14.22696)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color60"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color60" unique_id=1862414097]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color60/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color60/StaticBody3D" unique_id=1612922084]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color61" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color61" type="MeshInstance3D" parent="Env" unique_id=913355038]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.519269, 1.0152026, -15.028723)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color61"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color61" unique_id=1010572098]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color61/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color61/StaticBody3D" unique_id=1668504418]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color62" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color62" type="MeshInstance3D" parent="Env" unique_id=185012688]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.055872, 1.0152026, -15.415645)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color62"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color62" unique_id=847167324]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color62/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color62/StaticBody3D" unique_id=1078190524]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color63" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color63" type="MeshInstance3D" parent="Env" unique_id=1000229921]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 6.5139246, 1.0152026, -15.721188)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color63"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color63" unique_id=700271853]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color63/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color63/StaticBody3D" unique_id=1477981710]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color64" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color64" type="MeshInstance3D" parent="Env" unique_id=1255041843]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 5.9675694, 1.0152026, -15.811041)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color64"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color64" unique_id=443045910]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color64/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color64/StaticBody3D" unique_id=20501600]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color65" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color65" type="MeshInstance3D" parent="Env" unique_id=541893397]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 5.552926, 0.80684435, -15.870868)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color65"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color65" unique_id=1079350114]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color65/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color65/StaticBody3D" unique_id=1590017816]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color66" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color66" type="MeshInstance3D" parent="Env" unique_id=1914898715]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 5.2108507, 1.0152026, -15.812371)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color66"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color66" unique_id=966665413]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color66/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color66/StaticBody3D" unique_id=529384514]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color67" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color67" type="MeshInstance3D" parent="Env" unique_id=354920245]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.913006, 0.80684435, -15.769916)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color67"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color67" unique_id=66675911]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color67/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color67/StaticBody3D" unique_id=1519868508]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color68" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color68" type="MeshInstance3D" parent="Env" unique_id=1124099627]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.6746035, 1.0152026, -15.458755)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color68"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color68" unique_id=1255747437]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color68/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color68/StaticBody3D" unique_id=727305463]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color69" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color69" type="MeshInstance3D" parent="Env" unique_id=1976556705]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.5447497, 1.0152026, -14.925996)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color69"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color69" unique_id=408655977]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color69/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color69/StaticBody3D" unique_id=540161527]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color70" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color70" type="MeshInstance3D" parent="Env" unique_id=213873950]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.64791, 0.80684435, -14.431995)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color70"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color70" unique_id=723573613]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color70/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color70/StaticBody3D" unique_id=58347942]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color71" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color71" type="MeshInstance3D" parent="Env" unique_id=1863128299]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.6885457, 0.80684435, -13.936486)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color71"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color71" unique_id=441378273]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color71/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color71/StaticBody3D" unique_id=1344515890]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color72" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color72" type="MeshInstance3D" parent="Env" unique_id=1634543079]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.630418, 0.80684435, -13.698078)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color72"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color72" unique_id=1701545328]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color72/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color72/StaticBody3D" unique_id=1002794164]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_2_E_Color73" type="MeshInstance3D" parent="Env"]
+[node name="Tree_2_E_Color73" type="MeshInstance3D" parent="Env" unique_id=1033456900]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.630418, 0.80684435, -13.698078)
 mesh = SubResource("ArrayMesh_v3xjr")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color73"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_2_E_Color73" unique_id=1482804021]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color73/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_2_E_Color73/StaticBody3D" unique_id=1279395904]
 shape = SubResource("ConcavePolygonShape3D_7k868")
 
-[node name="Tree_3_C_Color2" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color2" type="MeshInstance3D" parent="Env" unique_id=337759182]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 6.348236, 1.051864, -16.126144)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color2"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color2" unique_id=1912880526]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color2/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color2/StaticBody3D" unique_id=585712600]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color3" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color3" type="MeshInstance3D" parent="Env" unique_id=999627753]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 5.2366133, 1.1322876, -16.204262)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color3"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color3" unique_id=50052160]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color3/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color3/StaticBody3D" unique_id=756937711]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color3" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color3" type="MeshInstance3D" parent="Env" unique_id=1754949648]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 5.5418315, 1.051864, -16.126144)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color3"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color3" unique_id=1868402553]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color3/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color3/StaticBody3D" unique_id=1684829403]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color4" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color4" type="MeshInstance3D" parent="Env" unique_id=1085248422]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 5.9129815, 1.1322876, -16.574562)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color4"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color4" unique_id=1788338301]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color4/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color4/StaticBody3D" unique_id=800096682]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color4" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color4" type="MeshInstance3D" parent="Env" unique_id=1981743486]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 6.2181997, 1.051864, -16.496445)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color4"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color4" unique_id=830273977]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color4/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color4/StaticBody3D" unique_id=1477232598]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color5" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color5" type="MeshInstance3D" parent="Env" unique_id=1674594967]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 5.2406864, 1.1322876, -16.574562)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color5"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color5" unique_id=1194040049]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color5/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color5/StaticBody3D" unique_id=1545203687]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color5" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color5" type="MeshInstance3D" parent="Env" unique_id=791068933]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 5.5459046, 1.051864, -16.496445)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color5"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color5" unique_id=59090161]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color5/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color5/StaticBody3D" unique_id=2145877597]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color6" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color6" type="MeshInstance3D" parent="Env" unique_id=1571026164]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 6.5447116, 1.1322876, -16.173866)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color6"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color6" unique_id=1753396811]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color6/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color6/StaticBody3D" unique_id=789085277]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color6" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color6" type="MeshInstance3D" parent="Env" unique_id=680959789]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 6.84993, 1.051864, -16.095749)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color6"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color6" unique_id=325912769]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color6/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color6/StaticBody3D" unique_id=297866175]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color7" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color7" type="MeshInstance3D" parent="Env" unique_id=679161307]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.0639553, 1.1322876, -15.82198)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color7"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color7" unique_id=1915302613]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color7/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color7/StaticBody3D" unique_id=1239441168]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color7" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color7" type="MeshInstance3D" parent="Env" unique_id=1917003354]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.3691735, 1.051864, -15.743863)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color7"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color7" unique_id=133318338]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color7/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color7/StaticBody3D" unique_id=587013538]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color8" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color8" type="MeshInstance3D" parent="Env" unique_id=1934545400]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.387381, 1.1322876, -15.4805565)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color8"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color8" unique_id=1047990999]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color8/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color8/StaticBody3D" unique_id=315705336]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color8" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color8" type="MeshInstance3D" parent="Env" unique_id=113009537]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.6925993, 1.051864, -15.402439)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color8"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color8" unique_id=2125519601]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color8/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color8/StaticBody3D" unique_id=1531870741]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color9" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color9" type="MeshInstance3D" parent="Env" unique_id=1912039007]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.6689553, 1.1322876, -15.4805565)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color9"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color9" unique_id=1146377763]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color9/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color9/StaticBody3D" unique_id=1817378082]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color9" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color9" type="MeshInstance3D" parent="Env" unique_id=371731525]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.9741735, 1.051864, -15.402439)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color9"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color9" unique_id=1250540856]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color9/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color9/StaticBody3D" unique_id=1975634069]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color10" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color10" type="MeshInstance3D" parent="Env" unique_id=28248815]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.6689553, 1.1322876, -14.774568)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color10"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color10" unique_id=1791448892]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color10/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color10/StaticBody3D" unique_id=83473424]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color10" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color10" type="MeshInstance3D" parent="Env" unique_id=570325446]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.9741735, 1.051864, -14.69645)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color10"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color10" unique_id=624428417]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color10/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color10/StaticBody3D" unique_id=252402328]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color11" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color11" type="MeshInstance3D" parent="Env" unique_id=613597389]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.9981103, 1.1322876, -14.774568)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color11"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color11" unique_id=230464630]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color11/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color11/StaticBody3D" unique_id=52587419]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color11" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color11" type="MeshInstance3D" parent="Env" unique_id=499015820]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 8.3033285, 1.051864, -14.69645)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color11"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color11" unique_id=131181326]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color11/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color11/StaticBody3D" unique_id=1362262504]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color12" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color12" type="MeshInstance3D" parent="Env" unique_id=1328106405]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.9981103, 1.1322876, -14.195597)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color12"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color12" unique_id=984472856]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color12/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color12/StaticBody3D" unique_id=2020371175]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color12" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color12" type="MeshInstance3D" parent="Env" unique_id=1348433165]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 8.3033285, 1.051864, -14.117479)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color12"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color12" unique_id=650314597]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color12/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color12/StaticBody3D" unique_id=1776591961]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color13" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color13" type="MeshInstance3D" parent="Env" unique_id=1632257186]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.9981103, 1.1322876, -13.523857)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color13"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color13" unique_id=209632156]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color13/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color13/StaticBody3D" unique_id=1827198056]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color13" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color13" type="MeshInstance3D" parent="Env" unique_id=538837807]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 8.3033285, 1.051864, -13.44574)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color13"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color13" unique_id=774087318]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color13/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color13/StaticBody3D" unique_id=1409141919]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color14" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color14" type="MeshInstance3D" parent="Env" unique_id=895585972]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 7.9981103, 1.1322876, -12.796706)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color14"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color14" unique_id=1497132221]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color14/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color14/StaticBody3D" unique_id=1976156137]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color14" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color14" type="MeshInstance3D" parent="Env" unique_id=1017541682]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 8.3033285, 1.051864, -12.718589)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color14"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color14" unique_id=1483874406]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color14/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color14/StaticBody3D" unique_id=1552261849]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color15" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color15" type="MeshInstance3D" parent="Env" unique_id=2080997707]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 3.9981103, 0.8025687, -12.796706)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color15"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color15" unique_id=429145988]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color15/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color15/StaticBody3D" unique_id=890639157]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color15" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color15" type="MeshInstance3D" parent="Env" unique_id=1677072694]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.3033285, 1.051864, -12.718589)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color15"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color15" unique_id=1125042232]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color15/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color15/StaticBody3D" unique_id=1216861826]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color16" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color16" type="MeshInstance3D" parent="Env" unique_id=1450714997]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 3.9981103, 0.8025687, -13.580357)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color16"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color16" unique_id=688401046]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color16/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color16/StaticBody3D" unique_id=383577487]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color16" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color16" type="MeshInstance3D" parent="Env" unique_id=309818505]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.3033285, 1.051864, -13.502239)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color16"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color16" unique_id=71251498]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color16/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color16/StaticBody3D" unique_id=1025788996]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color17" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color17" type="MeshInstance3D" parent="Env" unique_id=1866891663]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 3.9981103, 0.8261862, -14.356637)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color17"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color17" unique_id=1731426254]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color17/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color17/StaticBody3D" unique_id=692300583]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color17" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color17" type="MeshInstance3D" parent="Env" unique_id=853368802]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.3033285, 1.051864, -14.27852)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color17"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color17" unique_id=1293316678]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color17/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color17/StaticBody3D" unique_id=807475899]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color18" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color18" type="MeshInstance3D" parent="Env" unique_id=819980439]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 3.9981103, 1.1322876, -15.322821)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color18"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color18" unique_id=201385429]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color18/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color18/StaticBody3D" unique_id=966680796]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color18" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color18" type="MeshInstance3D" parent="Env" unique_id=602121858]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.3033285, 1.051864, -15.244703)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color18"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color18" unique_id=171736635]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color18/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color18/StaticBody3D" unique_id=645053066]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color19" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color19" type="MeshInstance3D" parent="Env" unique_id=773659722]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 3.9981103, 1.1322876, -15.975378)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color19"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color19" unique_id=1158806473]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color19/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color19/StaticBody3D" unique_id=768936669]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color19" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color19" type="MeshInstance3D" parent="Env" unique_id=1576929358]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.3033285, 1.051864, -15.897261)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color19"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color19" unique_id=1946243916]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color19/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color19/StaticBody3D" unique_id=2037251127]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color20" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color20" type="MeshInstance3D" parent="Env" unique_id=1368732842]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.3539257, 1.1322876, -16.343527)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color20"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color20" unique_id=1031952011]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color20/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color20/StaticBody3D" unique_id=1063422793]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color20" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color20" type="MeshInstance3D" parent="Env" unique_id=1810074611]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.659144, 1.051864, -16.26541)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color20"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color20" unique_id=594818160]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color20/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color20/StaticBody3D" unique_id=555612219]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color21" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color21" type="MeshInstance3D" parent="Env" unique_id=1654083638]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.730996, 1.1322876, -16.610664)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color21"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color21" unique_id=1867226262]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color21/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color21/StaticBody3D" unique_id=1885563026]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color21" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color21" type="MeshInstance3D" parent="Env" unique_id=1785511865]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 5.0362144, 1.051864, -16.532547)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color21"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color21" unique_id=827179747]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color21/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color21/StaticBody3D" unique_id=60369005]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color22" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color22" type="MeshInstance3D" parent="Env" unique_id=1818523401]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 3.9567194, 0.72893906, -13.151228)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color22"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color22" unique_id=163792438]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color22/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color22/StaticBody3D" unique_id=1176921521]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color22" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color22" type="MeshInstance3D" parent="Env" unique_id=600291525]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.2619376, 0.9782344, -13.073111)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color22"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color22" unique_id=479089732]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color22/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color22/StaticBody3D" unique_id=1223167993]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color23" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color23" type="MeshInstance3D" parent="Env" unique_id=1097983377]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 3.9567194, 0.72893906, -12.3074255)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color23"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color23" unique_id=934993738]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color23/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color23/StaticBody3D" unique_id=967717158]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color23" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color23" type="MeshInstance3D" parent="Env" unique_id=688451006]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.2619376, 0.9782344, -12.229308)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color23"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color23" unique_id=746378033]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color23/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color23/StaticBody3D" unique_id=1060864470]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Rock_1_L_Color24" type="MeshInstance3D" parent="Env"]
+[node name="Rock_1_L_Color24" type="MeshInstance3D" parent="Env" unique_id=1333728069]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 3.9567194, 0.72893906, -12.526327)
 mesh = SubResource("ArrayMesh_5urs6")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color24"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Rock_1_L_Color24" unique_id=861044564]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color24/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Rock_1_L_Color24/StaticBody3D" unique_id=530901335]
 shape = SubResource("ConcavePolygonShape3D_u50mg")
 
-[node name="Tree_3_C_Color24" type="MeshInstance3D" parent="Env"]
+[node name="Tree_3_C_Color24" type="MeshInstance3D" parent="Env" unique_id=304995922]
 transform = Transform3D(9.5, 0, 0, 0, -1.1324883e-06, 9.499999, 0, -9.499999, -1.1324883e-06, 4.2619376, 0.9782344, -12.44821)
 mesh = SubResource("ArrayMesh_uh25t")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color24"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Env/Tree_3_C_Color24" unique_id=1483258925]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color24/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Env/Tree_3_C_Color24/StaticBody3D" unique_id=715816531]
 shape = SubResource("ConcavePolygonShape3D_hpc6h")
 
-[node name="Collision" type="Node3D" parent="."]
+[node name="Collision" type="Node3D" parent="." unique_id=955100282]
 visible = false
 
-[node name="CSGMesh3D" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D" type="CSGMesh3D" parent="Collision" unique_id=447060315]
 transform = Transform3D(2.0009437, 0, 0, 0, 1, 0, 0, 0, 0.13106853, -0.4156922, 0, 0.76556826)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D43" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D43" type="CSGMesh3D" parent="Collision" unique_id=394351267]
 transform = Transform3D(0.42094207, 0, -0.10687867, 0, 1, 0, 0.59300226, 0, 0.0758677, 0.6924342, 0, 1.0481516)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D2" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D2" type="CSGMesh3D" parent="Collision" unique_id=783729012]
 transform = Transform3D(1.401259, 0, -0.093563214, 0, 1, 0, 1.4283729, 0, 0.09178716, -1.921819, -0.043749332, 0.066280425)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D3" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D3" type="CSGMesh3D" parent="Collision" unique_id=667286887]
 transform = Transform3D(0.07025069, 0, -0.1309877, 0, 1, 0, 1.9997101, 0, 0.00460165, -2.5456047, -0.043749332, -1.3106096)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D4" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D4" type="CSGMesh3D" parent="Collision" unique_id=1843188779]
 transform = Transform3D(0.07025069, 0, -0.1309877, 0, 1, 0, 1.9997101, 0, 0.00460165, -2.2526963, -0.043749332, -3.4922996)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D6" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D6" type="CSGMesh3D" parent="Collision" unique_id=582195044]
 transform = Transform3D(1.4369545, 0, -0.09121062, 0, 3.8957705, 0, 1.3924572, 0, 0.09412532, -2.8684506, 0.20049542, -5.213785)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D7" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D7" type="CSGMesh3D" parent="Collision" unique_id=699479755]
 transform = Transform3D(1.33028, 0, -0.097907916, 0, 3.89577, 0, 1.4947008, 0, 0.087137766, -4.085488, 0.20049542, -6.4373913)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D8" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D8" type="CSGMesh3D" parent="Collision" unique_id=798349679]
 transform = Transform3D(0.05248326, 0, -0.13102339, 0, 3.8957705, 0, 2.000255, 0, 0.0034378115, -4.5425615, 0.20049542, -7.9725404)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D9" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D9" type="CSGMesh3D" parent="Collision" unique_id=930677226]
 transform = Transform3D(-0.659066, 0, -0.12375465, 0, 3.895771, 0, 1.8892875, 0, -0.043171037, -4.2852726, 0.20049542, -9.673097)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D10" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D10" type="CSGMesh3D" parent="Collision" unique_id=291069096]
 transform = Transform3D(-0.659066, 0, -0.12375465, 0, 3.895771, 0, 1.8892875, 0, -0.043171037, -4.2852726, 0.20049542, -9.673097)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D11" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D11" type="CSGMesh3D" parent="Collision" unique_id=1672614538]
 transform = Transform3D(-0.659066, 0, -0.12375465, 0, 3.895771, 0, 1.8892875, 0, -0.043171037, -3.610096, 0.20049542, -11.415851)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D12" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D12" type="CSGMesh3D" parent="Collision" unique_id=14615839]
 transform = Transform3D(-1.4481598, 0, -0.09044701, 0, 3.895771, 0, 1.3807999, 0, -0.09485932, -2.6266813, 0.20049542, -12.899555)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D13" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D13" type="CSGMesh3D" parent="Collision" unique_id=2007404867]
 transform = Transform3D(-1.6744713, 0, -0.071752965, 0, 3.895771, 0, 1.0954092, 0, -0.10968347, -1.4844625, 0.20049542, -13.783975)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D14" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D14" type="CSGMesh3D" parent="Collision" unique_id=1934752636]
 transform = Transform3D(-1.9984565, 0, 0.006532915, 0, 3.895771, 0, -0.09973407, 0, -0.13090557, -0.09366274, 0.20049542, -14.128376)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D15" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D15" type="CSGMesh3D" parent="Collision" unique_id=1009687850]
 transform = Transform3D(-1.5976671, 0, 0.07891004, 0, 3.895771, 0, -1.2046721, 0, -0.10465252, 1.5531126, 0.20049542, -13.483466)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D16" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D16" type="CSGMesh3D" parent="Collision" unique_id=1293816825]
 transform = Transform3D(-1.3458589, 0, 0.096990034, 0, 3.895771, 0, -1.4806886, 0, -0.08815824, 2.8476014, 0.23447365, -12.408864)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D17" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D17" type="CSGMesh3D" parent="Collision" unique_id=192270379]
 transform = Transform3D(-1.3458589, 0, 0.096990034, 0, 3.895771, 0, -1.4806886, 0, -0.08815824, 3.6981368, 0.23447365, -11.334742)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D49" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D49" type="CSGMesh3D" parent="Collision" unique_id=1281847399]
 transform = Transform3D(-0.59691864, 0, 0.1645196, 0, 3.4842777, 0, -0.8967702, 0, -0.10950945, 4.334787, 0.23447365, -8.676089)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D50" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D50" type="CSGMesh3D" parent="Collision" unique_id=1351339597]
 transform = Transform3D(-0.59691864, 0, 0.1645196, 0, 3.4842777, 0, -0.8967702, 0, -0.10950945, 3.8717227, 0.23447353, -9.506068)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D18" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D18" type="CSGMesh3D" parent="Collision" unique_id=1376857896]
 transform = Transform3D(-0.31336182, 0, -0.12945122, 0, 3.8957715, 0, 1.9762539, 0, -0.020526249, 4.4751253, 0.23447365, -11.519491)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D19" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D19" type="CSGMesh3D" parent="Collision" unique_id=646776880]
 transform = Transform3D(0.26086354, 0, -0.12994987, 0, 3.8957715, 0, 1.9838662, 0, 0.017087428, 4.4449863, 0.23447365, -13.49293)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D20" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D20" type="CSGMesh3D" parent="Collision" unique_id=505951282]
 transform = Transform3D(-0.74263257, 0, -0.12170712, 0, 3.895771, 0, 1.858029, 0, -0.048644915, 4.670087, 0.23447365, -15.371278)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D21" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D21" type="CSGMesh3D" parent="Collision" unique_id=1411716477]
 transform = Transform3D(-1.9863336, 0, 0.015809767, 0, 3.8957705, 0, -0.24135825, 0, -0.1301115, 5.8133507, 0.23447365, -16.035456)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D22" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D22" type="CSGMesh3D" parent="Collision" unique_id=919657306]
 transform = Transform3D(-1.5300242, 0, 0.08446632, 0, 3.8957705, 0, -1.2894962, 0, -0.10022171, 7.2849975, 0.23447365, -15.412529)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D23" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D23" type="CSGMesh3D" parent="Collision" unique_id=1089943580]
 transform = Transform3D(-0.19456235, 0, 0.13044739, 0, 3.89577, 0, -1.9914616, 0, -0.0127444845, 7.937561, 0.2137925, -14.310967)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D24" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D24" type="CSGMesh3D" parent="Collision" unique_id=363756077]
 transform = Transform3D(0.39300203, 0, 0.12851554, 0, 3.89577, 0, -1.9619693, 0, 0.025742948, 7.937561, 0.2137925, -12.684713)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D25" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D25" type="CSGMesh3D" parent="Collision" unique_id=1846575124]
 transform = Transform3D(0.39300203, 0, 0.12851554, 0, 3.89577, 0, -1.9619693, 0, 0.025742948, 7.5304546, 0.2137925, -10.951556)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D26" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D26" type="CSGMesh3D" parent="Collision" unique_id=2093673816]
 transform = Transform3D(0.39300203, 0, 0.12851554, 0, 3.89577, 0, -1.9619693, 0, 0.025742948, 7.219679, 0.16144913, -9.224724)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D44" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D44" type="CSGMesh3D" parent="Collision" unique_id=743727523]
 transform = Transform3D(1.1810923, 0, 0.10579946, 0, 3.89577, 0, -1.6151766, 0, 0.07736549, 6.744662, 0.16144913, -8.931157)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D45" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D45" type="CSGMesh3D" parent="Collision" unique_id=1575214402]
 transform = Transform3D(0.37097663, 0, 0, 0, 1, 0, 0, 0, 0.060273707, 5.19655, 0.80013645, -8.241408)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D46" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D46" type="CSGMesh3D" parent="Collision" unique_id=1917865446]
 transform = Transform3D(0.37097663, 0, 0, 0, 1, 0, 0, 0, 0.060273707, 5.7831283, 0.80013645, -8.241408)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D47" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D47" type="CSGMesh3D" parent="Collision" unique_id=796679457]
 transform = Transform3D(0.37097663, 0, 0, 0, 0.4421897, 0, 0, 0, 0.060273707, 5.507474, 1.0472488, -8.241408)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D48" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D48" type="CSGMesh3D" parent="Collision" unique_id=1275777252]
 transform = Transform3D(0.37097663, 0, 0, 0, 0.74554724, 0, 0, 0, 0.060273707, 6.0209775, 0.9201325, -8.241408)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D27" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D27" type="CSGMesh3D" parent="Collision" unique_id=846268892]
 transform = Transform3D(-0.08781195, 0, 0.13284849, 0, 3.89577, 0, -2.8352144, 0, -0.004114565, 6.5223756, 0.16144913, -7.081171)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D28" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D28" type="CSGMesh3D" parent="Collision" unique_id=1240058284]
 transform = Transform3D(1.7351856, 0, 0.065270565, 0, 3.89577, 0, -0.9964463, 0, 0.11366046, 5.9149785, 0.16144961, -5.886029)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D29" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D29" type="CSGMesh3D" parent="Collision" unique_id=1419074639]
 transform = Transform3D(0.6426245, 0, 0.14326058, 0, 3.89577, 0, -0.6340455, 0, 0.14519893, 4.175442, 0.16144961, -4.88861)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D31" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D31" type="CSGMesh3D" parent="Collision" unique_id=1203196966]
 transform = Transform3D(0.28984052, 0, 0.19317758, 0, 3.8957705, 0, -0.85496926, 0, 0.06548851, 3.7569447, 0.16144961, -4.330866)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D32" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D32" type="CSGMesh3D" parent="Collision" unique_id=133600210]
 transform = Transform3D(0.15401605, 0, 0.20098588, 0, 3.8957705, 0, -0.8895274, 0, 0.034799412, 3.5653281, 0.16144961, -3.5822525)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D33" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D33" type="CSGMesh3D" parent="Collision" unique_id=200975669]
 transform = Transform3D(0.15401605, 0, 0.20098588, 0, 3.8957705, 0, -0.8895274, 0, 0.034799412, 3.409862, 0.16144961, -2.7686017)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D34" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D34" type="CSGMesh3D" parent="Collision" unique_id=350367063]
 transform = Transform3D(0.15401605, 0, 0.20098588, 0, 3.8957705, 0, -0.8895274, 0, 0.034799412, 3.3062596, 0.16144961, -2.0511417)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D35" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D35" type="CSGMesh3D" parent="Collision" unique_id=674440558]
 transform = Transform3D(0.8158753, 0, 0.08731244, 0, 3.8957705, 0, -0.38642907, 0, 0.1843444, 2.809415, 0.16144961, -1.636359)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D36" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D36" type="CSGMesh3D" parent="Collision" unique_id=485662636]
 transform = Transform3D(-0.12752445, 0, 0.21620342, 0, 1.5234725, 0, -1.6247075, 0, -0.016969992, 2.4485042, 0.16144961, -0.8736311)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D37" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D37" type="CSGMesh3D" parent="Collision" unique_id=92902814]
 transform = Transform3D(-0.035833217, 0, 0.34236982, 0, 1.5234725, 0, -0.4565281, 0, -0.0268729, 2.372632, 0.16144961, 0.14370775)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D38" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D38" type="CSGMesh3D" parent="Collision" unique_id=745831412]
 transform = Transform3D(-0.035833217, 0, 0.34236982, 0, 1.5234725, 0, -0.4565281, 0, -0.0268729, 2.1477683, 0.16144961, 0.7150067)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D39" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D39" type="CSGMesh3D" parent="Collision" unique_id=582932522]
 transform = Transform3D(-0.035833217, 0, 0.34236982, 0, 1.5234725, 0, -0.4565281, 0, -0.0268729, 2.3827531, 0.16144961, 0.5678657)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D40" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D40" type="CSGMesh3D" parent="Collision" unique_id=1091634188]
 transform = Transform3D(-0.035833217, 0, 0.34236982, 0, 1.5234725, 0, -0.4565281, 0, -0.0268729, 1.9446676, 0.16144961, 0.95587313)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D41" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D41" type="CSGMesh3D" parent="Collision" unique_id=1849082521]
 transform = Transform3D(-0.035833217, 0, 0.34236982, 0, 1.5234725, 0, -0.4565281, 0, -0.0268729, 1.6385574, 0.16144961, 1.156571)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D42" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D42" type="CSGMesh3D" parent="Collision" unique_id=637533808]
 transform = Transform3D(-0.02745814, 0, 1.3618553, 0, 1.5234725, 0, -0.3498266, 0, -0.106893174, 1.4308774, 0.16144961, 1.3213681)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D30" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D30" type="CSGMesh3D" parent="Collision" unique_id=736206330]
 transform = Transform3D(0.8949938, 0, 0.03249476, 0, 3.89577, 0, -0.2784167, 0, 0.10445708, 4.741739, 0.16144961, -5.268786)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="CSGMesh3D5" type="CSGMesh3D" parent="Collision"]
+[node name="CSGMesh3D5" type="CSGMesh3D" parent="Collision" unique_id=169641714]
 transform = Transform3D(-0.49543265, 0, -0.029120428, 0, 0.99999994, 0, 0.8059444, 0, -0.017901001, -2.4287906, -0.043749332, -2.190677)
 use_collision = true
 mesh = SubResource("BoxMesh_ee4r6")
 
-[node name="Ruina" type="MeshInstance3D" parent="."]
+[node name="Ruina" type="MeshInstance3D" parent="." unique_id=815671603]
 transform = Transform3D(1, 0, 0, 0, 1, 7.54979e-08, 0, -7.54979e-08, 1, 5.980386, 0.94375, -15.163819)
 mesh = SubResource("ArrayMesh_su17q")
 skeleton = NodePath("")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Ruina"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Ruina" unique_id=547286199]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ruina/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ruina/StaticBody3D" unique_id=27037933]
 shape = SubResource("ConcavePolygonShape3D_kltya")
-
-[node name="Slime" parent="." instance=ExtResource("29_6vcvc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.809044, 0.6794758, -7.6179514)
-
-[node name="Slime6" parent="." instance=ExtResource("29_6vcvc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.417468, 0.6794758, -6.7230525)
-
-[node name="Slime2" parent="." instance=ExtResource("29_6vcvc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2990427, 0.6794758, -10.294886)
-
-[node name="Slime3" parent="." instance=ExtResource("29_6vcvc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.4774427, 0.9324887, -10.294886)
-
-[node name="Slime4" parent="." instance=ExtResource("29_6vcvc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.192603, 1.0646228, -11.965989)
-
-[node name="Slime5" parent="." instance=ExtResource("29_6vcvc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1667566, 0.68876636, -6.6181555)
-
-[node name="FloatingEnemy" parent="." instance=ExtResource("30_7k868")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9356675, 0.60650074, -4.697193)
-
-[node name="FloatingEnemy2" parent="." instance=ExtResource("30_7k868")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9336417, 0.4942733, -4.004216)
-
-[node name="FloatingEnemy4" parent="." instance=ExtResource("30_7k868")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8644154, 0.86482036, -7.4734817)
-
-[node name="FloatingEnemy5" parent="." instance=ExtResource("30_7k868")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.203002, 0.73253894, -7.4734817)
-
-[node name="FloatingEnemy3" parent="." instance=ExtResource("30_7k868")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8665106, 0.661549, -5.0418153)

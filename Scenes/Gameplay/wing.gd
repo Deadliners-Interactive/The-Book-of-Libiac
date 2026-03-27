@@ -1,108 +1,116 @@
-# Wing.gd - Item que añade un contenedor de vida extra (+10 HP)
-# Este script va en el Node3D raíz
+## Extra health pickup item.
+##
+## Increases player maximum health when collected.
+## Can rotate and bob up and down.
 extends Node3D
 
+
+# ==============================================================================
+# Export variables
+# ==============================================================================
+
 @export var health_increase: float = 10.0
-@export var enable_rotation: bool = false  # Nuevo: controla si rota
+@export var enable_rotation: bool = false
 @export var rotation_speed: float = 2.0
 @export var bob_speed: float = 2.0
 @export var bob_height: float = 0.3
 @export var use_billboard: bool = false
 
-var time_passed: float = 0.0
-var start_y: float = 0.0
-var collected: bool = false
 
-@onready var sprite: Sprite3D = $Sprite3D
-@onready var area: Area3D = $Area3D
+# ==============================================================================
+# Member variables
+# ==============================================================================
 
-func _ready():
-	print("🪽 Wing: Inicializando item de vida extra...")
+var _time_passed: float = 0.0
+var _start_y: float = 0.0
+var _collected: bool = false
+
+
+# ==============================================================================
+# Onready variables
+# ==============================================================================
+
+@onready var _sprite: Sprite3D = $Sprite3D
+@onready var _area: Area3D = $Area3D
+
+
+# ==============================================================================
+# Built-in methods
+# ==============================================================================
+
+func _ready() -> void:
+	_start_y = global_position.y
 	
-	# Guardar posición inicial
-	start_y = global_position.y
+	if _sprite and use_billboard:
+		_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		_sprite.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		_sprite.pixel_size = 0.01
 	
-	# Configurar el sprite si existe (solo si use_billboard está activado)
-	if sprite and use_billboard:
-		sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-		sprite.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-		sprite.pixel_size = 0.01
-	
-	# Configurar Area3D
-	if area:
-		area.monitoring = true
-		area.monitorable = true
+	if _area:
+		_area.monitoring = true
+		_area.monitorable = true
 		
-		# Conectar señal
-		if not area.body_entered.is_connected(_on_body_entered):
-			area.body_entered.connect(_on_body_entered)
+		if not _area.body_entered.is_connected(_on_body_entered):
+			_area.body_entered.connect(_on_body_entered)
 	else:
 		push_error("🪽 Wing: No se encontró Area3D!")
 		return
-	
-	print("✅ Wing: Lista para ser recogida")
 
-func _process(delta):
-	if collected:
+
+func _process(delta: float) -> void:
+	if _collected:
 		return
 	
-	time_passed += delta
+	_time_passed += delta
 	
-	# Rotación constante del nodo completo (solo si está habilitado)
 	if enable_rotation:
 		rotate_y(rotation_speed * delta)
 	
-	# Movimiento de "flotación" arriba y abajo
-	var new_y = start_y + sin(time_passed * bob_speed) * bob_height
+	var new_y: float = _start_y + sin(_time_passed * bob_speed) * bob_height
 	global_position.y = new_y
 
-func _on_body_entered(body: Node):
-	if collected:
+
+# ==============================================================================
+# Private methods
+# ==============================================================================
+
+func _on_body_entered(body: Node) -> void:
+	if _collected:
 		return
 	
-	# Solo jugadores
 	if not body.is_in_group("player"):
 		return
 	
-	# Verificar que tiene el método
 	if not body.has_method("increase_max_health"):
 		push_warning("🪽 Wing: El player no tiene el método increase_max_health()")
 		return
 	
-	# Aplicar el aumento de vida
-	collected = true
+	_collected = true
 	body.increase_max_health(health_increase)
 	
-	print("🪽 Wing: ¡Recogida! +%.1f HP máximos" % health_increase)
-	
-	# NOTA: La notificación ya se muestra en increase_max_health del jugador
-	# ¡Obtuviste una vida extra! 🪶
-	
-	# Efecto de recogida
 	_play_collect_effect()
 
-func _play_collect_effect():
-	# Desactivar el process para que no siga rotando/flotando
+
+func _play_collect_effect() -> void:
 	set_process(false)
 	
-	# Desactivar el área de forma segura (deferred)
-	if area:
-		area.set_deferred("monitoring", false)
+	if _area:
+		_area.set_deferred("monitoring", false)
 	
-	# Crear un Tween para efecto de recogida
-	var tween = create_tween()
+	var tween: Tween = create_tween()
 	tween.set_parallel(true)
 	
-	# Subir mientras se encoge (pero no hasta 0)
-	tween.tween_property(self, "global_position:y", global_position.y + 1.0, 0.5)
+	tween.tween_property(
+		self,
+		"global_position:y",
+		global_position.y + 1.0,
+		0.5
+	)
 	tween.tween_property(self, "scale", Vector3(0.01, 0.01, 0.01), 0.5)
 	
-	# Hacer transparente el sprite si existe
-	if sprite:
-		tween.tween_property(sprite, "modulate:a", 0.0, 0.5)
+	if _sprite:
+		tween.tween_property(_sprite, "modulate:a", 0.0, 0.5)
 	
-	# Cuando termine, eliminar
-	tween.finished.connect(func():
-		print("🗑️ Wing: Eliminada de la escena")
+	tween.finished.connect(func() -> void:
 		queue_free()
 	)

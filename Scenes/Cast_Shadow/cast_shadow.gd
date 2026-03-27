@@ -1,24 +1,42 @@
-class_name CastShadow extends Node3D
+## Cast shadow that projects character shadow on ground using raycast.
+## Updates position and opacity based on distance from ground.
+class_name CastShadow
+extends Node3D
 
-@onready var ray_cast_3d: RayCast3D = $RayCast3D
-@onready var sprite_3d: Sprite3D = $Sprite3D
+# ==============================================================================
+# Constants
+# ==============================================================================
 
-var ray_collision_point: Vector3 = Vector3.ZERO
+const SHADOW_BIAS: float = 0.02
 
-# Este pequeño valor eleva la sombra para evitar el Z-Fighting (tiling)
-const SHADOW_BIAS: float = 0.02 
+# ==============================================================================
+# Onready Variables
+# ==============================================================================
+
+@onready var _ray_cast_3d: RayCast3D = $RayCast3D
+@onready var _sprite_3d: Sprite3D = $Sprite3D
+
+# ==============================================================================
+# Member Variables
+# ==============================================================================
+
+var _ray_collision_point: Vector3 = Vector3.ZERO
+
+
+# ==============================================================================
+# Lifecycle
+# ==============================================================================
 
 func _physics_process(_delta: float) -> void:
-	# 1. Detectar la coordenada de colisión del suelo
-	if ray_cast_3d.is_colliding():
-		ray_collision_point = ray_cast_3d.get_collision_point()
+	# Get ground collision point from raycast
+	if _ray_cast_3d.is_colliding():
+		_ray_collision_point = _ray_cast_3d.get_collision_point()
 	else:
-		ray_collision_point = ray_cast_3d.global_position + ray_cast_3d.target_position
-		
-	# 2. Actualizar la posición de la sombra
-	# Aquí sumamos el SHADOW_BIAS para que la sombra flote un milímetro sobre el suelo
-	sprite_3d.global_position.y = ray_collision_point.y + SHADOW_BIAS
-	
-	# 3. Calcular opacidad según la distancia
-	var distance_to_ground = ray_cast_3d.global_position.y - ray_collision_point.y
-	sprite_3d.modulate.a = clamp(1.0 - distance_to_ground / 10.0, 0.0, 1.0)
+		_ray_collision_point = _ray_cast_3d.global_position + _ray_cast_3d.target_position
+
+	# Update shadow position with bias to avoid z-fighting
+	_sprite_3d.global_position.y = _ray_collision_point.y + SHADOW_BIAS
+
+	# Update opacity based on distance from ground
+	var distance_to_ground: float = _ray_cast_3d.global_position.y - _ray_collision_point.y
+	_sprite_3d.modulate.a = clamp(1.0 - distance_to_ground / 10.0, 0.0, 1.0)

@@ -1,23 +1,35 @@
+## Game over screen UI that allows player to restart the game.
 extends Control
 
-# Ruta a la escena del primer nivel o el nivel al que deseas volver
-const START_LEVEL_PATH = "res://Scenes/Levels/main.tscn"# ¡Asegúrate de que esta ruta sea correcta!
+# ==============================================================================
+# Constants
+# ==============================================================================
 
-func _ready():
-	# 1. Hacer el ratón visible
+const START_LEVEL_PATH: String = "res://Scenes/Levels/main.tscn"
+
+
+# ==============================================================================
+# Lifecycle
+# ==============================================================================
+
+func _ready() -> void:
+	# Make mouse visible
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	
-	# 2. Conectar la señal pressed usando la sintaxis de Nombre de Hijo Único (%)
-	# Esto funciona porque PlayAgainButton está marcado con el icono % en el editor.
+
+	# Connect play again button
 	if %PlayAgainButton:
 		%PlayAgainButton.pressed.connect(_on_play_again_button_pressed)
 	else:
 		push_error("Error crítico: El nodo PlayAgainButton no se encontró usando el prefijo %.")
 
 
-func _on_play_again_button_pressed():
-	# Es crucial ocultar el cursor de nuevo si tu juego principal lo requiere
+# ==============================================================================
+# Private Methods - Signal Handlers
+# ==============================================================================
+
+func _on_play_again_button_pressed() -> void:
+	# Hide cursor again for main game
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	
-	# Usar TransitionManager para cargar el nivel inicial/deseado.
+
+	# Load start level with transition
 	TransitionManager.transition_to_scene(START_LEVEL_PATH, "default")
