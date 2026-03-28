@@ -8,7 +8,13 @@ extends CharacterBody3D
 # ==============================================================================
 # Signals
 # ==============================================================================
-# (None currently)
+
+signal health_changed(current: float, max_value: float)
+signal max_health_changed(max_value: float)
+signal keys_changed(count: int)
+signal notification_requested(message: String)
+signal immediate_notification_requested(message: String)
+signal state_changed(previous: int, current: int)
 
 
 # ==============================================================================
@@ -28,6 +34,22 @@ enum State {
 # ==============================================================================
 
 const KB_MULTIPLIER: float = 5.0
+
+
+# ==============================================================================
+# Export variables - Config
+# ==============================================================================
+
+@export_group("Config")
+@export var player_config: PlayerConfig
+
+
+# ==============================================================================
+# Export variables - Debug
+# ==============================================================================
+
+@export_group("Debug")
+@export var fsm_debug_logs: bool = false
 
 
 # ==============================================================================
@@ -84,7 +106,6 @@ var _attack_combo_step: int = 0
 var _input_buffer: String = ""
 var _enemies_hit: Array = []
 var _is_invulnerable: bool = false
-var _ui_ref: CanvasLayer = null
 
 var _damage_knockback_timer: Timer = Timer.new()
 var _damage_visual_timer: Timer = Timer.new()
@@ -108,6 +129,7 @@ var _notification_cooldown_time: float = 1.0
 # ==============================================================================
 
 func _ready() -> void:
+	_apply_config()
 	current_health = max_health
 	_attack_collision.disabled = true
 	
@@ -147,24 +169,12 @@ func _ready() -> void:
 		_detection_area.area_entered.connect(_on_area_entered_player)
 	else:
 		push_warning("Falta nodo DetectionArea para cambio de nivel")
-	
-	call_deferred("_find_ui")
+
+	refresh_ui_state()
 
 
 func _physics_process(delta: float) -> void:
-	match current_state:
-		State.NORMAL:
-			_handle_move()
-			_handle_jump()
-			_handle_actions_input()
-		State.ATTACKING:
-			if _damage_knockback_timer.is_stopped():
-				_handle_move(attack_movement_multiplier)
-			_handle_buffer_input()
-		State.ROLLING:
-			_apply_roll_physics()
-		State.DAMAGE:
-			pass
+	_update_current_state(delta)
 	
 	# Apply gravity
 	if not is_on_floor():
@@ -183,18 +193,14 @@ func _physics_process(delta: float) -> void:
 
 func add_key() -> void:
 	key_count += 1
+	keys_changed.emit(key_count)
 	show_notification("Llave conseguida (%d)" % key_count)
-	
-	if _ui_ref and _ui_ref.has_method("update_keys_display"):
-		_ui_ref.update_keys_display()
 
 
 func use_key() -> bool:
 	if key_count > 0:
 		key_count -= 1
-		
-		if _ui_ref and _ui_ref.has_method("update_keys_display"):
-			_ui_ref.update_keys_display()
+		keys_changed.emit(key_count)
 		return true
 	else:
 		show_notification("Necesitas una llave!")
@@ -222,9 +228,8 @@ func take_damage_hearts_with_knockback(
 	
 	if current_state != State.DAMAGE:
 		set_state(State.DAMAGE)
-	
-	if _ui_ref and _ui_ref.has_method("update_hearts_display"):
-		_ui_ref.update_hearts_display()
+
+	health_changed.emit(current_health, max_health)
 	
 	if knockback_force > 0:
 		if _damage_knockback_timer.is_stopped():
@@ -257,19 +262,17 @@ func heal(amount: float) -> void:
 				show_notification("Recuperaste %d pluma(s) de vida" % heart_containers)
 			elif partial_heart > 0:
 				show_notification("Medio corazon recuperado")
-		
-		if _ui_ref and _ui_ref.has_method("update_hearts_display"):
-			_ui_ref.update_hearts_display()
+
+		health_changed.emit(current_health, max_health)
 
 
 func increase_max_health(amount: float) -> void:
 	max_health += amount
 	current_health = max_health
+	max_health_changed.emit(max_health)
+	health_changed.emit(current_health, max_health)
 	
 	show_notification("Obtuviste una vida extra!")
-	
-	if _ui_ref and _ui_ref.has_method("update_max_hearts_display"):
-		_ui_ref.update_max_hearts_display()
 
 
 func die() -> void:
@@ -284,12 +287,9 @@ func die() -> void:
 # ==============================================================================
 
 func refresh_ui_state() -> void:
-	if _ui_ref and _ui_ref.has_method("update_max_hearts_display"):
-		_ui_ref.update_max_hearts_display()
-	if _ui_ref and _ui_ref.has_method("update_hearts_display"):
-		_ui_ref.update_hearts_display()
-	if _ui_ref and _ui_ref.has_method("update_keys_display"):
-		_ui_ref.update_keys_display()
+	max_health_changed.emit(max_health)
+	health_changed.emit(current_health, max_health)
+	keys_changed.emit(key_count)
 
 
 func show_notification(message: String) -> void:
@@ -301,14 +301,11 @@ func show_notification(message: String) -> void:
 			return
 	
 	_notification_cooldown[message] = current_time
-	
-	if _ui_ref and _ui_ref.has_method("show_notification"):
-		_ui_ref.show_notification(message)
+	notification_requested.emit(message)
 
 
 func show_immediate_notification(message: String) -> void:
-	if _ui_ref and _ui_ref.has_method("show_immediate_notification"):
-		_ui_ref.show_immediate_notification(message)
+	immediate_notification_requested.emit(message)
 
 
 # ==============================================================================
@@ -395,29 +392,155 @@ func _flip_sprite(x_velocity: float) -> void:
 # ==============================================================================
 
 func set_state(new_state: State) -> void:
-	# Exit previous state
-	if current_state == State.ATTACKING:
-		_attack_collision.set_deferred("disabled", true)
-		_animated_sprite.speed_scale = 1.0
-	
+	var previous_state: State = current_state
+
+	if new_state == previous_state:
+		return
+
+	if not _is_transition_allowed(previous_state, new_state):
+		if fsm_debug_logs:
+			push_warning(
+				"Player FSM: blocked transition %s -> %s"
+				% [_state_to_string(previous_state), _state_to_string(new_state)]
+			)
+		return
+
+	_exit_state(previous_state)
 	current_state = new_state
-	
-	# Enter new state
-	match new_state:
+	_enter_state(new_state)
+
+	if fsm_debug_logs:
+		print(
+			"Player FSM: %s -> %s"
+			% [_state_to_string(previous_state), _state_to_string(current_state)]
+		)
+
+	state_changed.emit(previous_state, current_state)
+
+
+func _update_current_state(_delta: float) -> void:
+	match current_state:
 		State.NORMAL:
-			if _damage_knockback_timer.is_stopped():
-				if _input_buffer == "attack":
-					_input_buffer = ""
-					set_state(State.ATTACKING)
-				elif _input_buffer == "roll" and _roll_cooldown_timer.is_stopped():
-					_input_buffer = ""
-					set_state(State.ROLLING)
+			_update_state_normal()
+		State.ATTACKING:
+			_update_state_attacking()
+		State.ROLLING:
+			_update_state_rolling()
+		State.DAMAGE:
+			_update_state_damage()
+
+
+func _update_state_normal() -> void:
+	_handle_move()
+	_handle_jump()
+	_handle_actions_input()
+
+
+func _update_state_attacking() -> void:
+	if _damage_knockback_timer.is_stopped():
+		_handle_move(attack_movement_multiplier)
+	_handle_buffer_input()
+
+
+func _update_state_rolling() -> void:
+	_apply_roll_physics()
+
+
+func _update_state_damage() -> void:
+	pass
+
+
+func _enter_state(state: State) -> void:
+	match state:
+		State.NORMAL:
+			_enter_state_normal()
 		State.ATTACKING:
 			_start_attack()
 		State.ROLLING:
 			_start_roll()
 		State.DAMAGE:
 			_start_damage()
+
+
+func _exit_state(state: State) -> void:
+	match state:
+		State.ATTACKING:
+			_attack_collision.set_deferred("disabled", true)
+			_animated_sprite.speed_scale = 1.0
+
+
+func _enter_state_normal() -> void:
+	if not _damage_knockback_timer.is_stopped():
+		return
+
+	if _input_buffer == "attack":
+		_input_buffer = ""
+		set_state(State.ATTACKING)
+	elif _input_buffer == "roll" and _roll_cooldown_timer.is_stopped():
+		_input_buffer = ""
+		set_state(State.ROLLING)
+
+
+func _is_transition_allowed(from_state: State, to_state: State) -> bool:
+	if not player_config:
+		return _is_transition_allowed_default(from_state, to_state)
+
+	match from_state:
+		State.NORMAL:
+			match to_state:
+				State.ATTACKING:
+					return player_config.allow_normal_to_attacking
+				State.ROLLING:
+					return player_config.allow_normal_to_rolling
+				State.DAMAGE:
+					return player_config.allow_normal_to_damage
+		State.ATTACKING:
+			match to_state:
+				State.NORMAL:
+					return player_config.allow_attacking_to_normal
+				State.ROLLING:
+					return player_config.allow_attacking_to_rolling
+				State.DAMAGE:
+					return player_config.allow_attacking_to_damage
+		State.ROLLING:
+			match to_state:
+				State.NORMAL:
+					return player_config.allow_rolling_to_normal
+				State.DAMAGE:
+					return player_config.allow_rolling_to_damage
+		State.DAMAGE:
+			if to_state == State.NORMAL:
+				return player_config.allow_damage_to_normal
+
+	return false
+
+
+func _is_transition_allowed_default(from_state: State, to_state: State) -> bool:
+	match from_state:
+		State.NORMAL:
+			return to_state in [State.ATTACKING, State.ROLLING, State.DAMAGE]
+		State.ATTACKING:
+			return to_state in [State.NORMAL, State.ROLLING, State.DAMAGE]
+		State.ROLLING:
+			return to_state in [State.NORMAL, State.DAMAGE]
+		State.DAMAGE:
+			return to_state == State.NORMAL
+
+	return false
+
+
+func _state_to_string(state: State) -> String:
+	match state:
+		State.NORMAL:
+			return "NORMAL"
+		State.ATTACKING:
+			return "ATTACKING"
+		State.ROLLING:
+			return "ROLLING"
+		State.DAMAGE:
+			return "DAMAGE"
+
+	return "UNKNOWN"
 
 
 # ==============================================================================
@@ -521,24 +644,28 @@ func _on_animation_finished() -> void:
 
 
 # ==============================================================================
-# Private methods - UI
+# Private methods - Configuration
 # ==============================================================================
 
-func _find_ui() -> void:
-	_ui_ref = get_tree().get_first_node_in_group("ui")
-	
-	if not _ui_ref:
-		for child in get_tree().root.get_children():
-			if (child.name == "player_ui" or child.name == "Player_UI"
-					or child is CanvasLayer):
-				_ui_ref = child
-				break
-	
-	if _ui_ref:
-		if _ui_ref.has_method("update_max_hearts_display"):
-			_ui_ref.update_max_hearts_display()
-	else:
-		push_warning("Player: No se encontró UI.")
+func _apply_config() -> void:
+	if not player_config:
+		return
+
+	move_speed = player_config.move_speed
+	jump_speed = player_config.jump_speed
+	gravity_multiplier = player_config.gravity_multiplier
+
+	attack_damage = player_config.attack_damage
+	attack_movement_multiplier = player_config.attack_movement_multiplier
+	attack_hit_delay = player_config.attack_hit_delay
+
+	max_health = player_config.max_health
+	invulnerability_time = player_config.invulnerability_time
+	damage_visual_time = player_config.damage_visual_time
+
+	roll_speed = player_config.roll_speed
+	roll_duration = player_config.roll_duration
+	roll_cooldown = player_config.roll_cooldown
 
 
 # ==============================================================================

@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="PlayerConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Data/PlayerConfig.gd" id="1_player_config_script"]
+
+[resource]
+script = ExtResource("1_player_config_script")
+move_speed = 1.0
+jump_speed = 2.0
+gravity_multiplier = 1.0
+attack_damage = 10
+attack_movement_multiplier = 0.6
+attack_hit_delay = 0.1
+max_health = 30.0
+invulnerability_time = 1.0
+damage_visual_time = 0.5
+roll_speed = 3.0
+roll_duration = 0.4
+roll_cooldown = 0.2
+allow_normal_to_attacking = true
+allow_normal_to_rolling = true
+allow_normal_to_damage = true
+allow_attacking_to_normal = true
+allow_attacking_to_rolling = true
+allow_attacking_to_damage = true
+allow_rolling_to_normal = true
+allow_rolling_to_damage = true
+allow_damage_to_normal = true

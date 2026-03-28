@@ -232,6 +232,7 @@ func _find_player() -> void:
 	var players: Array[Node] = get_tree().get_nodes_in_group("player")
 	if players.size() > 0:
 		_player_ref = players[0]
+		_connect_player_signals()
 
 		update_max_hearts_display()
 		update_hearts_display()
@@ -239,3 +240,43 @@ func _find_player() -> void:
 	else:
 		await get_tree().create_timer(0.5).timeout
 		_find_player()
+
+
+func _connect_player_signals() -> void:
+	if not is_instance_valid(_player_ref):
+		return
+
+	if _player_ref.has_signal("health_changed") and not _player_ref.health_changed.is_connected(_on_player_health_changed):
+		_player_ref.health_changed.connect(_on_player_health_changed)
+
+	if _player_ref.has_signal("max_health_changed") and not _player_ref.max_health_changed.is_connected(_on_player_max_health_changed):
+		_player_ref.max_health_changed.connect(_on_player_max_health_changed)
+
+	if _player_ref.has_signal("keys_changed") and not _player_ref.keys_changed.is_connected(_on_player_keys_changed):
+		_player_ref.keys_changed.connect(_on_player_keys_changed)
+
+	if _player_ref.has_signal("notification_requested") and not _player_ref.notification_requested.is_connected(_on_player_notification_requested):
+		_player_ref.notification_requested.connect(_on_player_notification_requested)
+
+	if _player_ref.has_signal("immediate_notification_requested") and not _player_ref.immediate_notification_requested.is_connected(_on_player_immediate_notification_requested):
+		_player_ref.immediate_notification_requested.connect(_on_player_immediate_notification_requested)
+
+
+func _on_player_health_changed(_current: float, _max_value: float) -> void:
+	update_hearts_display()
+
+
+func _on_player_max_health_changed(_max_value: float) -> void:
+	update_max_hearts_display()
+
+
+func _on_player_keys_changed(_count: int) -> void:
+	update_keys_display()
+
+
+func _on_player_notification_requested(message: String) -> void:
+	show_notification(message)
+
+
+func _on_player_immediate_notification_requested(message: String) -> void:
+	show_immediate_notification(message)
