@@ -257,7 +257,6 @@ shadow_blur = 0.0
 sky_mode = 1
 
 [node name="WaterSurface13" type="Area3D" parent="." unique_id=1925036246]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.046987534, -0.02450794, 2.9086988)
 script = ExtResource("5_ueoa1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WaterSurface13" unique_id=1263087303]

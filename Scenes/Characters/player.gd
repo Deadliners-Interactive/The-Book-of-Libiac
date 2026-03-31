@@ -107,6 +107,8 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var key_count: int = 0
 
 var _is_facing_right: bool = true
+var _last_move_animation: StringName = &"move_sides"
+var _last_move_input: Vector2 = Vector2.RIGHT
 var _attack_combo_step: int = 0
 var _input_buffer: String = ""
 var _enemies_hit: Array = []
@@ -362,9 +364,9 @@ func _handle_move(speed_mult: float = 1.0) -> void:
 	var final_speed: float = move_speed * speed_mult
 	
 	if direction:
+		_update_facing_from_input(input_dir)
 		velocity.x = direction.x * final_speed
 		velocity.z = direction.z * final_speed
-		_flip_sprite(velocity.x)
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, final_speed)
 		velocity.z = move_toward(velocity.z, 0.0, final_speed)
@@ -380,9 +382,9 @@ func _apply_roll_physics() -> void:
 		var current_vel_xz: float = Vector3(velocity.x, 0, velocity.z).length()
 		
 		if current_vel_xz < 0.1:
-			var facing_dir: float = 1.0 if _is_facing_right else -1.0
-			velocity.x = facing_dir * roll_speed
-			velocity.z = 0.0
+			var facing_direction: Vector3 = _get_last_facing_direction_3d()
+			velocity.x = facing_direction.x * roll_speed
+			velocity.z = facing_direction.z * roll_speed
 		else:
 			var roll_dir_xz: Vector3 = Vector3(velocity.x, 0, velocity.z).normalized()
 			velocity.x = roll_dir_xz.x * roll_speed
@@ -398,6 +400,31 @@ func _flip_sprite(x_velocity: float) -> void:
 		_is_facing_right = moving_right
 		_animated_sprite.flip_h = not _is_facing_right
 		_attack_area.scale.x = 1.0 if _is_facing_right else -1.0
+
+
+func _update_facing_from_input(input_dir: Vector2) -> void:
+	if input_dir == Vector2.ZERO:
+		return
+
+	_last_move_input = input_dir.normalized()
+
+	if abs(input_dir.x) >= abs(input_dir.y):
+		_last_move_animation = &"move_sides"
+		_flip_sprite(input_dir.x)
+		return
+
+	if input_dir.y < 0.0:
+		_last_move_animation = &"move_up"
+	else:
+		_last_move_animation = &"move_down"
+
+
+func _get_last_facing_direction_3d() -> Vector3:
+	if _last_move_input.length_squared() > 0.0:
+		return Vector3(_last_move_input.x, 0.0, _last_move_input.y).normalized()
+
+	var side_direction: float = 1.0 if _is_facing_right else -1.0
+	return Vector3(side_direction, 0.0, 0.0)
 
 
 # ==============================================================================
@@ -600,11 +627,9 @@ func _start_roll() -> void:
 	_is_invulnerable = true
 	_input_buffer = ""
 	_animated_sprite.speed_scale = 2.0
-	
-	if _animated_sprite.sprite_frames.has_animation("roll"):
-		_animated_sprite.play("roll")
-	
-	if not _animated_sprite.sprite_frames.has_animation("roll"):
+
+	var roll_animation: StringName = _get_roll_animation_name(Vector3(velocity.x, 0.0, velocity.z))
+	if not _play_animation_with_fallback(roll_animation, &"roll"):
 		var roll_timer: SceneTreeTimer = get_tree().create_timer(roll_duration)
 		roll_timer.timeout.connect(func() -> void:
 			_is_invulnerable = false
@@ -642,18 +667,70 @@ func _update_animations() -> void:
 	
 	_animated_sprite.speed_scale = 1.0
 	if velocity.x != 0 or velocity.z != 0:
-		_animated_sprite.play("run")
+		var move_animation: StringName = _get_move_animation_name(Vector3(velocity.x, 0.0, velocity.z))
+		_last_move_animation = move_animation
+		_play_animation_with_fallback(move_animation, &"run")
 	else:
-		_animated_sprite.play("idle")
+		_play_idle_from_last_direction()
 
 
 func _on_animation_finished() -> void:
 	if _animated_sprite.animation == "attack":
 		set_state(State.NORMAL)
-	elif _animated_sprite.animation == "roll":
+	elif String(_animated_sprite.animation).begins_with("roll"):
 		_is_invulnerable = false
 		_roll_cooldown_timer.start(roll_cooldown)
 		set_state(State.NORMAL)
+
+
+func _get_move_animation_name(direction: Vector3) -> StringName:
+	var horizontal: Vector3 = Vector3(direction.x, 0.0, direction.z)
+	if horizontal.length_squared() <= 0.0001:
+		return &"move_sides"
+
+	if abs(horizontal.z) > abs(horizontal.x):
+		if horizontal.z < 0.0:
+			return &"move_up"
+		return &"move_down"
+
+	return &"move_sides"
+
+
+func _get_roll_animation_name(direction: Vector3) -> StringName:
+	var horizontal: Vector3 = Vector3(direction.x, 0.0, direction.z)
+	if horizontal.length_squared() <= 0.0001:
+		match _last_move_animation:
+			&"move_up":
+				return &"roll_up"
+			&"move_down":
+				return &"roll_down"
+			_:
+				return &"roll_sides"
+
+	if abs(horizontal.z) > abs(horizontal.x):
+		if horizontal.z < 0.0:
+			return &"roll_up"
+		return &"roll_down"
+
+	return &"roll_sides"
+
+
+func _play_animation_with_fallback(preferred: StringName, fallback: StringName) -> bool:
+	if _animated_sprite.sprite_frames.has_animation(preferred):
+		_animated_sprite.play(preferred)
+		return true
+
+	if _animated_sprite.sprite_frames.has_animation(fallback):
+		_animated_sprite.play(fallback)
+		return true
+
+	return false
+
+
+func _play_idle_from_last_direction() -> void:
+	if _play_animation_with_fallback(_last_move_animation, &"move_sides"):
+		_animated_sprite.stop()
+		_animated_sprite.frame = 0
 
 
 # ==============================================================================
