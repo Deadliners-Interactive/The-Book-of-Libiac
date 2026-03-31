@@ -35,6 +35,18 @@ enum State {
 
 const KB_MULTIPLIER: float = 5.0
 
+const ANIM_MOVE_SIDE: StringName = &"move_side"
+const ANIM_MOVE_UP: StringName = &"move_up"
+const ANIM_MOVE_DOWN: StringName = &"move_down"
+const ANIM_ROLL_SIDE: StringName = &"roll_side"
+const ANIM_ROLL_UP: StringName = &"roll_up"
+const ANIM_ROLL_DOWN: StringName = &"roll_down"
+const ANIM_JUMP_SIDE: StringName = &"jump_side"
+const ANIM_JUMP_UP: StringName = &"jump_up"
+const ANIM_JUMP_DOWN: StringName = &"jump_down"
+const ANIM_FALL: StringName = &"fall"
+const ANIM_ATTACK: StringName = &"attack"
+
 
 # ==============================================================================
 # Export variables - Config
@@ -112,7 +124,7 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var key_count: int = 0
 
 var _is_facing_right: bool = true
-var _last_move_animation: StringName = &"move_sides"
+var _last_move_animation: StringName = ANIM_MOVE_SIDE
 var _last_move_input: Vector2 = Vector2.RIGHT
 var _attack_combo_step: int = 0
 var _input_buffer: String = ""
@@ -419,14 +431,14 @@ func _update_facing_from_input(input_dir: Vector2) -> void:
 	_last_move_input = input_dir.normalized()
 
 	if abs(input_dir.x) >= abs(input_dir.y):
-		_last_move_animation = &"move_sides"
+		_last_move_animation = ANIM_MOVE_SIDE
 		_flip_sprite(input_dir.x)
 		return
 
 	if input_dir.y < 0.0:
-		_last_move_animation = &"move_up"
+		_last_move_animation = ANIM_MOVE_UP
 	else:
-		_last_move_animation = &"move_down"
+		_last_move_animation = ANIM_MOVE_DOWN
 
 	# Keep vertical animations unmirrored.
 	_animated_sprite.flip_h = false
@@ -684,33 +696,33 @@ func _update_animations() -> void:
 			_animated_sprite.speed_scale = 2.0
 			if _is_jumping:
 				var jump_animation: StringName = _get_jump_animation_name()
-				_play_animation_with_fallback(jump_animation, &"jump_sides")
+				_play_animation_with_fallback(jump_animation, ANIM_JUMP_SIDE)
 			else:
-				_animated_sprite.play("fall")
+				_play_animation_with_fallback(ANIM_FALL, ANIM_MOVE_SIDE)
 			return
 		
 		# If actively moving with input but NOT jumping, show movement anim (climbing slopes)
 		if has_movement_input and (velocity.x != 0 or velocity.z != 0):
-			_play_animation_with_fallback(_last_move_animation, &"run")
+			_play_animation_with_fallback(_last_move_animation, ANIM_MOVE_SIDE)
 			return
 		
 		# Grace period without movement
 		if velocity.x != 0 or velocity.z != 0:
 			var ground_move_animation: StringName = _get_move_animation_name(Vector3(velocity.x, 0.0, velocity.z))
-			_play_animation_with_fallback(ground_move_animation, &"run")
+			_play_animation_with_fallback(ground_move_animation, ANIM_MOVE_SIDE)
 		else:
 			_play_idle_from_last_direction()
 		return
 	
 	_animated_sprite.speed_scale = 1.0
 	if has_movement_input or velocity.x != 0 or velocity.z != 0:
-		_play_animation_with_fallback(_last_move_animation, &"run")
+		_play_animation_with_fallback(_last_move_animation, ANIM_MOVE_SIDE)
 	else:
 		_play_idle_from_last_direction()
 
 
 func _on_animation_finished() -> void:
-	if _animated_sprite.animation == "attack":
+	if _animated_sprite.animation == ANIM_ATTACK:
 		set_state(State.NORMAL)
 	elif String(_animated_sprite.animation).begins_with("roll"):
 		_is_invulnerable = false
@@ -721,43 +733,44 @@ func _on_animation_finished() -> void:
 func _get_move_animation_name(direction: Vector3) -> StringName:
 	var horizontal: Vector3 = Vector3(direction.x, 0.0, direction.z)
 	if horizontal.length_squared() <= 0.0001:
-		return &"move_sides"
+		return ANIM_MOVE_SIDE
 
 	if abs(horizontal.z) > abs(horizontal.x):
 		if horizontal.z < 0.0:
-			return &"move_up"
-		return &"move_down"
+			return ANIM_MOVE_UP
+		return ANIM_MOVE_DOWN
 
-	return &"move_sides"
+	return ANIM_MOVE_SIDE
 
 
 func _get_roll_animation_name(direction: Vector3) -> StringName:
 	var horizontal: Vector3 = Vector3(direction.x, 0.0, direction.z)
 	if horizontal.length_squared() <= 0.0001:
 		match _last_move_animation:
-			&"move_up":
-				return &"roll_up"
-			&"move_down":
-				return &"roll_down"
+			ANIM_MOVE_UP:
+				return ANIM_ROLL_UP
+			ANIM_MOVE_DOWN:
+				return ANIM_ROLL_DOWN
 			_:
-				return &"roll_sides"
+				return ANIM_ROLL_SIDE
 
 	if abs(horizontal.z) > abs(horizontal.x):
 		if horizontal.z < 0.0:
-			return &"roll_up"
-		return &"roll_down"
+			return ANIM_ROLL_UP
+		return ANIM_ROLL_DOWN
 
-	return &"roll_sides"
+	return ANIM_ROLL_SIDE
 
 
 func _get_jump_animation_name() -> StringName:
 	match _last_move_animation:
-		&"move_up":
-			return &"jump_up"
-		&"move_down":
-			return &"jump_down"
+		ANIM_MOVE_UP:
+			return ANIM_JUMP_UP
+		ANIM_MOVE_DOWN:
+			return ANIM_JUMP_DOWN
 		_:
-			return &"jump_sides"
+			return ANIM_JUMP_SIDE
+
 
 
 func _play_animation_with_fallback(preferred: StringName, fallback: StringName) -> bool:
@@ -773,7 +786,7 @@ func _play_animation_with_fallback(preferred: StringName, fallback: StringName) 
 
 
 func _play_idle_from_last_direction() -> void:
-	if _play_animation_with_fallback(_last_move_animation, &"move_sides"):
+	if _play_animation_with_fallback(_last_move_animation, ANIM_MOVE_SIDE):
 		_animated_sprite.stop()
 		_animated_sprite.frame = 0
 

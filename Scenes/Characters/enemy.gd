@@ -290,7 +290,7 @@ func _update_animations() -> void:
 
 	var anim: String = "idle"
 	if velocity.length() > 0.05:
-		anim = "walk"
+		anim = "move"
 
 	if _animated_sprite.sprite_frames.has_animation(anim):
 		_animated_sprite.play(anim)
