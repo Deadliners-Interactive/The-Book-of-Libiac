@@ -60,6 +60,11 @@ const KB_MULTIPLIER: float = 5.0
 @export var move_speed: float = 1.0
 @export var jump_speed: float = 2.0
 @export var gravity_multiplier: float = 1.0
+@export var jump_coyote_time: float = 0.12
+@export var jump_buffer_time: float = 0.12
+@export var fall_gravity_multiplier: float = 1.15
+@export var jump_release_gravity_multiplier: float = 1.35
+@export var air_animation_delay: float = 0.08
 @export var ground_snap_length: float = 0.34
 @export var max_floor_angle_degrees: float = 58.0
 @export var terrain_floor_stop_on_slope: bool = false
@@ -119,6 +124,11 @@ var _damage_visual_timer: Timer = Timer.new()
 var _roll_cooldown_timer: Timer = Timer.new()
 var _notification_cooldown: Dictionary = {}
 var _notification_cooldown_time: float = 1.0
+var _last_time_on_floor: float = 0.0
+var _jump_buffer_timer: float = 0.0
+var _jump_consumed: bool = false
+var _is_jumping: bool = false
+var _airborne_time: float = 0.0
 
 
 # ==============================================================================
@@ -182,18 +192,19 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	_update_jump_timers(delta)
 	_update_current_state(delta)
 	
 	# Apply gravity
 	if not is_on_floor():
-		velocity.y -= gravity * gravity_multiplier * delta
+		velocity.y -= gravity * gravity_multiplier * _get_air_gravity_multiplier() * delta
 	else:
 		if current_state == State.DAMAGE and _damage_knockback_timer.is_stopped():
 			velocity.y = 0
 		else:
 			_apply_terrain_adhesion()
 
-	if velocity.y <= 0.0 and current_state != State.ROLLING:
+	if velocity.y <= 0.0 and current_state != State.ROLLING and not _is_jumping:
 		apply_floor_snap()
 	
 	move_and_slide()
@@ -373,8 +384,8 @@ func _handle_move(speed_mult: float = 1.0) -> void:
 
 
 func _handle_jump() -> void:
-	if Input.is_action_just_pressed("jump") and is_on_floor():
-		velocity.y = jump_speed
+	if _can_start_jump():
+		_start_jump()
 
 
 func _apply_roll_physics() -> void:
@@ -660,8 +671,16 @@ func _update_animations() -> void:
 		return
 	
 	if not is_on_floor():
+		if _airborne_time < air_animation_delay:
+			if velocity.x != 0 or velocity.z != 0:
+				var ground_move_animation: StringName = _get_move_animation_name(Vector3(velocity.x, 0.0, velocity.z))
+				_play_animation_with_fallback(ground_move_animation, &"run")
+			else:
+				_play_idle_from_last_direction()
+			return
+
 		_animated_sprite.speed_scale = 2.0
-		if velocity.y > 0:
+		if _is_jumping:
 			_animated_sprite.play("jump")
 		else:
 			_animated_sprite.play("fall")
@@ -746,6 +765,11 @@ func _apply_config() -> void:
 	move_speed = player_config.move_speed
 	jump_speed = player_config.jump_speed
 	gravity_multiplier = player_config.gravity_multiplier
+	jump_coyote_time = player_config.jump_coyote_time
+	jump_buffer_time = player_config.jump_buffer_time
+	fall_gravity_multiplier = player_config.fall_gravity_multiplier
+	jump_release_gravity_multiplier = player_config.jump_release_gravity_multiplier
+	air_animation_delay = player_config.air_animation_delay
 	ground_snap_length = player_config.ground_snap_length
 	max_floor_angle_degrees = player_config.max_floor_angle_degrees
 	terrain_floor_stop_on_slope = player_config.floor_stop_on_slope
@@ -763,6 +787,50 @@ func _apply_config() -> void:
 	roll_speed = player_config.roll_speed
 	roll_duration = player_config.roll_duration
 	roll_cooldown = player_config.roll_cooldown
+
+
+func _update_jump_timers(delta: float) -> void:
+	if is_on_floor():
+		_last_time_on_floor = jump_coyote_time
+		_jump_consumed = false
+		_is_jumping = false
+		_airborne_time = 0.0
+	else:
+		_last_time_on_floor = max(_last_time_on_floor - delta, 0.0)
+		_airborne_time += delta
+
+	if Input.is_action_just_pressed("jump"):
+		_jump_buffer_timer = jump_buffer_time
+	else:
+		_jump_buffer_timer = max(_jump_buffer_timer - delta, 0.0)
+
+
+func _can_start_jump() -> bool:
+	if _jump_consumed:
+		return false
+
+	if _jump_buffer_timer <= 0.0:
+		return false
+
+	return _last_time_on_floor > 0.0
+
+
+func _start_jump() -> void:
+	velocity.y = jump_speed
+	_jump_buffer_timer = 0.0
+	_last_time_on_floor = 0.0
+	_jump_consumed = true
+	_is_jumping = true
+
+
+func _get_air_gravity_multiplier() -> float:
+	if velocity.y < 0.0:
+		return fall_gravity_multiplier
+
+	if velocity.y > 0.0 and not Input.is_action_pressed("jump"):
+		return jump_release_gravity_multiplier
+
+	return 1.0
 
 
 func _setup_terrain_motion() -> void:
