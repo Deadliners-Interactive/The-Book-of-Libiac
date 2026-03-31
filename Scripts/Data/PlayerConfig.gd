@@ -10,6 +10,11 @@ class_name PlayerConfig
 @export var move_speed: float = 1.0
 @export var jump_speed: float = 2.0
 @export var gravity_multiplier: float = 1.0
+@export var ground_snap_length: float = 0.34
+@export var max_floor_angle_degrees: float = 58.0
+@export var floor_stop_on_slope: bool = false
+@export var floor_constant_speed: bool = true
+@export var collision_safe_margin: float = 0.0002
 
 # ==============================================================================
 # Combat

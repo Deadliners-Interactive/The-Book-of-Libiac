@@ -155,7 +155,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"jump",
-"speed": 3.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -193,8 +193,8 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gy20a"]
-radius = 0.24902344
-height = 1.1112671
+radius = 0.3618164
+height = 0.91381073
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3smsa"]
 size = Vector3(0.14215088, 0.12597656, 0.14233398)
@@ -210,9 +210,10 @@ alpha_cut = 1
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_ue4gs")
 animation = &"idle"
+frame_progress = 0.60666883
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=425719039]
-transform = Transform3D(0.13, 0, 0, 0, 0.10024477, 0.082770675, 0, -0.082770675, 0.10024477, 0.00015869085, 0.008690919, 0.00039223328)
+transform = Transform3D(0.13, 0, 0, 0, 0.13, 0, 0, 0, 0.13, 0.00015869085, -0.001956778, -0.004790632)
 shape = SubResource("CapsuleShape3D_gy20a")
 
 [node name="AttackArea" type="Area3D" parent="." unique_id=592024321]

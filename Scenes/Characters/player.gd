@@ -60,6 +60,11 @@ const KB_MULTIPLIER: float = 5.0
 @export var move_speed: float = 1.0
 @export var jump_speed: float = 2.0
 @export var gravity_multiplier: float = 1.0
+@export var ground_snap_length: float = 0.34
+@export var max_floor_angle_degrees: float = 58.0
+@export var terrain_floor_stop_on_slope: bool = false
+@export var terrain_floor_constant_speed: bool = true
+@export var collision_safe_margin: float = 0.0002
 
 
 # ==============================================================================
@@ -130,6 +135,7 @@ var _notification_cooldown_time: float = 1.0
 
 func _ready() -> void:
 	_apply_config()
+	_setup_terrain_motion()
 	current_health = max_health
 	_attack_collision.disabled = true
 	
@@ -182,8 +188,15 @@ func _physics_process(delta: float) -> void:
 	else:
 		if current_state == State.DAMAGE and _damage_knockback_timer.is_stopped():
 			velocity.y = 0
+		else:
+			_apply_terrain_adhesion()
+
+	if velocity.y <= 0.0 and current_state != State.ROLLING:
+		apply_floor_snap()
 	
 	move_and_slide()
+	if _resolve_slope_edge_block():
+		move_and_slide()
 	_update_animations()
 
 
@@ -654,6 +667,11 @@ func _apply_config() -> void:
 	move_speed = player_config.move_speed
 	jump_speed = player_config.jump_speed
 	gravity_multiplier = player_config.gravity_multiplier
+	ground_snap_length = player_config.ground_snap_length
+	max_floor_angle_degrees = player_config.max_floor_angle_degrees
+	terrain_floor_stop_on_slope = player_config.floor_stop_on_slope
+	terrain_floor_constant_speed = player_config.floor_constant_speed
+	collision_safe_margin = player_config.collision_safe_margin
 
 	attack_damage = player_config.attack_damage
 	attack_movement_multiplier = player_config.attack_movement_multiplier
@@ -666,6 +684,62 @@ func _apply_config() -> void:
 	roll_speed = player_config.roll_speed
 	roll_duration = player_config.roll_duration
 	roll_cooldown = player_config.roll_cooldown
+
+
+func _setup_terrain_motion() -> void:
+	up_direction = Vector3.UP
+	floor_snap_length = ground_snap_length
+	floor_max_angle = deg_to_rad(max_floor_angle_degrees)
+	self.floor_stop_on_slope = terrain_floor_stop_on_slope
+	self.floor_constant_speed = terrain_floor_constant_speed
+	safe_margin = collision_safe_margin
+
+
+func _apply_terrain_adhesion() -> void:
+	if not is_on_floor():
+		return
+
+	var horizontal_velocity: Vector3 = Vector3(velocity.x, 0.0, velocity.z)
+	if horizontal_velocity.length_squared() <= 0.0:
+		return
+
+	var floor_normal: Vector3 = get_floor_normal()
+	var adjusted_velocity: Vector3 = horizontal_velocity.slide(floor_normal)
+	velocity.x = adjusted_velocity.x
+	velocity.z = adjusted_velocity.z
+
+
+func _resolve_slope_edge_block() -> bool:
+	if not is_on_floor() or not is_on_wall():
+		return false
+
+	var input_dir: Vector2 = Input.get_vector(
+			"move_left",
+			"move_right",
+			"move_up",
+			"move_down"
+	)
+	if input_dir == Vector2.ZERO:
+		return false
+
+	for i: int in get_slide_collision_count():
+		var collision: KinematicCollision3D = get_slide_collision(i)
+		if collision == null:
+			continue
+
+		var normal: Vector3 = collision.get_normal()
+		if normal.y > 0.05 and normal.y < 0.95:
+			var horizontal_velocity: Vector3 = Vector3(velocity.x, 0.0, velocity.z)
+			if horizontal_velocity.length_squared() <= 0.0:
+				return false
+
+			var adjusted_velocity: Vector3 = horizontal_velocity.slide(normal)
+			velocity.x = adjusted_velocity.x
+			velocity.z = adjusted_velocity.z
+			velocity.y = max(velocity.y, 0.18)
+			return true
+
+	return false
 
 
 # ==============================================================================
