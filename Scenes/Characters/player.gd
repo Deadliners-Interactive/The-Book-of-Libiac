@@ -396,10 +396,9 @@ func _flip_sprite(x_velocity: float) -> void:
 		return
 	
 	var moving_right: bool = x_velocity > 0
-	if moving_right != _is_facing_right:
-		_is_facing_right = moving_right
-		_animated_sprite.flip_h = not _is_facing_right
-		_attack_area.scale.x = 1.0 if _is_facing_right else -1.0
+	_is_facing_right = moving_right
+	_animated_sprite.flip_h = not _is_facing_right
+	_attack_area.scale.x = 1.0 if _is_facing_right else -1.0
 
 
 func _update_facing_from_input(input_dir: Vector2) -> void:
@@ -417,6 +416,9 @@ func _update_facing_from_input(input_dir: Vector2) -> void:
 		_last_move_animation = &"move_up"
 	else:
 		_last_move_animation = &"move_down"
+
+	# Keep vertical animations unmirrored.
+	_animated_sprite.flip_h = false
 
 
 func _get_last_facing_direction_3d() -> Vector3:
