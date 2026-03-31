@@ -77,11 +77,11 @@ const ANIM_ATTACK: StringName = &"attack"
 @export var fall_gravity_multiplier: float = 1.15
 @export var jump_release_gravity_multiplier: float = 1.35
 @export var air_animation_delay: float = 0.08
-@export var ground_snap_length: float = 0.34
+@export var ground_snap_length: float = 0.6
 @export var max_floor_angle_degrees: float = 58.0
 @export var terrain_floor_stop_on_slope: bool = false
-@export var terrain_floor_constant_speed: bool = true
-@export var collision_safe_margin: float = 0.0002
+@export var terrain_floor_constant_speed: bool = false
+@export var collision_safe_margin: float = 0.001
 
 
 # ==============================================================================
@@ -877,6 +877,8 @@ func _setup_terrain_motion() -> void:
 	self.floor_stop_on_slope = terrain_floor_stop_on_slope
 	self.floor_constant_speed = terrain_floor_constant_speed
 	safe_margin = collision_safe_margin
+	# Configuración adicional para mejor adhesión a pendientes
+	floor_block_on_wall = false
 
 
 func _apply_terrain_adhesion() -> void:
@@ -894,9 +896,6 @@ func _apply_terrain_adhesion() -> void:
 
 
 func _resolve_slope_edge_block() -> bool:
-	if not is_on_floor() or not is_on_wall():
-		return false
-
 	var input_dir: Vector2 = Input.get_vector(
 			"move_left",
 			"move_right",
@@ -906,22 +905,41 @@ func _resolve_slope_edge_block() -> bool:
 	if input_dir == Vector2.ZERO:
 		return false
 
+	var horizontal_velocity: Vector3 = Vector3(velocity.x, 0.0, velocity.z)
+	if horizontal_velocity.length_squared() <= 0.0:
+		return false
+
+	# Buscar cualquier colisión con una pendiente (no requiere piso Y pared simultáneamente)
 	for i: int in get_slide_collision_count():
 		var collision: KinematicCollision3D = get_slide_collision(i)
 		if collision == null:
 			continue
 
 		var normal: Vector3 = collision.get_normal()
+		# 0.05 < normal.y < 0.95 detecta paredes inclinadas (pendientes)
 		if normal.y > 0.05 and normal.y < 0.95:
-			var horizontal_velocity: Vector3 = Vector3(velocity.x, 0.0, velocity.z)
-			if horizontal_velocity.length_squared() <= 0.0:
-				return false
-
 			var adjusted_velocity: Vector3 = horizontal_velocity.slide(normal)
 			velocity.x = adjusted_velocity.x
 			velocity.z = adjusted_velocity.z
-			velocity.y = max(velocity.y, 0.18)
+			# Dar pequeño impulso vertical para subir la pendiente suavemente
+			if velocity.y < 0.1:
+				velocity.y = 0.1
 			return true
+
+	# Si estamos en piso pero bloqueados contra una pared vertical, intentar saltar
+	if is_on_floor() and is_on_wall():
+		for i: int in get_slide_collision_count():
+			var collision: KinematicCollision3D = get_slide_collision(i)
+			if collision == null:
+				continue
+			
+			var normal: Vector3 = collision.get_normal()
+			# Pared vertical (normal.y muy cerca de 0)
+			if normal.y < 0.1:
+				var adjusted_velocity: Vector3 = horizontal_velocity.slide(normal)
+				velocity.x = adjusted_velocity.x
+				velocity.z = adjusted_velocity.z
+				return true
 
 	return false
 
