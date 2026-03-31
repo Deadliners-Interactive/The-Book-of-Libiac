@@ -41,7 +41,7 @@ class_name PlayerConfig
 # Roll
 # ==============================================================================
 
-@export var roll_speed: float = 3.0
+@export var roll_speed: float = 2.0
 @export var roll_duration: float = 0.4
 @export var roll_cooldown: float = 0.2
 

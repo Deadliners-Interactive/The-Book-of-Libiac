@@ -97,7 +97,7 @@ const KB_MULTIPLIER: float = 5.0
 # ==============================================================================
 
 @export_group("Roll")
-@export var roll_speed: float = 3.0
+@export var roll_speed: float = 2.0
 @export var roll_duration: float = 0.4
 @export var roll_cooldown: float = 0.2
 
@@ -670,27 +670,41 @@ func _update_animations() -> void:
 	if current_state in [State.ATTACKING, State.ROLLING, State.DAMAGE]:
 		return
 	
+	var input_dir: Vector2 = Input.get_vector(
+		"move_left",
+		"move_right",
+		"move_up",
+		"move_down"
+	)
+	var has_movement_input: bool = input_dir != Vector2.ZERO
+	
 	if not is_on_floor():
-		if _airborne_time < air_animation_delay:
-			if velocity.x != 0 or velocity.z != 0:
-				var ground_move_animation: StringName = _get_move_animation_name(Vector3(velocity.x, 0.0, velocity.z))
-				_play_animation_with_fallback(ground_move_animation, &"run")
+		# If jumping, show jump/fall animation regardless of horizontal movement
+		if _is_jumping or _airborne_time >= air_animation_delay:
+			_animated_sprite.speed_scale = 2.0
+			if _is_jumping:
+				var jump_animation: StringName = _get_jump_animation_name()
+				_play_animation_with_fallback(jump_animation, &"jump_sides")
 			else:
-				_play_idle_from_last_direction()
+				_animated_sprite.play("fall")
 			return
-
-		_animated_sprite.speed_scale = 2.0
-		if _is_jumping:
-			_animated_sprite.play("jump")
+		
+		# If actively moving with input but NOT jumping, show movement anim (climbing slopes)
+		if has_movement_input and (velocity.x != 0 or velocity.z != 0):
+			_play_animation_with_fallback(_last_move_animation, &"run")
+			return
+		
+		# Grace period without movement
+		if velocity.x != 0 or velocity.z != 0:
+			var ground_move_animation: StringName = _get_move_animation_name(Vector3(velocity.x, 0.0, velocity.z))
+			_play_animation_with_fallback(ground_move_animation, &"run")
 		else:
-			_animated_sprite.play("fall")
+			_play_idle_from_last_direction()
 		return
 	
 	_animated_sprite.speed_scale = 1.0
-	if velocity.x != 0 or velocity.z != 0:
-		var move_animation: StringName = _get_move_animation_name(Vector3(velocity.x, 0.0, velocity.z))
-		_last_move_animation = move_animation
-		_play_animation_with_fallback(move_animation, &"run")
+	if has_movement_input or velocity.x != 0 or velocity.z != 0:
+		_play_animation_with_fallback(_last_move_animation, &"run")
 	else:
 		_play_idle_from_last_direction()
 
@@ -734,6 +748,16 @@ func _get_roll_animation_name(direction: Vector3) -> StringName:
 		return &"roll_down"
 
 	return &"roll_sides"
+
+
+func _get_jump_animation_name() -> StringName:
+	match _last_move_animation:
+		&"move_up":
+			return &"jump_up"
+		&"move_down":
+			return &"jump_down"
+		_:
+			return &"jump_sides"
 
 
 func _play_animation_with_fallback(preferred: StringName, fallback: StringName) -> bool:
