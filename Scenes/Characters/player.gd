@@ -612,7 +612,7 @@ func _update_animations() -> void:
 					ANIM_JUMP_DOWN
 				)
 				_direction_animation_controller.play_animation_with_fallback(_animated_sprite, jump_animation, ANIM_JUMP_SIDE)
-			else:
+			elif velocity.y < -0.2:
 				_direction_animation_controller.play_animation_with_fallback(_animated_sprite, ANIM_FALL, ANIM_MOVE_SIDE)
 			return
 		
