@@ -28,6 +28,16 @@ uniform float bob_phase = 0.0;
 // Simple planar motion (no vertical displacement).
 uniform vec2 flow_direction = vec2(1.0, 0.0);
 uniform float flow_speed = 0.18;
+uniform vec2 flow_secondary_direction = vec2(0.0, 1.0);
+uniform float flow_secondary_speed = 0.11;
+uniform float flow_secondary_strength = 0.35;
+// Smooth flow controls.
+uniform bool pixel_flow = true;
+uniform float flow_mix = 0.1;
+uniform float flow_wobble_texels = 0.45;
+uniform float flow_wobble_frequency = 1.6;
+uniform float flow_wobble_speed = 0.8;
+uniform float mask_softness = 0.0;
 
 varying vec3 world_pos_v;
 
@@ -60,15 +70,39 @@ void fragment() {
         dir /= len_dir;
     }
 
+    vec2 dir2 = flow_secondary_direction;
+    float len_dir2 = length(dir2);
+    if (len_dir2 > 0.0001) {
+        dir2 /= len_dir2;
+    }
+
+    vec2 tex_size = max(vec2(textureSize(WATER_TILE_TEX, 0)), vec2(1.0));
+
     float t = TIME * flow_speed;
-    vec2 final_uv = pixel_snap_uv(base_uv + dir * t);
-    vec3 mask_tex = texture(WATER_TILE_TEX, final_uv).rgb;
-    float mask = mask_tex.r;
+    float t2 = TIME * flow_secondary_speed;
+    float wobble_t = TIME * flow_wobble_speed;
+
+    float wobble_x = sin((base_uv.y * flow_wobble_frequency + wobble_t) * 6.2831853);
+    float wobble_y = cos((base_uv.x * (flow_wobble_frequency * 0.85) + wobble_t * 1.13) * 6.2831853);
+    vec2 wobble_uv = vec2(wobble_x, wobble_y) * (flow_wobble_texels / tex_size);
+
+    vec2 flow_uv_a = base_uv + dir * t + dir2 * (t2 * flow_secondary_strength) + wobble_uv;
+    vec2 flow_uv_b = base_uv - dir2 * (t2 * 0.85) + dir * (t * 0.35) - wobble_uv * 0.7;
+
+    vec2 uv_a = pixel_flow ? pixel_snap_uv(flow_uv_a) : flow_uv_a;
+    vec2 uv_b = pixel_flow ? pixel_snap_uv(flow_uv_b) : flow_uv_b;
+
+    float mask_a = texture(WATER_TILE_TEX, uv_a).r;
+    float mask_b = texture(WATER_TILE_TEX, uv_b).r;
+    float mix_amt = clamp(flow_mix, 0.0, 1.0);
+    float mask = max(mask_a, mix(mask_a, mask_b, mix_amt));
     if (invert_mask) {
         mask = 1.0 - mask;
     }
 
-    float edge = hard_mask ? step(foam_threshold, mask) : mask;
+    float soft = max(mask_softness, 0.0001);
+    float edge_soft = smoothstep(foam_threshold - soft, foam_threshold + soft, mask);
+    float edge = hard_mask ? step(foam_threshold, mask) : edge_soft;
 
     ALBEDO = mix(OCEAN_COL.rgb, FOAM_COL.rgb, edge);
 }

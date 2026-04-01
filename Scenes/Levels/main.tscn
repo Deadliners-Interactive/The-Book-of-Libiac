@@ -46,8 +46,20 @@ shader_parameter/use_world_mapping = true
 shader_parameter/world_tiling = 0.2
 shader_parameter/mask_aspect = 4.0
 shader_parameter/surface_lift = 0.01
+shader_parameter/bob_height = 0.1
+shader_parameter/bob_speed = 1.0
+shader_parameter/bob_phase = 0.0
 shader_parameter/flow_direction = Vector2(1, 0)
 shader_parameter/flow_speed = 0.18
+shader_parameter/flow_secondary_direction = Vector2(0, 1)
+shader_parameter/flow_secondary_speed = 0.11
+shader_parameter/flow_secondary_strength = 0.35
+shader_parameter/pixel_flow = true
+shader_parameter/flow_mix = 0.1
+shader_parameter/flow_wobble_texels = 0.45
+shader_parameter/flow_wobble_frequency = 1.6
+shader_parameter/flow_wobble_speed = 0.8
+shader_parameter/mask_softness = 0.0
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2cgwh"]
 material = SubResource("ShaderMaterial_0c07c")
