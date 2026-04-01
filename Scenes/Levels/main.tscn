@@ -29,7 +29,7 @@ background_mode = 2
 sky = SubResource("Sky_8m2q7")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ueoa1"]
-size = Vector3(1, 0.023628235, 1)
+size = Vector3(4.0808105, 0.023628235, 4.0804443)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_0c07c"]
 render_priority = 0
@@ -239,7 +239,7 @@ data = PackedVector3Array(0.099999994, 0.32999998, 0.28149998, 0, 0.3829, 0.5841
 [node name="Main" type="Node3D" unique_id=411485026]
 
 [node name="Player" parent="." unique_id=1868634362 groups=["player"] instance=ExtResource("2_fdnlq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9794817, 4.1290174, 19.467566)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9794817, 3.1317554, 19.467566)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=77694813]
 environment = SubResource("Environment_u5gxq")
@@ -260,7 +260,7 @@ sky_mode = 1
 script = ExtResource("5_ueoa1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WaterSurface13" unique_id=1263087303]
-transform = Transform3D(49.245, 0, 0, 0, 49.245, 0, 0, 0, 49.245, 0, -0.594935, -9.818293)
+transform = Transform3D(49.245, 0, 0, 0, 49.245, 0, 0, 0, 49.245, 0, 0, 0)
 shape = SubResource("BoxShape3D_ueoa1")
 
 [node name="WaterSurface12" type="MeshInstance3D" parent="WaterSurface13" unique_id=996250100]

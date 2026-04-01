@@ -59,7 +59,7 @@ class_name PlayerConfig
 
 @export var roll_speed: float = 8.0
 @export var roll_duration: float = 0.45
-@export var roll_cooldown: float = 0.2
+@export var roll_cooldown: float = 0.1
 
 # ==============================================================================
 # FSM Transitions

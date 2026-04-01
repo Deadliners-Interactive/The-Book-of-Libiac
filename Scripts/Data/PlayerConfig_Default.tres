@@ -4,3 +4,4 @@
 
 [resource]
 script = ExtResource("1_player_config_script")
+roll_cooldown = 0.1

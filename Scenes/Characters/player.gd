@@ -48,6 +48,11 @@ const ANIM_FALL: StringName = &"fall"
 const ANIM_ATTACK: StringName = &"attack"
 const EDGE_HOP_RAYCAST_NAME: StringName = &"EdgeHopRayCast3D_Player"
 const EdgeHopControllerScript = preload("res://Scripts/Gameplay/Behaviors/edge_hop_controller.gd")
+const JumpControllerScript = preload("res://Scripts/Gameplay/Behaviors/jump_controller.gd")
+const GroundLocomotionControllerScript = preload("res://Scripts/Gameplay/Behaviors/ground_locomotion_controller.gd")
+const DirectionAnimationControllerScript = preload("res://Scripts/Gameplay/Behaviors/direction_animation_controller.gd")
+const CombatControllerScript = preload("res://Scripts/Gameplay/Behaviors/combat_controller.gd")
+const NotificationControllerScript = preload("res://Scripts/Gameplay/Behaviors/notification_controller.gd")
 
 
 # ==============================================================================
@@ -74,9 +79,6 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var current_health: float
 var key_count: int = 0
 
-# Movement config (loaded from player_config)
-var _jump_profile: Vector2 = Vector2.ZERO
-
 # Combat/Health config (loaded from player_config)
 var max_health: float
 
@@ -89,23 +91,19 @@ var current_state: State = State.NORMAL
 var _is_facing_right: bool = true
 var _last_move_animation: StringName = ANIM_MOVE_SIDE
 var _last_move_input: Vector2 = Vector2.RIGHT
-var _attack_combo_step: int = 0
 var _input_buffer: String = ""
-var _enemies_hit: Array = []
-var _is_invulnerable: bool = false
 
 var _damage_knockback_timer: Timer = Timer.new()
 var _damage_visual_timer: Timer = Timer.new()
 var _roll_cooldown_timer: Timer = Timer.new()
-var _notification_cooldown: Dictionary = {}
 var _notification_cooldown_time: float = 1.0
-var _last_time_on_floor: float = 0.0
-var _jump_buffer_timer: float = 0.0
-var _jump_consumed: bool = false
-var _is_jumping: bool = false
-var _airborne_time: float = 0.0
 var _was_on_floor_last_frame: bool = false
 var _edge_hop_controller = EdgeHopControllerScript.new()
+var _jump_controller = JumpControllerScript.new()
+var _ground_locomotion_controller = GroundLocomotionControllerScript.new()
+var _direction_animation_controller = DirectionAnimationControllerScript.new()
+var _combat_controller = CombatControllerScript.new()
+var _notification_controller = NotificationControllerScript.new()
 
 
 # ==============================================================================
@@ -129,6 +127,7 @@ func _ready() -> void:
 		return
 	
 	_apply_config()
+	_notification_controller.cooldown_seconds = _notification_cooldown_time
 	_setup_edge_hop_raycast()
 	_setup_terrain_motion()
 	_was_on_floor_last_frame = is_on_floor()
@@ -153,7 +152,7 @@ func _ready() -> void:
 	add_child(_damage_visual_timer)
 	_damage_visual_timer.one_shot = true
 	_damage_visual_timer.timeout.connect(func() -> void:
-		_is_invulnerable = false
+		_combat_controller.clear_invulnerability(_animated_sprite)
 	)
 	
 	# Connect signals
@@ -176,24 +175,28 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	_update_jump_timers(delta)
+	_jump_controller.update_timers(delta, is_on_floor(), player_config)
 	_edge_hop_controller.tick(delta)
 	_update_current_state(delta)
 	
 	# Apply gravity
 	if not is_on_floor():
-		velocity.y -= gravity * _jump_profile.y * _get_air_gravity_multiplier() * delta
+		velocity.y -= gravity * _jump_controller.jump_profile.y * _jump_controller.get_air_gravity_multiplier(
+			velocity.y,
+			Input.is_action_pressed("jump"),
+			player_config
+		) * delta
 	else:
 		if current_state == State.DAMAGE and _damage_knockback_timer.is_stopped():
 			velocity.y = 0
 		else:
-			_apply_terrain_adhesion()
+			_ground_locomotion_controller.apply_terrain_adhesion(self)
 
-	if velocity.y <= 0.0 and current_state != State.ROLLING and not _is_jumping:
+	if velocity.y <= 0.0 and current_state != State.ROLLING and not _jump_controller.is_jumping:
 		apply_floor_snap()
 	
 	move_and_slide()
-	if _resolve_slope_edge_block():
+	if _ground_locomotion_controller.resolve_slope_edge_block(self):
 		move_and_slide()
 	_try_edge_hop()
 	_was_on_floor_last_frame = is_on_floor()
@@ -233,7 +236,7 @@ func take_damage_hearts_with_knockback(
 		knockback_direction: Vector3,
 		knockback_force: float
 ) -> void:
-	if current_state == State.ROLLING or _is_invulnerable:
+	if current_state == State.ROLLING or _combat_controller.is_invulnerable:
 		return
 	
 	current_health -= damage_amount
@@ -306,14 +309,9 @@ func refresh_ui_state() -> void:
 
 
 func show_notification(message: String) -> void:
-	var current_time: int = Time.get_ticks_msec()
-	
-	if _notification_cooldown.has(message):
-		var last_shown_time: int = _notification_cooldown[message]
-		if current_time - last_shown_time < int(_notification_cooldown_time * 1000):
-			return
-	
-	_notification_cooldown[message] = current_time
+	if not _notification_controller.can_emit(message):
+		return
+
 	notification_requested.emit(message)
 
 
@@ -346,28 +344,26 @@ func _handle_buffer_input() -> void:
 # ==============================================================================
 
 func _handle_move(speed_mult: float = 1.0) -> void:
-	if not _damage_knockback_timer.is_stopped():
-		return
-
 	var input_dir: Vector2 = Input.get_vector(
 			"move_left",
 			"move_right",
 			"move_up",
 			"move_down"
 	)
-	var direction: Vector3 = (
-			transform.basis * Vector3(input_dir.x, 0, input_dir.y)
-	).normalized()
-	
-	var final_speed: float = _get_move_speed() * speed_mult
-	
-	if direction:
-		_update_facing_from_input(input_dir)
-		velocity.x = direction.x * final_speed
-		velocity.z = direction.z * final_speed
-	else:
-		velocity.x = move_toward(velocity.x, 0.0, final_speed)
-		velocity.z = move_toward(velocity.z, 0.0, final_speed)
+	if _ground_locomotion_controller.apply_move(self, input_dir, _get_move_speed() * speed_mult, _damage_knockback_timer, transform.basis):
+		var facing_update: Dictionary = _direction_animation_controller.update_facing_from_input(
+			_animated_sprite,
+			_attack_area,
+			input_dir,
+			_last_move_input,
+			_is_facing_right,
+			ANIM_MOVE_SIDE,
+			ANIM_MOVE_UP,
+			ANIM_MOVE_DOWN
+		)
+		_last_move_input = facing_update["last_move_input"]
+		_is_facing_right = facing_update["is_facing_right"]
+		_last_move_animation = facing_update["last_move_animation"]
 
 
 func _handle_jump() -> void:
@@ -376,56 +372,12 @@ func _handle_jump() -> void:
 
 
 func _apply_roll_physics() -> void:
-	if current_state == State.ROLLING:
-		var current_vel_xz: float = Vector3(velocity.x, 0, velocity.z).length()
-		var min_roll_motion_speed: float = max(player_config.roll_speed * 0.08, 0.06)
-		
-		if current_vel_xz < min_roll_motion_speed:
-			var facing_direction: Vector3 = _get_last_facing_direction_3d()
-			velocity.x = facing_direction.x * player_config.roll_speed
-			velocity.z = facing_direction.z * player_config.roll_speed
-		else:
-			var roll_dir_xz: Vector3 = Vector3(velocity.x, 0, velocity.z).normalized()
-			velocity.x = roll_dir_xz.x * player_config.roll_speed
-			velocity.z = roll_dir_xz.z * player_config.roll_speed
-
-
-func _flip_sprite(x_velocity: float) -> void:
-	if abs(x_velocity) < max(_get_move_speed() * 0.05, 0.05):
-		return
-	
-	var moving_right: bool = x_velocity > 0
-	_is_facing_right = moving_right
-	_animated_sprite.flip_h = not _is_facing_right
-	_attack_area.scale.x = 1.0 if _is_facing_right else -1.0
-
-
-func _update_facing_from_input(input_dir: Vector2) -> void:
-	if input_dir == Vector2.ZERO:
-		return
-
-	_last_move_input = input_dir.normalized()
-
-	if abs(input_dir.x) >= abs(input_dir.y):
-		_last_move_animation = ANIM_MOVE_SIDE
-		_flip_sprite(input_dir.x)
-		return
-
-	if input_dir.y < 0.0:
-		_last_move_animation = ANIM_MOVE_UP
-	else:
-		_last_move_animation = ANIM_MOVE_DOWN
-
-	# Keep vertical animations unmirrored.
-	_animated_sprite.flip_h = false
-
-
-func _get_last_facing_direction_3d() -> Vector3:
-	if _last_move_input.length_squared() > 0.0:
-		return Vector3(_last_move_input.x, 0.0, _last_move_input.y).normalized()
-
-	var side_direction: float = 1.0 if _is_facing_right else -1.0
-	return Vector3(side_direction, 0.0, 0.0)
+	_ground_locomotion_controller.apply_roll_physics(
+		self,
+		current_state == State.ROLLING,
+		player_config.roll_speed,
+		_direction_animation_controller.get_last_facing_direction_3d(_last_move_input, _is_facing_right)
+	)
 
 
 # ==============================================================================
@@ -589,15 +541,7 @@ func _state_to_string(state: State) -> String:
 # ==============================================================================
 
 func _start_attack() -> void:
-	_enemies_hit.clear()
-	_animated_sprite.speed_scale = 2.0
-	
-	if _attack_combo_step == 0:
-		_animated_sprite.play("attack")
-		_attack_combo_step = 1
-	else:
-		_animated_sprite.play_backwards("attack")
-		_attack_combo_step = 0
+	_combat_controller.start_attack(_animated_sprite, ANIM_ATTACK)
 	
 	get_tree().create_timer(player_config.attack_hit_delay).timeout.connect(_on_hitbox_activate)
 
@@ -606,48 +550,35 @@ func _on_hitbox_activate() -> void:
 	if current_state != State.ATTACKING:
 		return
 	
-	_attack_collision.set_deferred("disabled", false)
-	
-	get_tree().create_timer(0.15).timeout.connect(func() -> void:
-		if current_state == State.ATTACKING:
-			_attack_collision.set_deferred("disabled", true)
-	)
+	_combat_controller.activate_attack_hitbox(self, _attack_collision, State.ATTACKING)
 
 
 func _on_attack_hit(body: Node3D) -> void:
-	if _attack_collision.disabled:
-		return
-	
-	if (body.has_method("take_damage") and body != self
-			and body not in _enemies_hit):
-		_enemies_hit.append(body)
-		body.take_damage(player_config.attack_damage)
+	_combat_controller.handle_attack_hit(self, body, _attack_collision, player_config.attack_damage)
 
 
 func _start_roll() -> void:
-	_is_invulnerable = true
 	_input_buffer = ""
 	_animated_sprite.speed_scale = 2.0
 
-	var roll_animation: StringName = _get_roll_animation_name(Vector3(velocity.x, 0.0, velocity.z))
-	if not _play_animation_with_fallback(roll_animation, &"roll"):
+	var roll_animation: StringName = _direction_animation_controller.get_roll_animation_name(
+		Vector3(velocity.x, 0.0, velocity.z),
+		_last_move_animation,
+		ANIM_ROLL_SIDE,
+		ANIM_ROLL_UP,
+		ANIM_ROLL_DOWN
+	)
+	if not _direction_animation_controller.play_animation_with_fallback(_animated_sprite, roll_animation, &"roll"):
 		var roll_timer: SceneTreeTimer = get_tree().create_timer(player_config.roll_duration)
 		roll_timer.timeout.connect(func() -> void:
-			_is_invulnerable = false
+			_combat_controller.clear_invulnerability(_animated_sprite)
 			_roll_cooldown_timer.start(player_config.roll_cooldown)
 			set_state(State.NORMAL)
 		)
 
 
 func _start_damage() -> void:
-	_is_invulnerable = true
-	_damage_visual_timer.start(player_config.invulnerability_time)
-	_animated_sprite.modulate = Color(1, 0.5, 0.5, 1)
-	
-	get_tree().create_timer(player_config.damage_visual_time).timeout.connect(func() -> void:
-		if _is_invulnerable:
-			_animated_sprite.modulate = Color.WHITE
-	)
+	_combat_controller.start_damage(_animated_sprite, _damage_visual_timer, player_config.invulnerability_time, player_config.damage_visual_time)
 
 
 # ==============================================================================
@@ -668,103 +599,50 @@ func _update_animations() -> void:
 	
 	if not is_on_floor():
 		# If jumping, show jump/fall animation regardless of horizontal movement
-		if _is_jumping or _airborne_time >= player_config.air_animation_delay:
+		if _jump_controller.is_jumping or _jump_controller.airborne_time >= player_config.air_animation_delay:
 			_animated_sprite.speed_scale = 2.0
-			if _is_jumping:
-				var jump_animation: StringName = _get_jump_animation_name()
-				_play_animation_with_fallback(jump_animation, ANIM_JUMP_SIDE)
+			if _jump_controller.is_jumping:
+				var jump_animation: StringName = _direction_animation_controller.get_jump_animation_name(
+					_last_move_animation,
+					ANIM_MOVE_SIDE,
+					ANIM_MOVE_UP,
+					ANIM_MOVE_DOWN,
+					ANIM_JUMP_SIDE,
+					ANIM_JUMP_UP,
+					ANIM_JUMP_DOWN
+				)
+				_direction_animation_controller.play_animation_with_fallback(_animated_sprite, jump_animation, ANIM_JUMP_SIDE)
 			else:
-				_play_animation_with_fallback(ANIM_FALL, ANIM_MOVE_SIDE)
+				_direction_animation_controller.play_animation_with_fallback(_animated_sprite, ANIM_FALL, ANIM_MOVE_SIDE)
 			return
 		
 		# If actively moving with input but NOT jumping, show movement anim (climbing slopes)
 		if has_movement_input and (velocity.x != 0 or velocity.z != 0):
-			_play_animation_with_fallback(_last_move_animation, ANIM_MOVE_SIDE)
+			_direction_animation_controller.play_animation_with_fallback(_animated_sprite, _last_move_animation, ANIM_MOVE_SIDE)
 			return
 		
 		# Grace period without movement
 		if velocity.x != 0 or velocity.z != 0:
-			var ground_move_animation: StringName = _get_move_animation_name(Vector3(velocity.x, 0.0, velocity.z))
-			_play_animation_with_fallback(ground_move_animation, ANIM_MOVE_SIDE)
+			var ground_move_animation: StringName = _direction_animation_controller.get_move_animation_name(Vector3(velocity.x, 0.0, velocity.z), ANIM_MOVE_SIDE, ANIM_MOVE_UP, ANIM_MOVE_DOWN)
+			_direction_animation_controller.play_animation_with_fallback(_animated_sprite, ground_move_animation, ANIM_MOVE_SIDE)
 		else:
-			_play_idle_from_last_direction()
+			_direction_animation_controller.play_idle_from_last_direction(_animated_sprite, _last_move_animation, ANIM_MOVE_SIDE)
 		return
 	
 	_animated_sprite.speed_scale = 1.0
 	if has_movement_input or velocity.x != 0 or velocity.z != 0:
-		_play_animation_with_fallback(_last_move_animation, ANIM_MOVE_SIDE)
+		_direction_animation_controller.play_animation_with_fallback(_animated_sprite, _last_move_animation, ANIM_MOVE_SIDE)
 	else:
-		_play_idle_from_last_direction()
+		_direction_animation_controller.play_idle_from_last_direction(_animated_sprite, _last_move_animation, ANIM_MOVE_SIDE)
 
 
 func _on_animation_finished() -> void:
 	if _animated_sprite.animation == ANIM_ATTACK:
 		set_state(State.NORMAL)
 	elif String(_animated_sprite.animation).begins_with("roll"):
-		_is_invulnerable = false
+		_combat_controller.clear_invulnerability(_animated_sprite)
 		_roll_cooldown_timer.start(player_config.roll_cooldown)
 		set_state(State.NORMAL)
-
-
-func _get_move_animation_name(direction: Vector3) -> StringName:
-	var horizontal: Vector3 = Vector3(direction.x, 0.0, direction.z)
-	if horizontal.length_squared() <= 0.0001:
-		return ANIM_MOVE_SIDE
-
-	if abs(horizontal.z) > abs(horizontal.x):
-		if horizontal.z < 0.0:
-			return ANIM_MOVE_UP
-		return ANIM_MOVE_DOWN
-
-	return ANIM_MOVE_SIDE
-
-
-func _get_roll_animation_name(direction: Vector3) -> StringName:
-	var horizontal: Vector3 = Vector3(direction.x, 0.0, direction.z)
-	if horizontal.length_squared() <= 0.0001:
-		match _last_move_animation:
-			ANIM_MOVE_UP:
-				return ANIM_ROLL_UP
-			ANIM_MOVE_DOWN:
-				return ANIM_ROLL_DOWN
-			_:
-				return ANIM_ROLL_SIDE
-
-	if abs(horizontal.z) > abs(horizontal.x):
-		if horizontal.z < 0.0:
-			return ANIM_ROLL_UP
-		return ANIM_ROLL_DOWN
-
-	return ANIM_ROLL_SIDE
-
-
-func _get_jump_animation_name() -> StringName:
-	match _last_move_animation:
-		ANIM_MOVE_UP:
-			return ANIM_JUMP_UP
-		ANIM_MOVE_DOWN:
-			return ANIM_JUMP_DOWN
-		_:
-			return ANIM_JUMP_SIDE
-
-
-
-func _play_animation_with_fallback(preferred: StringName, fallback: StringName) -> bool:
-	if _animated_sprite.sprite_frames.has_animation(preferred):
-		_animated_sprite.play(preferred)
-		return true
-
-	if _animated_sprite.sprite_frames.has_animation(fallback):
-		_animated_sprite.play(fallback)
-		return true
-
-	return false
-
-
-func _play_idle_from_last_direction() -> void:
-	if _play_animation_with_fallback(_last_move_animation, ANIM_MOVE_SIDE):
-		_animated_sprite.stop()
-		_animated_sprite.frame = 0
 
 
 # ==============================================================================
@@ -774,24 +652,9 @@ func _play_idle_from_last_direction() -> void:
 func _apply_config() -> void:
 	if not player_config:
 		return
-
-	_jump_profile = Vector2(player_config.jump_speed, player_config.gravity_multiplier)
-	if player_config.use_jump_model:
-		var grid_step: float = _get_world_grid_step()
-		var jump_height_world: float = max(player_config.jump_height * grid_step, 0.2)
-		_jump_profile = _build_jump_profile(jump_height_world, player_config.time_to_jump_apex)
+	_jump_controller.configure(player_config, gravity, _get_world_grid_step())
 
 	max_health = player_config.max_health
-
-
-func _build_jump_profile(height: float, apex_time: float) -> Vector2:
-	var safe_height: float = max(height, 0.05)
-	var safe_apex_time: float = max(apex_time, 0.05)
-	var effective_gravity: float = (2.0 * safe_height) / (safe_apex_time * safe_apex_time)
-	var safe_base_gravity: float = max(gravity, 0.001)
-	var computed_jump_speed: float = (2.0 * safe_height) / safe_apex_time
-	var computed_gravity_multiplier: float = effective_gravity / safe_base_gravity
-	return Vector2(computed_jump_speed, computed_gravity_multiplier)
 
 
 func _get_move_speed() -> float:
@@ -829,59 +692,16 @@ func _find_first_grid_map(node: Node) -> GridMap:
 
 
 
-func _update_jump_timers(delta: float) -> void:
-	if is_on_floor():
-		_last_time_on_floor = player_config.jump_coyote_time
-		_jump_consumed = false
-		_is_jumping = false
-		_airborne_time = 0.0
-	else:
-		_last_time_on_floor = max(_last_time_on_floor - delta, 0.0)
-		_airborne_time += delta
-
-	if Input.is_action_just_pressed("jump"):
-		_jump_buffer_timer = player_config.jump_buffer_time
-	else:
-		_jump_buffer_timer = max(_jump_buffer_timer - delta, 0.0)
-
-
 func _can_start_jump() -> bool:
-	if _jump_consumed:
-		return false
-
-	if _jump_buffer_timer <= 0.0:
-		return false
-
-	return _last_time_on_floor > 0.0
+	return _jump_controller.can_start_jump()
 
 
 func _start_jump() -> void:
-	velocity.y = _jump_profile.x
-	_jump_buffer_timer = 0.0
-	_last_time_on_floor = 0.0
-	_jump_consumed = true
-	_is_jumping = true
-
-
-func _get_air_gravity_multiplier() -> float:
-	if velocity.y < 0.0:
-		return player_config.fall_gravity_multiplier
-
-	if velocity.y > 0.0 and not Input.is_action_pressed("jump"):
-		return player_config.jump_release_gravity_multiplier
-
-	return 1.0
+	_jump_controller.start_jump(self)
 
 
 func _setup_terrain_motion() -> void:
-	up_direction = Vector3.UP
-	floor_snap_length = player_config.ground_snap_length
-	floor_max_angle = deg_to_rad(player_config.max_floor_angle_degrees)
-	self.floor_stop_on_slope = player_config.floor_stop_on_slope
-	self.floor_constant_speed = player_config.floor_constant_speed
-	safe_margin = player_config.collision_safe_margin
-	# Configuración adicional para mejor adhesión a pendientes
-	floor_block_on_wall = false
+	_ground_locomotion_controller.setup_terrain_motion(self, player_config)
 
 
 func _setup_edge_hop_raycast() -> void:
@@ -902,95 +722,18 @@ func _try_edge_hop() -> void:
 		_was_on_floor_last_frame,
 		current_state,
 		State.NORMAL,
-		_is_jumping,
+		_jump_controller.is_jumping,
 		_get_move_speed(),
 		_damage_knockback_timer,
-		_get_horizontal_move_direction_3d()
+		_ground_locomotion_controller.get_horizontal_move_direction_3d(
+			Input.get_vector("move_left", "move_right", "move_up", "move_down"),
+			velocity,
+			_direction_animation_controller.get_last_facing_direction_3d(_last_move_input, _is_facing_right)
+		)
 	):
-		_jump_buffer_timer = 0.0
-		_last_time_on_floor = 0.0
-		_jump_consumed = true
-		_is_jumping = true
+		_jump_controller.consume_jump_by_external_boost()
 
 
-func _get_horizontal_move_direction_3d() -> Vector3:
-	var input_dir: Vector2 = Input.get_vector(
-			"move_left",
-			"move_right",
-			"move_up",
-			"move_down"
-	)
-	if input_dir != Vector2.ZERO:
-		return Vector3(input_dir.x, 0.0, input_dir.y).normalized()
-
-	var horizontal_velocity: Vector3 = Vector3(velocity.x, 0.0, velocity.z)
-	if horizontal_velocity.length_squared() > 0.001:
-		return horizontal_velocity.normalized()
-
-	return _get_last_facing_direction_3d()
-
-
-func _apply_terrain_adhesion() -> void:
-	if not is_on_floor():
-		return
-
-	var horizontal_velocity: Vector3 = Vector3(velocity.x, 0.0, velocity.z)
-	if horizontal_velocity.length_squared() <= 0.0:
-		return
-
-	var floor_normal: Vector3 = get_floor_normal()
-	var adjusted_velocity: Vector3 = horizontal_velocity.slide(floor_normal)
-	velocity.x = adjusted_velocity.x
-	velocity.z = adjusted_velocity.z
-
-
-func _resolve_slope_edge_block() -> bool:
-	var input_dir: Vector2 = Input.get_vector(
-			"move_left",
-			"move_right",
-			"move_up",
-			"move_down"
-	)
-	if input_dir == Vector2.ZERO:
-		return false
-
-	var horizontal_velocity: Vector3 = Vector3(velocity.x, 0.0, velocity.z)
-	if horizontal_velocity.length_squared() <= 0.0:
-		return false
-
-	# Buscar cualquier colisión con una pendiente (no requiere piso Y pared simultáneamente)
-	for i: int in get_slide_collision_count():
-		var collision: KinematicCollision3D = get_slide_collision(i)
-		if collision == null:
-			continue
-
-		var normal: Vector3 = collision.get_normal()
-		# 0.05 < normal.y < 0.95 detecta paredes inclinadas (pendientes)
-		if normal.y > 0.05 and normal.y < 0.95:
-			var adjusted_velocity: Vector3 = horizontal_velocity.slide(normal)
-			velocity.x = adjusted_velocity.x
-			velocity.z = adjusted_velocity.z
-			# Dar pequeño impulso vertical para subir la pendiente suavemente
-			if velocity.y < 0.1:
-				velocity.y = 0.1
-			return true
-
-	# Si estamos en piso pero bloqueados contra una pared vertical, intentar saltar
-	if is_on_floor() and is_on_wall():
-		for i: int in get_slide_collision_count():
-			var collision: KinematicCollision3D = get_slide_collision(i)
-			if collision == null:
-				continue
-			
-			var normal: Vector3 = collision.get_normal()
-			# Pared vertical (normal.y muy cerca de 0)
-			if normal.y < 0.1:
-				var adjusted_velocity: Vector3 = horizontal_velocity.slide(normal)
-				velocity.x = adjusted_velocity.x
-				velocity.z = adjusted_velocity.z
-				return true
-
-	return false
 
 
 # ==============================================================================
