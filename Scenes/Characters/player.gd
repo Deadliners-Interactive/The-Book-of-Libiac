@@ -47,6 +47,7 @@ const ANIM_JUMP_DOWN: StringName = &"jump_down"
 const ANIM_FALL: StringName = &"fall"
 const ANIM_ATTACK: StringName = &"attack"
 const EDGE_HOP_RAYCAST_NAME: StringName = &"EdgeHopRayCast3D_Player"
+const EdgeHopControllerScript = preload("res://Scripts/Gameplay/Behaviors/edge_hop_controller.gd")
 
 
 # ==============================================================================
@@ -74,38 +75,10 @@ var current_health: float
 var key_count: int = 0
 
 # Movement config (loaded from player_config)
-var move_speed: float
-var jump_speed: float
-var gravity_multiplier: float
-var jump_coyote_time: float
-var jump_buffer_time: float
-var fall_gravity_multiplier: float
-var jump_release_gravity_multiplier: float
-var air_animation_delay: float
-var ground_snap_length: float
-var max_floor_angle_degrees: float
-var terrain_floor_stop_on_slope: bool
-var terrain_floor_constant_speed: bool
-var collision_safe_margin: float
-var edge_hop_enabled: bool
-var edge_hop_forward_distance: float
-var edge_hop_probe_height: float
-var edge_hop_probe_depth: float
-var edge_hop_forward_boost: float
-var edge_hop_vertical_boost: float
-var edge_hop_cooldown: float
-var edge_hop_step_down_threshold: float
+var _jump_profile: Vector2 = Vector2.ZERO
 
 # Combat/Health config (loaded from player_config)
-var attack_damage: int
-var attack_movement_multiplier: float
-var attack_hit_delay: float
 var max_health: float
-var invulnerability_time: float
-var damage_visual_time: float
-var roll_speed: float
-var roll_duration: float
-var roll_cooldown: float
 
 
 # ==============================================================================
@@ -131,8 +104,8 @@ var _jump_buffer_timer: float = 0.0
 var _jump_consumed: bool = false
 var _is_jumping: bool = false
 var _airborne_time: float = 0.0
-var _edge_hop_cooldown_left: float = 0.0
 var _was_on_floor_last_frame: bool = false
+var _edge_hop_controller = EdgeHopControllerScript.new()
 
 
 # ==============================================================================
@@ -204,12 +177,12 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_update_jump_timers(delta)
-	_update_edge_hop_cooldown(delta)
+	_edge_hop_controller.tick(delta)
 	_update_current_state(delta)
 	
 	# Apply gravity
 	if not is_on_floor():
-		velocity.y -= gravity * gravity_multiplier * _get_air_gravity_multiplier() * delta
+		velocity.y -= gravity * _jump_profile.y * _get_air_gravity_multiplier() * delta
 	else:
 		if current_state == State.DAMAGE and _damage_knockback_timer.is_stopped():
 			velocity.y = 0
@@ -386,7 +359,7 @@ func _handle_move(speed_mult: float = 1.0) -> void:
 			transform.basis * Vector3(input_dir.x, 0, input_dir.y)
 	).normalized()
 	
-	var final_speed: float = move_speed * speed_mult
+	var final_speed: float = _get_move_speed() * speed_mult
 	
 	if direction:
 		_update_facing_from_input(input_dir)
@@ -405,20 +378,20 @@ func _handle_jump() -> void:
 func _apply_roll_physics() -> void:
 	if current_state == State.ROLLING:
 		var current_vel_xz: float = Vector3(velocity.x, 0, velocity.z).length()
-		var min_roll_motion_speed: float = max(roll_speed * 0.08, 0.06)
+		var min_roll_motion_speed: float = max(player_config.roll_speed * 0.08, 0.06)
 		
 		if current_vel_xz < min_roll_motion_speed:
 			var facing_direction: Vector3 = _get_last_facing_direction_3d()
-			velocity.x = facing_direction.x * roll_speed
-			velocity.z = facing_direction.z * roll_speed
+			velocity.x = facing_direction.x * player_config.roll_speed
+			velocity.z = facing_direction.z * player_config.roll_speed
 		else:
 			var roll_dir_xz: Vector3 = Vector3(velocity.x, 0, velocity.z).normalized()
-			velocity.x = roll_dir_xz.x * roll_speed
-			velocity.z = roll_dir_xz.z * roll_speed
+			velocity.x = roll_dir_xz.x * player_config.roll_speed
+			velocity.z = roll_dir_xz.z * player_config.roll_speed
 
 
 func _flip_sprite(x_velocity: float) -> void:
-	if abs(x_velocity) < max(move_speed * 0.05, 0.05):
+	if abs(x_velocity) < max(_get_move_speed() * 0.05, 0.05):
 		return
 	
 	var moving_right: bool = x_velocity > 0
@@ -506,7 +479,7 @@ func _update_state_normal() -> void:
 
 func _update_state_attacking() -> void:
 	if _damage_knockback_timer.is_stopped():
-		_handle_move(attack_movement_multiplier)
+		_handle_move(player_config.attack_movement_multiplier)
 	_handle_buffer_input()
 
 
@@ -626,7 +599,7 @@ func _start_attack() -> void:
 		_animated_sprite.play_backwards("attack")
 		_attack_combo_step = 0
 	
-	get_tree().create_timer(attack_hit_delay).timeout.connect(_on_hitbox_activate)
+	get_tree().create_timer(player_config.attack_hit_delay).timeout.connect(_on_hitbox_activate)
 
 
 func _on_hitbox_activate() -> void:
@@ -648,7 +621,7 @@ func _on_attack_hit(body: Node3D) -> void:
 	if (body.has_method("take_damage") and body != self
 			and body not in _enemies_hit):
 		_enemies_hit.append(body)
-		body.take_damage(attack_damage)
+		body.take_damage(player_config.attack_damage)
 
 
 func _start_roll() -> void:
@@ -658,20 +631,20 @@ func _start_roll() -> void:
 
 	var roll_animation: StringName = _get_roll_animation_name(Vector3(velocity.x, 0.0, velocity.z))
 	if not _play_animation_with_fallback(roll_animation, &"roll"):
-		var roll_timer: SceneTreeTimer = get_tree().create_timer(roll_duration)
+		var roll_timer: SceneTreeTimer = get_tree().create_timer(player_config.roll_duration)
 		roll_timer.timeout.connect(func() -> void:
 			_is_invulnerable = false
-			_roll_cooldown_timer.start(roll_cooldown)
+			_roll_cooldown_timer.start(player_config.roll_cooldown)
 			set_state(State.NORMAL)
 		)
 
 
 func _start_damage() -> void:
 	_is_invulnerable = true
-	_damage_visual_timer.start(invulnerability_time)
+	_damage_visual_timer.start(player_config.invulnerability_time)
 	_animated_sprite.modulate = Color(1, 0.5, 0.5, 1)
 	
-	get_tree().create_timer(damage_visual_time).timeout.connect(func() -> void:
+	get_tree().create_timer(player_config.damage_visual_time).timeout.connect(func() -> void:
 		if _is_invulnerable:
 			_animated_sprite.modulate = Color.WHITE
 	)
@@ -695,7 +668,7 @@ func _update_animations() -> void:
 	
 	if not is_on_floor():
 		# If jumping, show jump/fall animation regardless of horizontal movement
-		if _is_jumping or _airborne_time >= air_animation_delay:
+		if _is_jumping or _airborne_time >= player_config.air_animation_delay:
 			_animated_sprite.speed_scale = 2.0
 			if _is_jumping:
 				var jump_animation: StringName = _get_jump_animation_name()
@@ -729,7 +702,7 @@ func _on_animation_finished() -> void:
 		set_state(State.NORMAL)
 	elif String(_animated_sprite.animation).begins_with("roll"):
 		_is_invulnerable = false
-		_roll_cooldown_timer.start(roll_cooldown)
+		_roll_cooldown_timer.start(player_config.roll_cooldown)
 		set_state(State.NORMAL)
 
 
@@ -802,46 +775,13 @@ func _apply_config() -> void:
 	if not player_config:
 		return
 
-	move_speed = player_config.move_speed
-	jump_speed = player_config.jump_speed
-	gravity_multiplier = player_config.gravity_multiplier
+	_jump_profile = Vector2(player_config.jump_speed, player_config.gravity_multiplier)
 	if player_config.use_jump_model:
 		var grid_step: float = _get_world_grid_step()
 		var jump_height_world: float = max(player_config.jump_height * grid_step, 0.2)
-		var jump_profile: Vector2 = _build_jump_profile(jump_height_world, player_config.time_to_jump_apex)
-		jump_speed = jump_profile.x
-		gravity_multiplier = jump_profile.y
-	jump_coyote_time = player_config.jump_coyote_time
-	jump_buffer_time = player_config.jump_buffer_time
-	fall_gravity_multiplier = player_config.fall_gravity_multiplier
-	jump_release_gravity_multiplier = player_config.jump_release_gravity_multiplier
-	air_animation_delay = player_config.air_animation_delay
-	ground_snap_length = player_config.ground_snap_length
-	max_floor_angle_degrees = player_config.max_floor_angle_degrees
-	terrain_floor_stop_on_slope = player_config.floor_stop_on_slope
-	terrain_floor_constant_speed = player_config.floor_constant_speed
-	collision_safe_margin = player_config.collision_safe_margin
-
-	attack_damage = player_config.attack_damage
-	attack_movement_multiplier = player_config.attack_movement_multiplier
-	attack_hit_delay = player_config.attack_hit_delay
+		_jump_profile = _build_jump_profile(jump_height_world, player_config.time_to_jump_apex)
 
 	max_health = player_config.max_health
-	invulnerability_time = player_config.invulnerability_time
-	damage_visual_time = player_config.damage_visual_time
-
-	roll_speed = player_config.roll_speed
-	roll_duration = player_config.roll_duration
-	roll_cooldown = player_config.roll_cooldown
-
-	edge_hop_enabled = player_config.edge_hop_enabled
-	edge_hop_forward_distance = player_config.edge_hop_forward_distance
-	edge_hop_probe_height = player_config.edge_hop_probe_height
-	edge_hop_probe_depth = player_config.edge_hop_probe_depth
-	edge_hop_forward_boost = player_config.edge_hop_forward_boost
-	edge_hop_vertical_boost = player_config.edge_hop_vertical_boost
-	edge_hop_cooldown = player_config.edge_hop_cooldown
-	edge_hop_step_down_threshold = player_config.edge_hop_step_down_threshold
 
 
 func _build_jump_profile(height: float, apex_time: float) -> Vector2:
@@ -852,6 +792,10 @@ func _build_jump_profile(height: float, apex_time: float) -> Vector2:
 	var computed_jump_speed: float = (2.0 * safe_height) / safe_apex_time
 	var computed_gravity_multiplier: float = effective_gravity / safe_base_gravity
 	return Vector2(computed_jump_speed, computed_gravity_multiplier)
+
+
+func _get_move_speed() -> float:
+	return player_config.move_speed
 
 
 func _get_world_grid_step() -> float:
@@ -887,7 +831,7 @@ func _find_first_grid_map(node: Node) -> GridMap:
 
 func _update_jump_timers(delta: float) -> void:
 	if is_on_floor():
-		_last_time_on_floor = jump_coyote_time
+		_last_time_on_floor = player_config.jump_coyote_time
 		_jump_consumed = false
 		_is_jumping = false
 		_airborne_time = 0.0
@@ -896,7 +840,7 @@ func _update_jump_timers(delta: float) -> void:
 		_airborne_time += delta
 
 	if Input.is_action_just_pressed("jump"):
-		_jump_buffer_timer = jump_buffer_time
+		_jump_buffer_timer = player_config.jump_buffer_time
 	else:
 		_jump_buffer_timer = max(_jump_buffer_timer - delta, 0.0)
 
@@ -912,7 +856,7 @@ func _can_start_jump() -> bool:
 
 
 func _start_jump() -> void:
-	velocity.y = jump_speed
+	velocity.y = _jump_profile.x
 	_jump_buffer_timer = 0.0
 	_last_time_on_floor = 0.0
 	_jump_consumed = true
@@ -921,105 +865,52 @@ func _start_jump() -> void:
 
 func _get_air_gravity_multiplier() -> float:
 	if velocity.y < 0.0:
-		return fall_gravity_multiplier
+		return player_config.fall_gravity_multiplier
 
 	if velocity.y > 0.0 and not Input.is_action_pressed("jump"):
-		return jump_release_gravity_multiplier
+		return player_config.jump_release_gravity_multiplier
 
 	return 1.0
 
 
 func _setup_terrain_motion() -> void:
 	up_direction = Vector3.UP
-	floor_snap_length = ground_snap_length
-	floor_max_angle = deg_to_rad(max_floor_angle_degrees)
-	self.floor_stop_on_slope = terrain_floor_stop_on_slope
-	self.floor_constant_speed = terrain_floor_constant_speed
-	safe_margin = collision_safe_margin
+	floor_snap_length = player_config.ground_snap_length
+	floor_max_angle = deg_to_rad(player_config.max_floor_angle_degrees)
+	self.floor_stop_on_slope = player_config.floor_stop_on_slope
+	self.floor_constant_speed = player_config.floor_constant_speed
+	safe_margin = player_config.collision_safe_margin
 	# Configuración adicional para mejor adhesión a pendientes
 	floor_block_on_wall = false
 
 
 func _setup_edge_hop_raycast() -> void:
-	if _edge_hop_raycast == null:
-		_edge_hop_raycast = RayCast3D.new()
-		_edge_hop_raycast.name = EDGE_HOP_RAYCAST_NAME
-		add_child(_edge_hop_raycast)
-
-	_edge_hop_raycast.enabled = true
-	_edge_hop_raycast.collide_with_areas = false
-	_edge_hop_raycast.collide_with_bodies = true
-	_edge_hop_raycast.position = Vector3(0.0, edge_hop_probe_height, 0.0)
-	_edge_hop_raycast.target_position = Vector3(0.0, -edge_hop_probe_depth, 0.0)
-
-
-func _update_edge_hop_cooldown(delta: float) -> void:
-	_edge_hop_cooldown_left = max(_edge_hop_cooldown_left - delta, 0.0)
+	_edge_hop_raycast = _edge_hop_controller.setup_raycast(
+		self,
+		_edge_hop_raycast,
+		EDGE_HOP_RAYCAST_NAME,
+		player_config.edge_hop_probe_height,
+		player_config.edge_hop_probe_depth
+	)
 
 
 func _try_edge_hop() -> void:
-	if not edge_hop_enabled:
-		return
-
-	if not _was_on_floor_last_frame:
-		return
-
-	if is_on_floor():
-		return
-
-	if velocity.y > 0.0:
-		return
-
-	if current_state != State.NORMAL:
-		return
-
-	if _is_jumping:
-		return
-
-	if _edge_hop_cooldown_left > 0.0:
-		return
-
-	if not _damage_knockback_timer.is_stopped():
-		return
-
-	var input_dir: Vector2 = Input.get_vector(
-			"move_left",
-			"move_right",
-			"move_up",
-			"move_down"
-	)
-	if input_dir == Vector2.ZERO:
-		return
-
-	var move_direction: Vector3 = Vector3(input_dir.x, 0.0, input_dir.y).normalized()
-	if move_direction.length_squared() <= 0.0:
-		return
-
-	if _edge_hop_raycast != null:
-		var probe_direction: Vector3 = _get_horizontal_move_direction_3d()
-		if probe_direction.length_squared() > 0.0:
-			_edge_hop_raycast.position = Vector3(
-				probe_direction.x * edge_hop_forward_distance,
-				edge_hop_probe_height,
-				probe_direction.z * edge_hop_forward_distance
-			)
-			_edge_hop_raycast.target_position = Vector3(0.0, -edge_hop_probe_depth, 0.0)
-			_edge_hop_raycast.force_raycast_update()
-
-			if _edge_hop_raycast.is_colliding():
-				var hit_local: Vector3 = to_local(_edge_hop_raycast.get_collision_point())
-				var step_down_height: float = _edge_hop_raycast.position.y - hit_local.y
-				if step_down_height <= edge_hop_step_down_threshold:
-					return
-
-	velocity.x = move_direction.x * max(move_speed, edge_hop_forward_boost)
-	velocity.z = move_direction.z * max(move_speed, edge_hop_forward_boost)
-	velocity.y = max(velocity.y, edge_hop_vertical_boost)
-	_jump_buffer_timer = 0.0
-	_last_time_on_floor = 0.0
-	_jump_consumed = true
-	_is_jumping = true
-	_edge_hop_cooldown_left = edge_hop_cooldown
+	if _edge_hop_controller.try_edge_hop(
+		self,
+		_edge_hop_raycast,
+		player_config,
+		_was_on_floor_last_frame,
+		current_state,
+		State.NORMAL,
+		_is_jumping,
+		_get_move_speed(),
+		_damage_knockback_timer,
+		_get_horizontal_move_direction_3d()
+	):
+		_jump_buffer_timer = 0.0
+		_last_time_on_floor = 0.0
+		_jump_consumed = true
+		_is_jumping = true
 
 
 func _get_horizontal_move_direction_3d() -> Vector3:
