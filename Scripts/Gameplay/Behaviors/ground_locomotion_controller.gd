@@ -102,7 +102,9 @@ func resolve_slope_edge_block(character: CharacterBody3D) -> bool:
 				var adjusted_velocity: Vector3 = horizontal_velocity.slide(normal)
 				character.velocity.x = adjusted_velocity.x
 				character.velocity.z = adjusted_velocity.z
-				return true
+				# On wall contacts, keep corrected horizontal velocity for the next frame
+				# but avoid forcing a second move_and_slide() in the same frame.
+				return false
 
 	return false
 
