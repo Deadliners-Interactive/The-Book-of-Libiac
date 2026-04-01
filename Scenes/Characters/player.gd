@@ -46,6 +46,7 @@ const ANIM_JUMP_UP: StringName = &"jump_up"
 const ANIM_JUMP_DOWN: StringName = &"jump_down"
 const ANIM_FALL: StringName = &"fall"
 const ANIM_ATTACK: StringName = &"attack"
+const EDGE_HOP_RAYCAST_NAME: StringName = &"EdgeHopRayCast3D_Player"
 
 
 # ==============================================================================
@@ -82,6 +83,14 @@ const ANIM_ATTACK: StringName = &"attack"
 @export var terrain_floor_stop_on_slope: bool = false
 @export var terrain_floor_constant_speed: bool = false
 @export var collision_safe_margin: float = 0.001
+@export var edge_hop_enabled: bool = true
+@export var edge_hop_forward_distance: float = 0.11
+@export var edge_hop_probe_height: float = 0.18
+@export var edge_hop_probe_depth: float = 0.9
+@export var edge_hop_forward_boost: float = 2.15
+@export var edge_hop_vertical_boost: float = 1.75
+@export var edge_hop_cooldown: float = 0.16
+@export var edge_hop_step_down_threshold: float = 0.07
 
 
 # ==============================================================================
@@ -141,6 +150,8 @@ var _jump_buffer_timer: float = 0.0
 var _jump_consumed: bool = false
 var _is_jumping: bool = false
 var _airborne_time: float = 0.0
+var _edge_hop_cooldown_left: float = 0.0
+var _was_on_floor_last_frame: bool = false
 
 
 # ==============================================================================
@@ -151,6 +162,7 @@ var _airborne_time: float = 0.0
 @onready var _attack_area: Area3D = $AttackArea
 @onready var _attack_collision: CollisionShape3D = $AttackArea/CollisionShape3D
 @onready var _detection_area: Area3D = $DetectionArea
+@onready var _edge_hop_raycast: RayCast3D = get_node_or_null(NodePath(String(EDGE_HOP_RAYCAST_NAME)))
 
 
 # ==============================================================================
@@ -159,7 +171,9 @@ var _airborne_time: float = 0.0
 
 func _ready() -> void:
 	_apply_config()
+	_setup_edge_hop_raycast()
 	_setup_terrain_motion()
+	_was_on_floor_last_frame = is_on_floor()
 	current_health = max_health
 	_attack_collision.disabled = true
 	
@@ -205,6 +219,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_update_jump_timers(delta)
+	_update_edge_hop_cooldown(delta)
 	_update_current_state(delta)
 	
 	# Apply gravity
@@ -222,6 +237,8 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	if _resolve_slope_edge_block():
 		move_and_slide()
+	_try_edge_hop()
+	_was_on_floor_last_frame = is_on_floor()
 	_update_animations()
 
 
@@ -879,6 +896,88 @@ func _setup_terrain_motion() -> void:
 	safe_margin = collision_safe_margin
 	# Configuración adicional para mejor adhesión a pendientes
 	floor_block_on_wall = false
+
+
+func _setup_edge_hop_raycast() -> void:
+	if _edge_hop_raycast == null:
+		_edge_hop_raycast = RayCast3D.new()
+		_edge_hop_raycast.name = EDGE_HOP_RAYCAST_NAME
+		add_child(_edge_hop_raycast)
+
+	_edge_hop_raycast.enabled = true
+	_edge_hop_raycast.collide_with_areas = false
+	_edge_hop_raycast.collide_with_bodies = true
+	_edge_hop_raycast.position = Vector3(0.0, edge_hop_probe_height, 0.0)
+	_edge_hop_raycast.target_position = Vector3(0.0, -edge_hop_probe_depth, 0.0)
+
+
+func _update_edge_hop_cooldown(delta: float) -> void:
+	_edge_hop_cooldown_left = max(_edge_hop_cooldown_left - delta, 0.0)
+
+
+func _try_edge_hop() -> void:
+	if not edge_hop_enabled:
+		return
+
+	if not _was_on_floor_last_frame:
+		return
+
+	if is_on_floor():
+		return
+
+	if velocity.y > 0.0:
+		return
+
+	if current_state != State.NORMAL:
+		return
+
+	if _is_jumping:
+		return
+
+	if _edge_hop_cooldown_left > 0.0:
+		return
+
+	if not _damage_knockback_timer.is_stopped():
+		return
+
+	var input_dir: Vector2 = Input.get_vector(
+			"move_left",
+			"move_right",
+			"move_up",
+			"move_down"
+	)
+	if input_dir == Vector2.ZERO:
+		return
+
+	var move_direction: Vector3 = Vector3(input_dir.x, 0.0, input_dir.y).normalized()
+	if move_direction.length_squared() <= 0.0:
+		return
+
+	velocity.x = move_direction.x * max(move_speed, edge_hop_forward_boost)
+	velocity.z = move_direction.z * max(move_speed, edge_hop_forward_boost)
+	velocity.y = max(velocity.y, edge_hop_vertical_boost)
+	_jump_buffer_timer = 0.0
+	_last_time_on_floor = 0.0
+	_jump_consumed = true
+	_is_jumping = true
+	_edge_hop_cooldown_left = edge_hop_cooldown
+
+
+func _get_horizontal_move_direction_3d() -> Vector3:
+	var input_dir: Vector2 = Input.get_vector(
+			"move_left",
+			"move_right",
+			"move_up",
+			"move_down"
+	)
+	if input_dir != Vector2.ZERO:
+		return Vector3(input_dir.x, 0.0, input_dir.y).normalized()
+
+	var horizontal_velocity: Vector3 = Vector3(velocity.x, 0.0, velocity.z)
+	if horizontal_velocity.length_squared() > 0.001:
+		return horizontal_velocity.normalized()
+
+	return _get_last_facing_direction_3d()
 
 
 func _apply_terrain_adhesion() -> void:
