@@ -66,72 +66,53 @@ const EDGE_HOP_RAYCAST_NAME: StringName = &"EdgeHopRayCast3D_Player"
 
 
 # ==============================================================================
-# Export variables - Movement
+# Runtime variables
 # ==============================================================================
 
-@export_group("Movement")
-@export var move_speed: float = 1.0
-@export var jump_speed: float = 2.0
-@export var gravity_multiplier: float = 1.0
-@export var jump_coyote_time: float = 0.12
-@export var jump_buffer_time: float = 0.12
-@export var fall_gravity_multiplier: float = 1.15
-@export var jump_release_gravity_multiplier: float = 1.35
-@export var air_animation_delay: float = 0.08
-@export var ground_snap_length: float = 0.6
-@export var max_floor_angle_degrees: float = 58.0
-@export var terrain_floor_stop_on_slope: bool = false
-@export var terrain_floor_constant_speed: bool = false
-@export var collision_safe_margin: float = 0.001
-@export var edge_hop_enabled: bool = true
-@export var edge_hop_forward_distance: float = 0.11
-@export var edge_hop_probe_height: float = 0.18
-@export var edge_hop_probe_depth: float = 0.9
-@export var edge_hop_forward_boost: float = 2.15
-@export var edge_hop_vertical_boost: float = 1.75
-@export var edge_hop_cooldown: float = 0.16
-@export var edge_hop_step_down_threshold: float = 0.07
-
-
-# ==============================================================================
-# Export variables - Combat
-# ==============================================================================
-
-@export_group("Combat")
-@export var attack_damage: int = 10
-@export var attack_movement_multiplier: float = 0.6
-@export var attack_hit_delay: float = 0.1
-
-
-# ==============================================================================
-# Export variables - Health
-# ==============================================================================
-
-@export_group("Health")
-@export var max_health: float = 30.0
-@export var invulnerability_time: float = 1.0
-@export var damage_visual_time: float = 0.5
-
-
-# ==============================================================================
-# Export variables - Roll
-# ==============================================================================
-
-@export_group("Roll")
-@export var roll_speed: float = 2.0
-@export var roll_duration: float = 0.4
-@export var roll_cooldown: float = 0.2
-
-
-# ==============================================================================
-# Regular variables
-# ==============================================================================
-
-var current_health: float
-var current_state: State = State.NORMAL
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
+var current_health: float
 var key_count: int = 0
 
+# Movement config (loaded from player_config)
+var move_speed: float
+var jump_speed: float
+var gravity_multiplier: float
+var jump_coyote_time: float
+var jump_buffer_time: float
+var fall_gravity_multiplier: float
+var jump_release_gravity_multiplier: float
+var air_animation_delay: float
+var ground_snap_length: float
+var max_floor_angle_degrees: float
+var terrain_floor_stop_on_slope: bool
+var terrain_floor_constant_speed: bool
+var collision_safe_margin: float
+var edge_hop_enabled: bool
+var edge_hop_forward_distance: float
+var edge_hop_probe_height: float
+var edge_hop_probe_depth: float
+var edge_hop_forward_boost: float
+var edge_hop_vertical_boost: float
+var edge_hop_cooldown: float
+var edge_hop_step_down_threshold: float
+
+# Combat/Health config (loaded from player_config)
+var attack_damage: int
+var attack_movement_multiplier: float
+var attack_hit_delay: float
+var max_health: float
+var invulnerability_time: float
+var damage_visual_time: float
+var roll_speed: float
+var roll_duration: float
+var roll_cooldown: float
+
+
+# ==============================================================================
+# FSM and state variables
+# ==============================================================================
+
+var current_state: State = State.NORMAL
 var _is_facing_right: bool = true
 var _last_move_animation: StringName = ANIM_MOVE_SIDE
 var _last_move_input: Vector2 = Vector2.RIGHT
@@ -170,6 +151,10 @@ var _was_on_floor_last_frame: bool = false
 # ==============================================================================
 
 func _ready() -> void:
+	if not player_config:
+		push_error("PlayerConfig no asignado en player.tscn")
+		return
+	
 	_apply_config()
 	_setup_edge_hop_raycast()
 	_setup_terrain_motion()
@@ -420,8 +405,9 @@ func _handle_jump() -> void:
 func _apply_roll_physics() -> void:
 	if current_state == State.ROLLING:
 		var current_vel_xz: float = Vector3(velocity.x, 0, velocity.z).length()
+		var min_roll_motion_speed: float = max(roll_speed * 0.08, 0.06)
 		
-		if current_vel_xz < 0.1:
+		if current_vel_xz < min_roll_motion_speed:
 			var facing_direction: Vector3 = _get_last_facing_direction_3d()
 			velocity.x = facing_direction.x * roll_speed
 			velocity.z = facing_direction.z * roll_speed
@@ -432,7 +418,7 @@ func _apply_roll_physics() -> void:
 
 
 func _flip_sprite(x_velocity: float) -> void:
-	if abs(x_velocity) < 0.1:
+	if abs(x_velocity) < max(move_speed * 0.05, 0.05):
 		return
 	
 	var moving_right: bool = x_velocity > 0
@@ -819,6 +805,12 @@ func _apply_config() -> void:
 	move_speed = player_config.move_speed
 	jump_speed = player_config.jump_speed
 	gravity_multiplier = player_config.gravity_multiplier
+	if player_config.use_jump_model:
+		var grid_step: float = _get_world_grid_step()
+		var jump_height_world: float = max(player_config.jump_height * grid_step, 0.2)
+		var jump_profile: Vector2 = _build_jump_profile(jump_height_world, player_config.time_to_jump_apex)
+		jump_speed = jump_profile.x
+		gravity_multiplier = jump_profile.y
 	jump_coyote_time = player_config.jump_coyote_time
 	jump_buffer_time = player_config.jump_buffer_time
 	fall_gravity_multiplier = player_config.fall_gravity_multiplier
@@ -841,6 +833,56 @@ func _apply_config() -> void:
 	roll_speed = player_config.roll_speed
 	roll_duration = player_config.roll_duration
 	roll_cooldown = player_config.roll_cooldown
+
+	edge_hop_enabled = player_config.edge_hop_enabled
+	edge_hop_forward_distance = player_config.edge_hop_forward_distance
+	edge_hop_probe_height = player_config.edge_hop_probe_height
+	edge_hop_probe_depth = player_config.edge_hop_probe_depth
+	edge_hop_forward_boost = player_config.edge_hop_forward_boost
+	edge_hop_vertical_boost = player_config.edge_hop_vertical_boost
+	edge_hop_cooldown = player_config.edge_hop_cooldown
+	edge_hop_step_down_threshold = player_config.edge_hop_step_down_threshold
+
+
+func _build_jump_profile(height: float, apex_time: float) -> Vector2:
+	var safe_height: float = max(height, 0.05)
+	var safe_apex_time: float = max(apex_time, 0.05)
+	var effective_gravity: float = (2.0 * safe_height) / (safe_apex_time * safe_apex_time)
+	var safe_base_gravity: float = max(gravity, 0.001)
+	var computed_jump_speed: float = (2.0 * safe_height) / safe_apex_time
+	var computed_gravity_multiplier: float = effective_gravity / safe_base_gravity
+	return Vector2(computed_jump_speed, computed_gravity_multiplier)
+
+
+func _get_world_grid_step() -> float:
+	var scene_root: Node = get_tree().current_scene
+	if scene_root == null:
+		return 1.0
+
+	var grid_map: GridMap = _find_first_grid_map(scene_root)
+	if grid_map == null:
+		return 1.0
+
+	var biggest_cell_axis: float = maxf(grid_map.cell_size.x, maxf(grid_map.cell_size.y, grid_map.cell_size.z))
+	return maxf(biggest_cell_axis * grid_map.cell_scale, 0.001)
+
+
+func _find_first_grid_map(node: Node) -> GridMap:
+	if node is GridMap:
+		return node as GridMap
+
+	for child: Node in node.get_children():
+		var found: GridMap = _find_first_grid_map(child)
+		if found != null:
+			return found
+
+	return null
+
+
+
+
+
+
 
 
 func _update_jump_timers(delta: float) -> void:
@@ -952,6 +994,23 @@ func _try_edge_hop() -> void:
 	var move_direction: Vector3 = Vector3(input_dir.x, 0.0, input_dir.y).normalized()
 	if move_direction.length_squared() <= 0.0:
 		return
+
+	if _edge_hop_raycast != null:
+		var probe_direction: Vector3 = _get_horizontal_move_direction_3d()
+		if probe_direction.length_squared() > 0.0:
+			_edge_hop_raycast.position = Vector3(
+				probe_direction.x * edge_hop_forward_distance,
+				edge_hop_probe_height,
+				probe_direction.z * edge_hop_forward_distance
+			)
+			_edge_hop_raycast.target_position = Vector3(0.0, -edge_hop_probe_depth, 0.0)
+			_edge_hop_raycast.force_raycast_update()
+
+			if _edge_hop_raycast.is_colliding():
+				var hit_local: Vector3 = to_local(_edge_hop_raycast.get_collision_point())
+				var step_down_height: float = _edge_hop_raycast.position.y - hit_local.y
+				if step_down_height <= edge_hop_step_down_threshold:
+					return
 
 	velocity.x = move_direction.x * max(move_speed, edge_hop_forward_boost)
 	velocity.z = move_direction.z * max(move_speed, edge_hop_forward_boost)

@@ -239,13 +239,13 @@ data = PackedVector3Array(0.099999994, 0.32999998, 0.28149998, 0, 0.3829, 0.5841
 [node name="Main" type="Node3D" unique_id=411485026]
 
 [node name="Player" parent="." unique_id=1868634362 groups=["player"] instance=ExtResource("2_fdnlq")]
-transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0.5312184, 2.666222)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9794817, 4.1290174, 19.467566)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=77694813]
 environment = SubResource("Environment_u5gxq")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment" unique_id=1026830698]
-transform = Transform3D(1, 0, 0, 0, 0.81915206, 0.57357645, 0, -0.57357645, 0.81915206, 0, 4.994841, 0.775661)
+transform = Transform3D(1, 0, 0, 0, 0.25375792, 0.96726775, 0, -0.96726775, 0.25375792, 0, 8.195, 0)
 light_energy = 0.6
 light_indirect_energy = 0.0
 light_angular_distance = 10.2
@@ -322,7 +322,6 @@ skeleton = NodePath("")
 shape = SubResource("ConcavePolygonShape3D_kltya")
 
 [node name="GridMap" type="GridMap" parent="." unique_id=219402494]
-transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0, 0, 0)
 mesh_library = ExtResource("17_42g4d")
 cell_size = Vector3(1, 1, 1)
 cell_scale = 1.012

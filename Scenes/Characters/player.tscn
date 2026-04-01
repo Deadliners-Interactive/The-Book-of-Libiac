@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://examvqnqwji0" path="res://Scenes/Characters/player.gd" id="1_viyiy"]
 [ext_resource type="Texture2D" uid="uid://bi318idsaxcaq" path="res://assets/Sprites/Characters/Player/Gallito_sword-Sheet.png" id="2_3smsa"]
 [ext_resource type="Texture2D" uid="uid://b57o7evfye650" path="res://assets/Sprites/Characters/Player/gallito_fall.png" id="2_545oy"]
+[ext_resource type="Resource" uid="uid://dl7crr7of6oyc" path="res://Scripts/Data/PlayerConfig_Default.tres" id="2_cqrjx"]
 [ext_resource type="Texture2D" uid="uid://hkgu2vvoodd1" path="res://assets/Sprites/Characters/Player/Libiac-Sheet.png" id="7_utp2y"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8erm5"]
@@ -93,6 +94,10 @@ region = Rect2(48, 176, 16, 16)
 atlas = ExtResource("7_utp2y")
 region = Rect2(64, 176, 16, 16)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_atmnh"]
+atlas = ExtResource("7_utp2y")
+region = Rect2(64, 160, 16, 16)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_numad"]
 atlas = ExtResource("7_utp2y")
 region = Rect2(48, 32, 16, 16)
@@ -112,10 +117,6 @@ region = Rect2(32, 160, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_3m5rm"]
 atlas = ExtResource("7_utp2y")
 region = Rect2(48, 160, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_atmnh"]
-atlas = ExtResource("7_utp2y")
-region = Rect2(64, 160, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hy8lp"]
 atlas = ExtResource("7_utp2y")
@@ -316,6 +317,9 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_atmnh")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_numad")
 }, {
 "duration": 1.0,
@@ -329,9 +333,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3m5rm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_atmnh")
 }],
 "loop": false,
 "name": &"jump_up",
@@ -350,7 +351,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_jnx77")
 }],
-"loop": true,
+"loop": false,
 "name": &"move_down",
 "speed": 5.0
 }, {
@@ -447,8 +448,8 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gy20a"]
-radius = 0.3618164
-height = 1.2276114
+radius = 2.2661133
+height = 8.332414
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3smsa"]
 size = Vector3(0.14215088, 0.12597656, 0.14233398)
@@ -457,21 +458,23 @@ size = Vector3(0.14215088, 0.12597656, 0.14233398)
 
 [node name="Player" type="CharacterBody3D" unique_id=984000044]
 script = ExtResource("1_viyiy")
+player_config = ExtResource("2_cqrjx")
 
 [node name="Sprite3D" type="AnimatedSprite3D" parent="." unique_id=1540410405]
-transform = Transform3D(1, 0, 0, 0, 0.9999998, 0, 0, 0, 0.9999998, 0.0003549531, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0003549531, 0, 0)
+pixel_size = 0.07
 billboard = 1
 alpha_cut = 1
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_ue4gs")
-animation = &"jump_down"
+animation = &"jump_up"
 
 [node name="RayCast3D" type="RayCast3D" parent="Sprite3D" unique_id=881906985]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, -0.00024222852, 0.00024222852)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=425719039]
-transform = Transform3D(0.13, 0, 0, 0, 0.13, 0, 0, 0, 0.13, 0.00015869085, -0.0026292098, -0.0038796272)
+transform = Transform3D(0.13, 0, 0, 0, 0.13, 0, 0, 0, 0.13, 0.00015869085, -0.03291341, -0.0038796272)
 shape = SubResource("CapsuleShape3D_gy20a")
 
 [node name="AttackArea" type="Area3D" parent="." unique_id=592024321]
@@ -482,7 +485,7 @@ transform = Transform3D(1.965, 0, 0, 0, 1.965, 0, 0, 0, 1.965, 0.14008376, 0, -0
 shape = SubResource("BoxShape3D_3smsa")
 
 [node name="Camera3D2" type="Camera3D" parent="." unique_id=2051324027]
-transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 0.7, 0.7)
+transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 5, 5)
 
 [node name="DetectionArea" type="Area3D" parent="." unique_id=381006753]
 
