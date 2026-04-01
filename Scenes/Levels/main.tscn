@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://dl1ki8dhwoa1f" path="res://Scenes/Characters/player.tscn" id="2_fdnlq"]
 [ext_resource type="Texture2D" uid="uid://bxy3j428xvf6d" path="res://assets/Sprites/enviroment/sky1.png" id="3_jkdf5"]
 [ext_resource type="Shader" uid="uid://bo5k6vcboghsw" path="res://assets/Shaders/water.gdshader" id="5_k12tt"]
+[ext_resource type="Texture2D" uid="uid://boiswmgw5t0hh" path="res://assets/Sprites/enviroment/water_vorono_pixel.png" id="5_pgcb0"]
 [ext_resource type="Script" uid="uid://byk2ut37tal0a" path="res://Scenes/Gameplay/Triggers/DeathZone.gd" id="5_ueoa1"]
 [ext_resource type="PackedScene" uid="uid://c28ty3qhpxyb2" path="res://Scenes/Props/key.tscn" id="7_b3802"]
 [ext_resource type="PackedScene" uid="uid://bjy3djarvtqb2" path="res://Scenes/Props/door.tscn" id="8_fevyy"]
@@ -29,28 +30,24 @@ background_mode = 2
 sky = SubResource("Sky_8m2q7")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ueoa1"]
-size = Vector3(4.0808105, 0.023628235, 4.0804443)
+size = Vector3(4.0808105, 0.001, 4.043503)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_0c07c"]
 render_priority = 0
 shader = ExtResource("5_k12tt")
-shader_parameter/WATER_COL = Color(0.04, 0.38, 0.88, 1)
-shader_parameter/WATER2_COL = Color(0.04, 0.35, 0.78, 1)
-shader_parameter/FOAM_COL = Color(0.8125, 0.9609, 0.9648, 1)
-shader_parameter/distortion_speed = 2.0
-shader_parameter/tile = Vector2(1000, 1000)
-shader_parameter/wave_speed = 0.14
-shader_parameter/wave_amplitude = -0.075
-shader_parameter/wave_frequency = 1.5
-shader_parameter/time_offset = 0.0
-shader_parameter/water_size = Vector2(128, 128)
-shader_parameter/water_transparency = 1.045
-shader_parameter/water_depth_factor = 0.1
-shader_parameter/foam_width = 0.5
-shader_parameter/foam_edge_softness = 0.05
-shader_parameter/foam_smoothness = 0.03
-shader_parameter/foam_distortion_speed = 0.5
-shader_parameter/foam_distortion_amount = 0.1
+shader_parameter/WATER_TILE_TEX = ExtResource("5_pgcb0")
+shader_parameter/OCEAN_COL = Color(0.32941177, 0.74509805, 0.9607843, 1)
+shader_parameter/FOAM_COL = Color(0.84313726, 0.8862745, 0.98039216, 1)
+shader_parameter/foam_threshold = 0.5
+shader_parameter/hard_mask = true
+shader_parameter/invert_mask = false
+shader_parameter/tile = Vector2(5, 5)
+shader_parameter/use_world_mapping = true
+shader_parameter/world_tiling = 0.2
+shader_parameter/mask_aspect = 4.0
+shader_parameter/surface_lift = 0.01
+shader_parameter/flow_direction = Vector2(1, 0)
+shader_parameter/flow_speed = 0.18
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2cgwh"]
 material = SubResource("ShaderMaterial_0c07c")
@@ -257,14 +254,15 @@ shadow_blur = 0.0
 sky_mode = 1
 
 [node name="WaterSurface13" type="Area3D" parent="." unique_id=1925036246]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.75460625, 0)
 script = ExtResource("5_ueoa1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WaterSurface13" unique_id=1263087303]
-transform = Transform3D(49.245, 0, 0, 0, 49.245, 0, 0, 0, 49.245, 0, 0, 0)
+transform = Transform3D(49.245, 0, 0, 0, 49.245, 0, 0, 0, 49.245, 0, 0, 1.0470886)
 shape = SubResource("BoxShape3D_ueoa1")
 
 [node name="WaterSurface12" type="MeshInstance3D" parent="WaterSurface13" unique_id=996250100]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07560986, 0.0073412657, 0.0051705837)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.16373634, 2.8418608, 0.027950287)
 mesh = SubResource("PlaneMesh_2cgwh")
 skeleton = NodePath("../..")
 
