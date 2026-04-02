@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://drd7hv06qxr18"]
 
-[ext_resource type="Texture2D" uid="uid://d252v4xnh54bc" path="res://assets/models/Plain_Tiles_Plain_Tiles.png" id="1_i2ok5"]
+[ext_resource type="Texture2D" uid="uid://d252v4xnh54bc" path="res://assets/models/Plain_Tiles.png" id="1_i2ok5"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p1f3q"]
 resource_name = "Plain_Tiles.png"

@@ -1,6 +1,6 @@
 [gd_resource type="MeshLibrary" format=4 uid="uid://dujrrlilayk0g"]
 
-[ext_resource type="Texture2D" uid="uid://d252v4xnh54bc" path="res://assets/models/Plain_Tiles_Plain_Tiles.png" id="1_y1pq5"]
+[ext_resource type="Texture2D" uid="uid://d252v4xnh54bc" path="res://assets/models/Plain_Tiles.png" id="1_y1pq5"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p1f3q"]
 resource_name = "Plain_Tiles.png"
