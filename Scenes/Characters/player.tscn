@@ -1,38 +1,21 @@
 [gd_scene format=3 uid="uid://dl1ki8dhwoa1f"]
 
 [ext_resource type="Script" uid="uid://examvqnqwji0" path="res://Scenes/Characters/player.gd" id="1_viyiy"]
-[ext_resource type="Texture2D" uid="uid://bi318idsaxcaq" path="res://assets/Sprites/Characters/Player/Gallito_sword-Sheet.png" id="2_3smsa"]
 [ext_resource type="Texture2D" uid="uid://b57o7evfye650" path="res://assets/Sprites/Characters/Player/gallito_fall.png" id="2_545oy"]
 [ext_resource type="Resource" uid="uid://dl7crr7of6oyc" path="res://Scripts/Data/PlayerConfig_Default.tres" id="2_cqrjx"]
 [ext_resource type="Texture2D" uid="uid://hkgu2vvoodd1" path="res://assets/Sprites/Characters/Player/Libiac-Sheet.png" id="7_utp2y"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_8erm5"]
-atlas = ExtResource("2_3smsa")
-region = Rect2(0, 0, 32, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_ck4ea"]
+atlas = ExtResource("7_utp2y")
+region = Rect2(0, 128, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_f1ek2"]
-atlas = ExtResource("2_3smsa")
-region = Rect2(32, 0, 32, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_usylf"]
+atlas = ExtResource("7_utp2y")
+region = Rect2(16, 128, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_tx1dd"]
-atlas = ExtResource("2_3smsa")
-region = Rect2(64, 0, 32, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gymyn"]
-atlas = ExtResource("2_3smsa")
-region = Rect2(96, 0, 32, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pu2lt"]
-atlas = ExtResource("2_3smsa")
-region = Rect2(128, 0, 32, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ukyrk"]
-atlas = ExtResource("2_3smsa")
-region = Rect2(160, 0, 32, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7dp3o"]
-atlas = ExtResource("2_3smsa")
-region = Rect2(192, 0, 32, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_6f6io"]
+atlas = ExtResource("7_utp2y")
+region = Rect2(32, 128, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fs7ks"]
 atlas = ExtResource("2_545oy")
@@ -226,29 +209,17 @@ region = Rect2(64, 160, 16, 16)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_8erm5")
+"texture": SubResource("AtlasTexture_ck4ea")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_f1ek2")
+"texture": SubResource("AtlasTexture_usylf")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_tx1dd")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_gymyn")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pu2lt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ukyrk")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7dp3o")
+"texture": SubResource("AtlasTexture_6f6io")
 }],
 "loop": false,
-"name": &"attack",
-"speed": 10.0
+"name": &"attack_side",
+"speed": 3.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -454,6 +425,35 @@ height = 8.998437
 [sub_resource type="BoxShape3D" id="BoxShape3D_3smsa"]
 size = Vector3(0.14215088, 0.12597656, 0.14233398)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_3q2eo"]
+atlas = ExtResource("7_utp2y")
+region = Rect2(0, 112, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dpjl7"]
+atlas = ExtResource("7_utp2y")
+region = Rect2(16, 112, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4sh5b"]
+atlas = ExtResource("7_utp2y")
+region = Rect2(32, 112, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qaw8m"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3q2eo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dpjl7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4sh5b")
+}],
+"loop": false,
+"name": &"default",
+"speed": 3.0
+}]
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_8erm5"]
 
 [node name="Player" type="CharacterBody3D" unique_id=984000044]
@@ -467,7 +467,9 @@ billboard = 1
 alpha_cut = 1
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_ue4gs")
-animation = &"idle"
+animation = &"attack_side"
+frame = 2
+frame_progress = 1.0
 
 [node name="RayCast3D" type="RayCast3D" parent="Sprite3D" unique_id=881906985]
 unique_name_in_owner = true
@@ -483,6 +485,16 @@ unique_name_in_owner = true
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AttackArea" unique_id=1969549770]
 transform = Transform3D(1.965, 0, 0, 0, 1.965, 0, 0, 0, 1.965, 0.14008376, 0, -0.0025634756)
 shape = SubResource("BoxShape3D_3smsa")
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="AttackArea" unique_id=2132384698]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0915952, -0.00063046813, 0)
+visible = false
+pixel_size = 0.07
+billboard = 1
+texture_filter = 0
+sprite_frames = SubResource("SpriteFrames_qaw8m")
+frame = 2
+frame_progress = 1.0
 
 [node name="Camera3D2" type="Camera3D" parent="." unique_id=2051324027]
 transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 5, 5)

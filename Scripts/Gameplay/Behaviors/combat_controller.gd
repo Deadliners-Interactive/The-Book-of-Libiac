@@ -1,7 +1,6 @@
 extends RefCounted
 class_name CombatController
 
-var attack_combo_step: int = 0
 var enemies_hit: Array = []
 var is_invulnerable: bool = false
 
@@ -9,13 +8,7 @@ var is_invulnerable: bool = false
 func start_attack(animated_sprite: AnimatedSprite3D, attack_animation: StringName) -> void:
 	enemies_hit.clear()
 	animated_sprite.speed_scale = 2.0
-
-	if attack_combo_step == 0:
-		animated_sprite.play(attack_animation)
-		attack_combo_step = 1
-	else:
-		animated_sprite.play_backwards(attack_animation)
-		attack_combo_step = 0
+	animated_sprite.play(attack_animation)
 
 
 func activate_attack_hitbox(player: Node, attack_collision: CollisionShape3D, attack_state: int) -> void:
