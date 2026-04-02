@@ -38,6 +38,7 @@ shader = ExtResource("5_k12tt")
 shader_parameter/WATER_TILE_TEX = ExtResource("5_pgcb0")
 shader_parameter/OCEAN_COL = Color(0.32941177, 0.74509805, 0.9607843, 1)
 shader_parameter/FOAM_COL = Color(0.84313726, 0.8862745, 0.98039216, 1)
+shader_parameter/DARK_FOAM_COL = Color(0.02, 0.16, 0.34, 1)
 shader_parameter/foam_threshold = 0.5
 shader_parameter/hard_mask = true
 shader_parameter/invert_mask = false
@@ -55,11 +56,15 @@ shader_parameter/flow_secondary_direction = Vector2(0, 1)
 shader_parameter/flow_secondary_speed = 0.11
 shader_parameter/flow_secondary_strength = 0.35
 shader_parameter/pixel_flow = true
+shader_parameter/pixel_art_scale = 0.0
 shader_parameter/flow_mix = 0.1
-shader_parameter/flow_wobble_texels = 0.45
-shader_parameter/flow_wobble_frequency = 1.6
-shader_parameter/flow_wobble_speed = 0.8
+shader_parameter/flow_wobble_texels = 0.02
+shader_parameter/flow_wobble_frequency = 0.485
+shader_parameter/flow_wobble_speed = 0.7
 shader_parameter/mask_softness = 0.0
+shader_parameter/dark_foam_width = 0.12
+shader_parameter/dark_foam_strength = 0.8
+shader_parameter/dark_foam_offset = Vector2(0, -0.08)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2cgwh"]
 material = SubResource("ShaderMaterial_0c07c")
@@ -275,7 +280,7 @@ transform = Transform3D(49.245, 0, 0, 0, 49.245, 0, 0, 0, 49.245, 0, 0, 1.047088
 shape = SubResource("BoxShape3D_ueoa1")
 
 [node name="WaterSurface12" type="MeshInstance3D" parent="WaterSurface13" unique_id=996250100]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.16373634, 2.8418608, 0.027950287)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.16373634, 2.6331034, 0.027950287)
 mesh = SubResource("PlaneMesh_2cgwh")
 skeleton = NodePath("../..")
 

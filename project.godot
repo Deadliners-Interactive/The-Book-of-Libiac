@@ -28,6 +28,8 @@ GameOverHandler="*res://Scripts/Autoload/GameOverHandler.gd"
 
 [display]
 
+window/size/viewport_width=1280
+window/size/viewport_height=720
 window/layer_3=""
 window/layer_2=""
 window/layer_1=""

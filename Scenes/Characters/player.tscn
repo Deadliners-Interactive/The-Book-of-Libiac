@@ -449,7 +449,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4sh5b")
 }],
-"loop": false,
+"loop": true,
 "name": &"default",
 "speed": 3.0
 }]
@@ -488,13 +488,13 @@ shape = SubResource("BoxShape3D_3smsa")
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="AttackArea" unique_id=2132384698]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0915952, -0.00063046813, 0)
-visible = false
 pixel_size = 0.07
 billboard = 1
+alpha_antialiasing_mode = 1
 texture_filter = 0
+render_priority = 1
 sprite_frames = SubResource("SpriteFrames_qaw8m")
-frame = 2
-frame_progress = 1.0
+frame_progress = 0.4001399
 
 [node name="Camera3D2" type="Camera3D" parent="." unique_id=2051324027]
 transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 5, 5)
