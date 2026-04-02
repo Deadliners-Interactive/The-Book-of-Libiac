@@ -65,14 +65,17 @@ shader_parameter/mask_softness = 0.0
 shader_parameter/dark_foam_width = 0.12
 shader_parameter/dark_foam_strength = 0.8
 shader_parameter/dark_foam_offset = Vector2(0, -0.08)
-shader_parameter/HORIZON_COL_NEAR = Color(0.05, 0.72, 0.98, 1)
-shader_parameter/HORIZON_COL_MID = Color(0, 0.86, 1, 1)
-shader_parameter/HORIZON_COL_FAR = Color(0.72, 0.97, 1, 1)
-shader_parameter/horizon_start = 12.76
-shader_parameter/horizon_range = 30.0
-shader_parameter/band_thickness = 0.16
-shader_parameter/tide_speed = 0.18
-shader_parameter/tide_strength = 0.12
+shader_parameter/HORIZON_COL_NEAR = Color(0.048447303, 0.71792656, 0.9756741, 1)
+shader_parameter/HORIZON_COL_MID = Color(0.49712443, 0.84411854, 0.9999997, 1)
+shader_parameter/HORIZON_COL_FAR = Color(1.2513996e-06, 0.49758643, 0.7367793, 1)
+shader_parameter/horizon_start = 11.29
+shader_parameter/horizon_range = 20.0
+shader_parameter/band_thickness = 0.6
+shader_parameter/horizon_mid_point = 0.5
+shader_parameter/horizon_cut_scale = 0.7
+shader_parameter/horizon_cut_fill = 0.52
+shader_parameter/horizon_cut_softness = 0.08
+shader_parameter/horizon_cut_strength = 1.0
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2cgwh"]
 material = SubResource("ShaderMaterial_0c07c")
@@ -288,7 +291,7 @@ transform = Transform3D(49.245, 0, 0, 0, 49.245, 0, 0, 0, 49.245, 0, 0, 1.047088
 shape = SubResource("BoxShape3D_ueoa1")
 
 [node name="WaterSurface12" type="MeshInstance3D" parent="WaterSurface13" unique_id=996250100]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.16373634, 2.6331034, 0.027950287)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.17339325, 2.6828356, -0.0107860565)
 mesh = SubResource("PlaneMesh_2cgwh")
 skeleton = NodePath("../..")
 
