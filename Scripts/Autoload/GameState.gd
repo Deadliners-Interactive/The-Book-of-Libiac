@@ -13,6 +13,8 @@ var player_health: float = 30.0
 var player_max_health: float = 30.0
 var player_key_count: int = 0
 var player_position: Vector3 = Vector3.ZERO
+var player_owned_weapons: Array[StringName] = [StringName("sword")]
+var player_equipped_weapon: StringName = StringName("sword")
 
 var current_level: String = ""
 var spawn_point_name: String = "default"
@@ -29,12 +31,21 @@ func save_player_state(player: CharacterBody3D) -> void:
 	player_key_count = player.key_count
 	player_position = player.global_position
 
+	if player.has_method("get_owned_weapons_for_save"):
+		player_owned_weapons = player.get_owned_weapons_for_save()
+
+	if player.has_method("get_equipped_weapon_id"):
+		player_equipped_weapon = player.get_equipped_weapon_id()
+
 
 func load_player_state(player: CharacterBody3D) -> void:
 	"""Loads the saved player state."""
 	player.current_health = player_health
 	player.max_health = player_max_health
 	player.key_count = player_key_count
+
+	if player.has_method("load_weapon_state_from_save"):
+		player.load_weapon_state_from_save(player_owned_weapons, player_equipped_weapon)
 
 	if player.has_method("refresh_ui_state"):
 		player.refresh_ui_state()
@@ -46,4 +57,6 @@ func reset_player_state() -> void:
 	player_max_health = 30.0
 	player_key_count = 0
 	player_position = Vector3.ZERO
+	player_owned_weapons = [StringName("sword")]
+	player_equipped_weapon = StringName("sword")
 	spawn_point_name = "default"

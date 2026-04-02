@@ -45,6 +45,8 @@ const ANIM_JUMP_SIDE: StringName = &"jump_side"
 const ANIM_JUMP_UP: StringName = &"jump_up"
 const ANIM_JUMP_DOWN: StringName = &"jump_down"
 const ANIM_ATTACK: StringName = &"attack_side"
+const WEAPON_NONE: StringName = &"none"
+const WEAPON_SWORD: StringName = &"sword"
 const EDGE_HOP_RAYCAST_NAME: StringName = &"EdgeHopRayCast3D_Player"
 const EdgeHopControllerScript = preload("res://Scripts/Gameplay/Behaviors/edge_hop_controller.gd")
 const JumpControllerScript = preload("res://Scripts/Gameplay/Behaviors/jump_controller.gd")
@@ -69,6 +71,11 @@ const NotificationControllerScript = preload("res://Scripts/Gameplay/Behaviors/n
 @export_group("Debug")
 @export var fsm_debug_logs: bool = false
 
+@export_group("Combat - Equipment")
+@export var weapon_toggle_action: StringName = &"toggle_weapon"
+@export var sword_starts_unlocked: bool = true
+@export var sword_starts_equipped: bool = true
+
 
 # ==============================================================================
 # Runtime variables
@@ -77,6 +84,8 @@ const NotificationControllerScript = preload("res://Scripts/Gameplay/Behaviors/n
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var current_health: float
 var key_count: int = 0
+var _owned_weapons: Dictionary = {}
+var _equipped_weapon: StringName = WEAPON_NONE
 
 # Combat/Health config (loaded from player_config)
 var max_health: float
@@ -131,7 +140,7 @@ func _ready() -> void:
 	_setup_terrain_motion()
 	_was_on_floor_last_frame = is_on_floor()
 	current_health = max_health
-	_attack_collision.disabled = true
+	_initialize_weapon_state()
 	
 	add_to_group("player")
 	_attack_area.add_to_group("hitbox_player")
@@ -323,19 +332,102 @@ func show_immediate_notification(message: String) -> void:
 # ==============================================================================
 
 func _handle_actions_input() -> void:
-	if Input.is_action_just_pressed("attack"):
+	if Input.is_action_just_pressed(String(weapon_toggle_action)):
+		toggle_sword_equipped()
+		return
+
+	if Input.is_action_just_pressed("attack") and _can_attack_with_current_weapon():
 		set_state(State.ATTACKING)
 	elif Input.is_action_just_pressed("roll") and _roll_cooldown_timer.is_stopped():
 		set_state(State.ROLLING)
 
 
 func _handle_buffer_input() -> void:
-	if Input.is_action_just_pressed("attack"):
+	if Input.is_action_just_pressed("attack") and _can_attack_with_current_weapon():
 		_input_buffer = "attack"
 	elif Input.is_action_just_pressed("roll"):
 		_input_buffer = "roll"
 		if _roll_cooldown_timer.is_stopped():
 			set_state(State.ROLLING)
+
+
+func toggle_sword_equipped() -> void:
+	if current_state == State.ATTACKING:
+		return
+
+	if _equipped_weapon == WEAPON_SWORD:
+		set_equipped_weapon(WEAPON_NONE)
+		show_notification("Espada guardada")
+		return
+
+	if not _owned_weapons.get(WEAPON_SWORD, false):
+		show_notification("No tienes espada")
+		return
+
+	set_equipped_weapon(WEAPON_SWORD)
+	show_notification("Espada equipada")
+
+
+func register_weapon(weapon_id: StringName) -> void:
+	_owned_weapons[weapon_id] = true
+
+
+func set_equipped_weapon(weapon_id: StringName) -> bool:
+	if weapon_id != WEAPON_NONE and not _owned_weapons.get(weapon_id, false):
+		return false
+
+	_equipped_weapon = weapon_id
+	if _equipped_weapon == WEAPON_NONE:
+		_attack_collision.set_deferred("disabled", true)
+
+	return true
+
+
+func get_equipped_weapon_id() -> StringName:
+	return _equipped_weapon
+
+
+func get_owned_weapons_for_save() -> Array[StringName]:
+	var result: Array[StringName] = []
+	for weapon_id in _owned_weapons.keys():
+		if _owned_weapons[weapon_id]:
+			result.append(weapon_id)
+	return result
+
+
+func load_weapon_state_from_save(owned_weapons: Array, equipped_weapon: StringName) -> void:
+	_owned_weapons.clear()
+	for weapon_id in owned_weapons:
+		_owned_weapons[StringName(weapon_id)] = true
+
+	if equipped_weapon != WEAPON_NONE and _owned_weapons.get(equipped_weapon, false):
+		_equipped_weapon = equipped_weapon
+	else:
+		_equipped_weapon = WEAPON_NONE
+
+	if _equipped_weapon == WEAPON_NONE:
+		_attack_collision.set_deferred("disabled", true)
+
+
+func _can_attack_with_current_weapon() -> bool:
+	return _equipped_weapon == WEAPON_SWORD
+
+
+func _initialize_weapon_state() -> void:
+	_owned_weapons.clear()
+
+	if sword_starts_unlocked:
+		register_weapon(WEAPON_SWORD)
+
+	if sword_starts_equipped and sword_starts_unlocked:
+		_equipped_weapon = WEAPON_SWORD
+	else:
+		_equipped_weapon = WEAPON_NONE
+
+	if _equipped_weapon == WEAPON_NONE:
+		_attack_collision.disabled = true
+	else:
+		_attack_collision.disabled = false
 
 
 # ==============================================================================
