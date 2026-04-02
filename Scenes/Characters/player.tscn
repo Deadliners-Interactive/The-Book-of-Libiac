@@ -451,40 +451,10 @@ animations = [{
 radius = 3.1010742
 height = 8.998437
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ck4ea"]
-atlas = ExtResource("7_utp2y")
-region = Rect2(0, 112, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_usylf"]
-atlas = ExtResource("7_utp2y")
-region = Rect2(16, 112, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6f6io"]
-atlas = ExtResource("7_utp2y")
-region = Rect2(32, 112, 16, 16)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_3q2eo"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ck4ea")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_usylf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_6f6io")
-}],
-"loop": false,
-"name": &"default",
-"speed": 5.0
-}]
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_3smsa"]
-size = Vector3(0.5311432, 0.4720993, 0.14233398)
+size = Vector3(0.14215088, 0.12597656, 0.14233398)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_8erm5"]
-size = Vector3(14.158203, 12.711182, 10.224609)
 
 [node name="Player" type="CharacterBody3D" unique_id=984000044]
 script = ExtResource("1_viyiy")
@@ -509,19 +479,9 @@ shape = SubResource("CapsuleShape3D_gy20a")
 
 [node name="AttackArea" type="Area3D" parent="." unique_id=592024321]
 unique_name_in_owner = true
-visible = false
 
-[node name="Attack_Sides" type="AnimatedSprite3D" parent="AttackArea" unique_id=1988406538]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3951643, 1.1822459, -0.53557175)
-pixel_size = 0.07
-alpha_cut = 1
-texture_filter = 0
-sprite_frames = SubResource("SpriteFrames_3q2eo")
-frame = 2
-frame_progress = 1.0
-
-[node name="Attack_Sides_CollisionShape3D" type="CollisionShape3D" parent="AttackArea" unique_id=1969549770]
-transform = Transform3D(1.965, 0, 0, 0, 1.965, 0, 0, 0, 1.965, 0.36269802, 0.8852975, -0.53813523)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AttackArea" unique_id=1969549770]
+transform = Transform3D(1.965, 0, 0, 0, 1.965, 0, 0, 0, 1.965, 0.14008376, 0, -0.0025634756)
 shape = SubResource("BoxShape3D_3smsa")
 
 [node name="Camera3D2" type="Camera3D" parent="." unique_id=2051324027]
@@ -530,5 +490,5 @@ transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.70710
 [node name="DetectionArea" type="Area3D" parent="." unique_id=381006753]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea" unique_id=249296474]
-transform = Transform3D(0.16, 0, 0, 0, 0.16, 0, 0, 0, 0.16, 0.0010937452, 0.020878896, 0.0078125)
+transform = Transform3D(0.16, 0, 0, 0, 0.16, 0, 0, 0, 0.16, 0, 0, 0)
 shape = SubResource("BoxShape3D_8erm5")
