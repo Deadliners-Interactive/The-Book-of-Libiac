@@ -65,6 +65,14 @@ shader_parameter/mask_softness = 0.0
 shader_parameter/dark_foam_width = 0.12
 shader_parameter/dark_foam_strength = 0.8
 shader_parameter/dark_foam_offset = Vector2(0, -0.08)
+shader_parameter/HORIZON_COL_NEAR = Color(0.05, 0.72, 0.98, 1)
+shader_parameter/HORIZON_COL_MID = Color(0, 0.86, 1, 1)
+shader_parameter/HORIZON_COL_FAR = Color(0.72, 0.97, 1, 1)
+shader_parameter/horizon_start = 12.76
+shader_parameter/horizon_range = 30.0
+shader_parameter/band_thickness = 0.16
+shader_parameter/tide_speed = 0.18
+shader_parameter/tide_strength = 0.12
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2cgwh"]
 material = SubResource("ShaderMaterial_0c07c")
