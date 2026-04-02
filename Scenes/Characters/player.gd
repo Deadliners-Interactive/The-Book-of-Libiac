@@ -44,7 +44,6 @@ const ANIM_ROLL_DOWN: StringName = &"roll_down"
 const ANIM_JUMP_SIDE: StringName = &"jump_side"
 const ANIM_JUMP_UP: StringName = &"jump_up"
 const ANIM_JUMP_DOWN: StringName = &"jump_down"
-const ANIM_FALL: StringName = &"fall"
 const ANIM_ATTACK: StringName = &"attack"
 const EDGE_HOP_RAYCAST_NAME: StringName = &"EdgeHopRayCast3D_Player"
 const EdgeHopControllerScript = preload("res://Scripts/Gameplay/Behaviors/edge_hop_controller.gd")
@@ -598,34 +597,34 @@ func _update_animations() -> void:
 	var has_movement_input: bool = input_dir != Vector2.ZERO
 	
 	if not is_on_floor():
-		# If jumping, show jump/fall animation regardless of horizontal movement
-		if _jump_controller.is_jumping or _jump_controller.airborne_time >= player_config.air_animation_delay:
+		# No fall animation: airborne state resolves to jump or regular movement/idle.
+		if _jump_controller.is_jumping:
 			_animated_sprite.speed_scale = 2.0
-			if _jump_controller.is_jumping:
-				var jump_animation: StringName = _direction_animation_controller.get_jump_animation_name(
-					_last_move_animation,
-					ANIM_MOVE_SIDE,
-					ANIM_MOVE_UP,
-					ANIM_MOVE_DOWN,
-					ANIM_JUMP_SIDE,
-					ANIM_JUMP_UP,
-					ANIM_JUMP_DOWN
-				)
-				_direction_animation_controller.play_animation_with_fallback(_animated_sprite, jump_animation, ANIM_JUMP_SIDE)
-			elif velocity.y < -0.2:
-				_direction_animation_controller.play_animation_with_fallback(_animated_sprite, ANIM_FALL, ANIM_MOVE_SIDE)
+			var jump_animation: StringName = _direction_animation_controller.get_jump_animation_name(
+				_last_move_animation,
+				ANIM_MOVE_SIDE,
+				ANIM_MOVE_UP,
+				ANIM_MOVE_DOWN,
+				ANIM_JUMP_SIDE,
+				ANIM_JUMP_UP,
+				ANIM_JUMP_DOWN
+			)
+			_direction_animation_controller.play_animation_with_fallback(_animated_sprite, jump_animation, ANIM_JUMP_SIDE)
 			return
 		
 		# If actively moving with input but NOT jumping, show movement anim (climbing slopes)
 		if has_movement_input and (velocity.x != 0 or velocity.z != 0):
+			_animated_sprite.speed_scale = 1.0
 			_direction_animation_controller.play_animation_with_fallback(_animated_sprite, _last_move_animation, ANIM_MOVE_SIDE)
 			return
 		
 		# Grace period without movement
 		if velocity.x != 0 or velocity.z != 0:
+			_animated_sprite.speed_scale = 1.0
 			var ground_move_animation: StringName = _direction_animation_controller.get_move_animation_name(Vector3(velocity.x, 0.0, velocity.z), ANIM_MOVE_SIDE, ANIM_MOVE_UP, ANIM_MOVE_DOWN)
 			_direction_animation_controller.play_animation_with_fallback(_animated_sprite, ground_move_animation, ANIM_MOVE_SIDE)
 		else:
+			_animated_sprite.speed_scale = 1.0
 			_direction_animation_controller.play_idle_from_last_direction(_animated_sprite, _last_move_animation, ANIM_MOVE_SIDE)
 		return
 	
