@@ -111,6 +111,26 @@ func get_jump_animation_name(
 			return jump_side_animation
 
 
+func get_attack_animation_name(
+		last_move_animation: StringName,
+		move_side_animation: StringName,
+		move_up_animation: StringName,
+		move_down_animation: StringName,
+		attack_side_animation: StringName,
+		attack_up_animation: StringName,
+		attack_down_animation: StringName
+) -> StringName:
+	match last_move_animation:
+		move_up_animation, attack_up_animation:
+			return attack_up_animation
+		move_down_animation, attack_down_animation:
+			return attack_down_animation
+		move_side_animation, attack_side_animation:
+			return attack_side_animation
+		_:
+			return attack_side_animation
+
+
 func play_animation_with_fallback(animated_sprite: AnimatedSprite3D, preferred: StringName, fallback: StringName) -> bool:
 	if animated_sprite.sprite_frames.has_animation(preferred):
 		animated_sprite.play(preferred)

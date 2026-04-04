@@ -5,6 +5,18 @@
 [ext_resource type="Resource" uid="uid://dl7crr7of6oyc" path="res://Scripts/Data/PlayerConfig_Default.tres" id="2_cqrjx"]
 [ext_resource type="Texture2D" uid="uid://hkgu2vvoodd1" path="res://assets/Sprites/Characters/Player/Libiac-Sheet.png" id="7_utp2y"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_3q2eo"]
+atlas = ExtResource("7_utp2y")
+region = Rect2(0, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dpjl7"]
+atlas = ExtResource("7_utp2y")
+region = Rect2(16, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4sh5b"]
+atlas = ExtResource("7_utp2y")
+region = Rect2(32, 48, 16, 16)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_ck4ea"]
 atlas = ExtResource("7_utp2y")
 region = Rect2(0, 128, 16, 16)
@@ -16,6 +28,18 @@ region = Rect2(16, 128, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_6f6io"]
 atlas = ExtResource("7_utp2y")
 region = Rect2(32, 128, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qaw8m"]
+atlas = ExtResource("7_utp2y")
+region = Rect2(0, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_42d1c"]
+atlas = ExtResource("7_utp2y")
+region = Rect2(16, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uc3c3"]
+atlas = ExtResource("7_utp2y")
+region = Rect2(32, 96, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fs7ks"]
 atlas = ExtResource("2_545oy")
@@ -209,6 +233,20 @@ region = Rect2(64, 160, 16, 16)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_3q2eo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dpjl7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4sh5b")
+}],
+"loop": false,
+"name": &"attack_down",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_ck4ea")
 }, {
 "duration": 1.0,
@@ -219,6 +257,20 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack_side",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qaw8m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_42d1c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uc3c3")
+}],
+"loop": false,
+"name": &"attack_up",
 "speed": 3.0
 }, {
 "frames": [{
@@ -438,9 +490,7 @@ billboard = 1
 alpha_cut = 1
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_ue4gs")
-animation = &"attack_side"
-frame = 2
-frame_progress = 1.0
+animation = &"attack_down"
 
 [node name="RayCast3D" type="RayCast3D" parent="Sprite3D" unique_id=881906985]
 unique_name_in_owner = true

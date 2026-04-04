@@ -44,7 +44,9 @@ const ANIM_ROLL_DOWN: StringName = &"roll_down"
 const ANIM_JUMP_SIDE: StringName = &"jump_side"
 const ANIM_JUMP_UP: StringName = &"jump_up"
 const ANIM_JUMP_DOWN: StringName = &"jump_down"
-const ANIM_ATTACK: StringName = &"attack_side"
+const ANIM_ATTACK_SIDE: StringName = &"attack_side"
+const ANIM_ATTACK_UP: StringName = &"attack_up"
+const ANIM_ATTACK_DOWN: StringName = &"attack_down"
 const WEAPON_NONE: StringName = &"none"
 const WEAPON_SWORD: StringName = &"sword"
 const EDGE_HOP_RAYCAST_NAME: StringName = &"EdgeHopRayCast3D_Player"
@@ -631,7 +633,18 @@ func _state_to_string(state: State) -> String:
 # ==============================================================================
 
 func _start_attack() -> void:
-	_combat_controller.start_attack(_animated_sprite, ANIM_ATTACK)
+	var attack_animation: StringName = _direction_animation_controller.get_attack_animation_name(
+		_last_move_animation,
+		ANIM_MOVE_SIDE,
+		ANIM_MOVE_UP,
+		ANIM_MOVE_DOWN,
+		ANIM_ATTACK_SIDE,
+		ANIM_ATTACK_UP,
+		ANIM_ATTACK_DOWN
+	)
+
+	if not _direction_animation_controller.play_animation_with_fallback(_animated_sprite, attack_animation, ANIM_ATTACK_SIDE):
+		_combat_controller.start_attack(_animated_sprite, ANIM_ATTACK_SIDE)
 	
 	get_tree().create_timer(player_config.attack_hit_delay).timeout.connect(_on_hitbox_activate)
 
@@ -730,7 +743,7 @@ func _update_animations() -> void:
 
 
 func _on_animation_finished() -> void:
-	if _animated_sprite.animation == ANIM_ATTACK:
+	if _animated_sprite.animation in [ANIM_ATTACK_SIDE, ANIM_ATTACK_UP, ANIM_ATTACK_DOWN]:
 		set_state(State.NORMAL)
 	elif String(_animated_sprite.animation).begins_with("roll"):
 		_combat_controller.clear_invulnerability(_animated_sprite)
