@@ -61,25 +61,14 @@ func get_move_animation_name(direction: Vector3, move_side_animation: StringName
 	return move_side_animation
 
 
-func get_roll_animation_name(
-		direction: Vector3,
-		last_move_animation: StringName,
-		roll_side_animation: StringName,
-		roll_up_animation: StringName,
-		roll_down_animation: StringName,
-		move_side_animation: StringName,
-		move_up_animation: StringName,
-		move_down_animation: StringName
-) -> StringName:
+func get_roll_animation_name(direction: Vector3, last_move_animation: StringName, roll_side_animation: StringName, roll_up_animation: StringName, roll_down_animation: StringName) -> StringName:
 	var horizontal: Vector3 = Vector3(direction.x, 0.0, direction.z)
 	if horizontal.length_squared() <= 0.0001:
 		match last_move_animation:
-			roll_up_animation, move_up_animation:
+			roll_up_animation:
 				return roll_up_animation
-			roll_down_animation, move_down_animation:
+			roll_down_animation:
 				return roll_down_animation
-			roll_side_animation, move_side_animation:
-				return roll_side_animation
 			_:
 				return roll_side_animation
 

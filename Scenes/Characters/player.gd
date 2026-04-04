@@ -206,7 +206,8 @@ func _physics_process(delta: float) -> void:
 		apply_floor_snap()
 	
 	move_and_slide()
-	_ground_locomotion_controller.resolve_slope_edge_block(self)
+	if _ground_locomotion_controller.resolve_slope_edge_block(self):
+		move_and_slide()
 	_try_edge_hop()
 	_was_on_floor_last_frame = is_on_floor()
 	_update_animations()
@@ -669,10 +670,7 @@ func _start_roll() -> void:
 		_last_move_animation,
 		ANIM_ROLL_SIDE,
 		ANIM_ROLL_UP,
-		ANIM_ROLL_DOWN,
-		ANIM_MOVE_SIDE,
-		ANIM_MOVE_UP,
-		ANIM_MOVE_DOWN
+		ANIM_ROLL_DOWN
 	)
 	if not _direction_animation_controller.play_animation_with_fallback(_animated_sprite, roll_animation, &"roll"):
 		var roll_timer: SceneTreeTimer = get_tree().create_timer(player_config.roll_duration)
