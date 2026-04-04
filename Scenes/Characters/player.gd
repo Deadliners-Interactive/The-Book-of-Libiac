@@ -664,9 +664,10 @@ func _on_attack_hit(body: Node3D) -> void:
 func _start_roll() -> void:
 	_input_buffer = ""
 	_animated_sprite.speed_scale = 2.0
+	var roll_direction: Vector3 = _direction_animation_controller.get_last_facing_direction_3d(_last_move_input, _is_facing_right)
 
 	var roll_animation: StringName = _direction_animation_controller.get_roll_animation_name(
-		Vector3(velocity.x, 0.0, velocity.z),
+		roll_direction,
 		_last_move_animation,
 		ANIM_ROLL_SIDE,
 		ANIM_ROLL_UP,
