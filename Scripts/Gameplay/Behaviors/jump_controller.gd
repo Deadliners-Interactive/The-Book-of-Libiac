@@ -7,6 +7,7 @@ var jump_buffer_timer: float = 0.0
 var jump_consumed: bool = false
 var is_jumping: bool = false
 var airborne_time: float = 0.0
+var is_edge_hop_jump: bool = false
 
 
 func configure(config: PlayerConfig, base_gravity: float, grid_step: float) -> void:
@@ -16,11 +17,14 @@ func configure(config: PlayerConfig, base_gravity: float, grid_step: float) -> v
 		jump_profile = _build_jump_profile(jump_height_world, config.time_to_jump_apex, base_gravity)
 
 
-func update_timers(delta: float, on_floor: bool, config: PlayerConfig) -> void:
-	if on_floor:
+func update_timers(delta: float, on_floor: bool, velocity_y: float, config: PlayerConfig) -> void:
+	var is_edge_contact_while_ascending: bool = on_floor and is_jumping and velocity_y > 0.05
+
+	if on_floor and not is_edge_contact_while_ascending:
 		last_time_on_floor = config.jump_coyote_time
 		jump_consumed = false
 		is_jumping = false
+		is_edge_hop_jump = false
 		airborne_time = 0.0
 	else:
 		last_time_on_floor = max(last_time_on_floor - delta, 0.0)
@@ -53,6 +57,15 @@ func consume_jump_by_external_boost() -> void:
 	last_time_on_floor = 0.0
 	jump_consumed = true
 	is_jumping = true
+	is_edge_hop_jump = true
+
+
+func consume_jump_by_manual_jump() -> void:
+	jump_buffer_timer = 0.0
+	last_time_on_floor = 0.0
+	jump_consumed = true
+	is_jumping = true
+	is_edge_hop_jump = false
 
 
 func get_air_gravity_multiplier(velocity_y: float, jump_pressed: bool, config: PlayerConfig) -> float:

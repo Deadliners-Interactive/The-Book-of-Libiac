@@ -185,7 +185,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	_jump_controller.update_timers(delta, is_on_floor(), player_config)
+	_jump_controller.update_timers(delta, is_on_floor(), velocity.y, player_config)
 	_edge_hop_controller.tick(delta)
 	_update_current_state(delta)
 	
@@ -206,8 +206,7 @@ func _physics_process(delta: float) -> void:
 		apply_floor_snap()
 	
 	move_and_slide()
-	if _ground_locomotion_controller.resolve_slope_edge_block(self):
-		move_and_slide()
+	_ground_locomotion_controller.resolve_slope_edge_block(self)
 	_try_edge_hop()
 	_was_on_floor_last_frame = is_on_floor()
 	_update_animations()
@@ -701,11 +700,12 @@ func _update_animations() -> void:
 		"move_down"
 	)
 	var has_movement_input: bool = input_dir != Vector2.ZERO
+	var should_use_airborne_animation: bool = not is_on_floor() or _jump_controller.is_jumping or velocity.y > 0.05
 	
-	if not is_on_floor():
+	if should_use_airborne_animation:
 		# No fall animation: airborne state resolves to jump or regular movement/idle.
 		if _jump_controller.is_jumping:
-			_animated_sprite.speed_scale = 2.0
+			_animated_sprite.speed_scale = 3.0 if _jump_controller.is_edge_hop_jump else 2.0
 			var jump_animation: StringName = _direction_animation_controller.get_jump_animation_name(
 				_last_move_animation,
 				ANIM_MOVE_SIDE,

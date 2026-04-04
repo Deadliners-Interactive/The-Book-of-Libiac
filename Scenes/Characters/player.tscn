@@ -313,7 +313,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"jump_down",
-"speed": 6.0
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -490,7 +490,7 @@ billboard = 1
 alpha_cut = 1
 texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_ue4gs")
-animation = &"attack_down"
+animation = &"jump_down"
 
 [node name="RayCast3D" type="RayCast3D" parent="Sprite3D" unique_id=881906985]
 unique_name_in_owner = true
