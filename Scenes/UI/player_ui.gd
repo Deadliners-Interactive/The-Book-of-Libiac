@@ -29,6 +29,8 @@ const NOTIFICATION_COOLDOWN: float = 0.5
 const MIN_KEYS: int = 0
 const MAX_KEYS: int = 99
 const INVENTORY_TOGGLE_ACTION: StringName = &"inventory_toggle"
+const QUICK_SELECT_X_A: float = 211.0
+const QUICK_SELECT_X_B: float = 231.0
 
 # ==============================================================================
 # Member Variables
@@ -41,6 +43,7 @@ var _last_notification_message: String = ""
 var _last_notification_time: float = 0.0
 var _slot_a_weapon_id: StringName = &"none"
 var _slot_b_weapon_id: StringName = &"none"
+var _active_quick_slot: StringName = &"A"
 
 # ==============================================================================
 # Onready Variables
@@ -52,6 +55,7 @@ var _slot_b_weapon_id: StringName = &"none"
 @onready var _notification_container: PanelContainer = $Notification
 @onready var _notification_label: Label = $Notification/NotificationLabel
 @onready var _inventory_menu: Control = get_node_or_null("Inventory_Menu") as Control
+@onready var _quick_weapon_select: TextureRect = get_node_or_null("%WeaponSelect") as TextureRect
 @onready var _slot_a: TextureRect = $Player_status_bar/GridContainer/Slot_A
 @onready var _slot_b: TextureRect = $Player_status_bar/GridContainer/Slot_B
 
@@ -84,6 +88,7 @@ func _ready() -> void:
 
 	_collect_life_nodes()
 	_initialize_default_life_display()
+	_update_quick_selector_visual()
 
 	if _inventory_menu and _inventory_menu.has_signal("weapon_assign_requested"):
 		if not _inventory_menu.weapon_assign_requested.is_connected(_on_inventory_weapon_assign_requested):
@@ -96,6 +101,20 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(String(INVENTORY_TOGGLE_ACTION)):
 		await _toggle_inventory_menu()
 		get_viewport().set_input_as_handled()
+		return
+
+	if _inventory_menu and _inventory_menu.visible:
+		return
+
+	if event is InputEventKey:
+		var key_event: InputEventKey = event as InputEventKey
+		if key_event.pressed and not key_event.echo:
+			if key_event.physical_keycode == KEY_1:
+				_set_active_quick_slot(&"A")
+				get_viewport().set_input_as_handled()
+			elif key_event.physical_keycode == KEY_2:
+				_set_active_quick_slot(&"B")
+				get_viewport().set_input_as_handled()
 
 
 func _exit_tree() -> void:
@@ -390,6 +409,7 @@ func _on_inventory_weapon_assign_requested(slot_name: StringName, weapon_id: Str
 			_slot_a_weapon_id = weapon_id
 			if _slot_a:
 				_slot_a.texture = icon
+			_set_active_quick_slot(&"A")
 			show_notification("%s -> Slot A" % String(weapon_id).capitalize())
 		&"B":
 			# Zelda-like behavior: one weapon can only live in one quick slot.
@@ -401,4 +421,38 @@ func _on_inventory_weapon_assign_requested(slot_name: StringName, weapon_id: Str
 			_slot_b_weapon_id = weapon_id
 			if _slot_b:
 				_slot_b.texture = icon
+			_set_active_quick_slot(&"B")
 			show_notification("%s -> Slot B" % String(weapon_id).capitalize())
+
+
+func _set_active_quick_slot(slot_name: StringName) -> void:
+	if slot_name != &"A" and slot_name != &"B":
+		return
+
+	_active_quick_slot = slot_name
+	_update_quick_selector_visual()
+	_apply_equipped_weapon_from_active_slot()
+
+
+func _update_quick_selector_visual() -> void:
+	if _quick_weapon_select == null:
+		return
+
+	_quick_weapon_select.visible = true
+	var target_x: float = QUICK_SELECT_X_A if _active_quick_slot == &"A" else QUICK_SELECT_X_B
+	_quick_weapon_select.position = Vector2(target_x, _quick_weapon_select.position.y)
+
+
+func _apply_equipped_weapon_from_active_slot() -> void:
+	if not is_instance_valid(_player_ref):
+		return
+
+	if not _player_ref.has_method("set_equipped_weapon"):
+		return
+
+	var weapon_id: StringName = _slot_a_weapon_id if _active_quick_slot == &"A" else _slot_b_weapon_id
+	if weapon_id == &"none":
+		_player_ref.set_equipped_weapon(StringName("none"))
+		return
+
+	_player_ref.set_equipped_weapon(weapon_id)

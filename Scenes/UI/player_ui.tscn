@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://dto1uj8ul7e0y" path="res://assets/Sprites/UI/Life/Wing_half.png" id="3_bsti6"]
 [ext_resource type="Texture2D" uid="uid://br50l6mcelqg7" path="res://assets/Sprites/UI/Life/Wing_empty.png" id="4_rffj1"]
 [ext_resource type="Texture2D" uid="uid://dxkq18qvmmde3" path="res://assets/Sprites/UI/Player_status_bar.PNG" id="6_deklj"]
+[ext_resource type="Texture2D" uid="uid://c63wa5sko53un" path="res://assets/Sprites/UI/Weapon_Select.png" id="6_nwg7q"]
 [ext_resource type="Texture2D" uid="uid://iyxkn8tvw3bf" path="res://assets/Sprites/UI/Life/Wing_full.png" id="7_nwg7q"]
 
 [node name="player_ui" type="CanvasLayer" unique_id=1317836317 groups=["ui"]]
@@ -153,6 +154,18 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 6
 text = "00"
 autowrap_mode = 2
+
+[node name="WeaponSelect" type="TextureRect" parent="Player_status_bar" unique_id=2106774368]
+unique_name_in_owner = true
+visible = false
+z_index = 5
+layout_mode = 0
+offset_left = 231.0
+offset_top = 1.0
+offset_right = 249.0
+offset_bottom = 19.0
+mouse_filter = 2
+texture = ExtResource("6_nwg7q")
 
 [node name="GridContainer" type="GridContainer" parent="Player_status_bar" unique_id=2083456874]
 layout_mode = 1
