@@ -28,6 +28,7 @@ const DEFAULT_VISIBLE_CONTAINERS: int = 3
 const NOTIFICATION_COOLDOWN: float = 0.5
 const MIN_KEYS: int = 0
 const MAX_KEYS: int = 99
+const INVENTORY_TOGGLE_ACTION: StringName = &"inventory_toggle"
 
 # ==============================================================================
 # Member Variables
@@ -48,6 +49,7 @@ var _last_notification_time: float = 0.0
 @onready var _key_label: Label = _keys_container.get_node_or_null("Label") as Label if _keys_container else null
 @onready var _notification_container: PanelContainer = $Notification
 @onready var _notification_label: Label = $Notification/NotificationLabel
+@onready var _inventory_menu: Control = get_node_or_null("Inventory_Menu") as Control
 
 var _player_ref: CharacterBody3D = null
 
@@ -58,6 +60,8 @@ var _player_ref: CharacterBody3D = null
 
 func _ready() -> void:
 	add_to_group("ui")
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	_ensure_inventory_input_action()
 
 	if _key_label:
 		_key_label.text = "00"
@@ -66,6 +70,7 @@ func _ready() -> void:
 
 	_notification_container.visible = false
 	_notification_label.text = ""
+	_inventory_menu.visible = false
 
 	# Position notification panel (bottom left)
 	_notification_container.position = Vector2(20, get_viewport().size.y - 100)
@@ -77,6 +82,17 @@ func _ready() -> void:
 	_initialize_default_life_display()
 
 	call_deferred("_find_player")
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(String(INVENTORY_TOGGLE_ACTION)):
+		_toggle_inventory_menu()
+		get_viewport().set_input_as_handled()
+
+
+func _exit_tree() -> void:
+	if is_instance_valid(get_tree()) and _inventory_menu and _inventory_menu.visible:
+		get_tree().paused = false
 
 
 # ==============================================================================
@@ -221,6 +237,26 @@ func _show_next_notification() -> void:
 
 func _on_viewport_size_changed() -> void:
 	_notification_container.position = Vector2(20, get_viewport().size.y - 100)
+
+
+func _toggle_inventory_menu() -> void:
+	if _inventory_menu == null:
+		push_warning("No se encontro nodo Inventory_Menu en player_ui.tscn")
+		return
+
+	var should_open: bool = not _inventory_menu.visible
+	_inventory_menu.visible = should_open
+	get_tree().paused = should_open
+
+
+func _ensure_inventory_input_action() -> void:
+	if InputMap.has_action(String(INVENTORY_TOGGLE_ACTION)):
+		return
+
+	InputMap.add_action(String(INVENTORY_TOGGLE_ACTION))
+	var key_event: InputEventKey = InputEventKey.new()
+	key_event.physical_keycode = KEY_I
+	InputMap.action_add_event(String(INVENTORY_TOGGLE_ACTION), key_event)
 
 
 func _find_player() -> void:
