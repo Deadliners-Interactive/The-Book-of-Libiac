@@ -11,12 +11,6 @@ extends CanvasLayer
 @export var empty_heart: Texture2D
 
 # ==============================================================================
-# Exports - Key Icon
-# ==============================================================================
-
-@export var key_texture: Texture2D
-
-# ==============================================================================
 # Exports - Notifications
 # ==============================================================================
 
@@ -30,7 +24,10 @@ extends CanvasLayer
 
 const HP_PER_CONTAINER: float = 10.0
 const HALF_CONTAINER_HP: float = 5.0
+const DEFAULT_VISIBLE_CONTAINERS: int = 3
 const NOTIFICATION_COOLDOWN: float = 0.5
+const MIN_KEYS: int = 0
+const MAX_KEYS: int = 99
 
 # ==============================================================================
 # Member Variables
@@ -46,9 +43,9 @@ var _last_notification_time: float = 0.0
 # Onready Variables
 # ==============================================================================
 
-@onready var _hearts_container: HBoxContainer = $HeartsContainer
-@onready var _key_icon: TextureRect = $KeysContainer/TextureRect
-@onready var _key_label: Label = $KeysContainer/Label
+@onready var _life_container: HBoxContainer = get_node_or_null("%LifeContainer") as HBoxContainer
+@onready var _keys_container: HBoxContainer = get_node_or_null("%KeysContainer") as HBoxContainer
+@onready var _key_label: Label = _keys_container.get_node_or_null("Label") as Label if _keys_container else null
 @onready var _notification_container: PanelContainer = $Notification
 @onready var _notification_label: Label = $Notification/NotificationLabel
 
@@ -62,12 +59,10 @@ var _player_ref: CharacterBody3D = null
 func _ready() -> void:
 	add_to_group("ui")
 
-	_key_icon.visible = true
-	_key_icon.texture = key_texture if key_texture else _key_icon.texture
-	_key_icon.custom_minimum_size = Vector2(32, 32)
-	_key_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-
-	_key_label.text = "x0"
+	if _key_label:
+		_key_label.text = "0"
+	else:
+		push_warning("No se encontro Label del contador de llaves en Player_status_bar/KeysContainer")
 
 	_notification_container.visible = false
 	_notification_label.text = ""
@@ -78,10 +73,8 @@ func _ready() -> void:
 	# Listen for viewport resize
 	get_viewport().size_changed.connect(_on_viewport_size_changed)
 
-	# Clear hearts
-	for child in _hearts_container.get_children():
-		child.queue_free()
-	_heart_nodes.clear()
+	_collect_life_nodes()
+	_initialize_default_life_display()
 
 	call_deferred("_find_player")
 
@@ -126,10 +119,16 @@ func update_hearts_display() -> void:
 	if not is_instance_valid(_player_ref):
 		return
 
+	if _heart_nodes.is_empty():
+		_collect_life_nodes()
+
 	var current_hp: int = _player_ref.current_health
 	var num_containers: int = _heart_nodes.size()
 
 	for i in range(num_containers):
+		if not _heart_nodes[i].visible:
+			continue
+
 		var container_index: int = i
 		var container_start_hp: float = container_index * HP_PER_CONTAINER
 		var container_end_hp: float = (container_index + 1) * HP_PER_CONTAINER
@@ -146,25 +145,20 @@ func update_max_hearts_display() -> void:
 	if not is_instance_valid(_player_ref):
 		return
 
+	if _heart_nodes.is_empty():
+		_collect_life_nodes()
+
+	if _heart_nodes.is_empty():
+		return
+
 	var max_hp: int = _player_ref.max_health
-	var needed_containers: int = int(ceil(max_hp / HP_PER_CONTAINER))
-	var current_containers: int = _heart_nodes.size()
+	var needed_containers: int = clampi(int(ceil(max_hp / HP_PER_CONTAINER)), 0, _heart_nodes.size())
 
-	# Create missing containers
-	if current_containers < needed_containers:
-		for i in range(needed_containers - current_containers):
-			var new_heart: TextureRect = TextureRect.new()
-			new_heart.texture = full_heart
-			new_heart.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			new_heart.custom_minimum_size = Vector2(32, 32)
-			_hearts_container.add_child(new_heart)
-			_heart_nodes.append(new_heart)
-
-	# Remove excess containers
-	elif current_containers > needed_containers:
-		for i in range(current_containers - needed_containers):
-			var heart_to_remove: TextureRect = _heart_nodes.pop_back()
-			heart_to_remove.queue_free()
+	for i in range(_heart_nodes.size()):
+		var life_node: TextureRect = _heart_nodes[i]
+		life_node.visible = i < needed_containers
+		if life_node.visible:
+			life_node.texture = empty_heart
 
 	update_hearts_display()
 
@@ -174,10 +168,11 @@ func update_max_hearts_display() -> void:
 # ==============================================================================
 
 func update_keys_display() -> void:
-	if not is_instance_valid(_player_ref):
+	if not is_instance_valid(_player_ref) or _key_label == null:
 		return
 
-	_key_label.text = "x" + str(_player_ref.key_count)
+	var display_keys: int = clampi(int(_player_ref.key_count), MIN_KEYS, MAX_KEYS)
+	_key_label.text = str(display_keys)
 
 
 # ==============================================================================
@@ -240,6 +235,45 @@ func _find_player() -> void:
 	else:
 		await get_tree().create_timer(0.5).timeout
 		_find_player()
+
+
+func _collect_life_nodes() -> void:
+	_heart_nodes.clear()
+
+	if _life_container == null:
+		push_warning("No se encontro LifeContainer en player_ui.tscn")
+		return
+
+	var found_nodes: Array[Node] = _life_container.find_children("Life*", "TextureRect", true, false)
+	for node: Node in found_nodes:
+		if node is TextureRect:
+			_heart_nodes.append(node as TextureRect)
+
+	_heart_nodes.sort_custom(func(a: TextureRect, b: TextureRect) -> bool:
+		return _extract_life_index(a.name) < _extract_life_index(b.name)
+	)
+
+
+func _initialize_default_life_display() -> void:
+	if _heart_nodes.is_empty():
+		return
+
+	var default_visible: int = clampi(DEFAULT_VISIBLE_CONTAINERS, 0, _heart_nodes.size())
+	for i in range(_heart_nodes.size()):
+		var life_node: TextureRect = _heart_nodes[i]
+		life_node.visible = i < default_visible
+		life_node.texture = full_heart if i < default_visible else empty_heart
+
+
+func _extract_life_index(node_name: String) -> int:
+	if not node_name.begins_with("Life"):
+		return 9999
+
+	var index_text: String = node_name.substr(4)
+	if index_text.is_valid_int():
+		return index_text.to_int()
+
+	return 9999
 
 
 func _connect_player_signals() -> void:

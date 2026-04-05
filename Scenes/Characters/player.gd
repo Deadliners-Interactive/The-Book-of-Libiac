@@ -49,6 +49,8 @@ const ANIM_ATTACK_UP: StringName = &"attack_up"
 const ANIM_ATTACK_DOWN: StringName = &"attack_down"
 const WEAPON_NONE: StringName = &"none"
 const WEAPON_SWORD: StringName = &"sword"
+const MIN_KEYS: int = 0
+const MAX_KEYS: int = 99
 const EDGE_HOP_RAYCAST_NAME: StringName = &"EdgeHopRayCast3D_Player"
 const EdgeHopControllerScript = preload("res://Scripts/Gameplay/Behaviors/edge_hop_controller.gd")
 const JumpControllerScript = preload("res://Scripts/Gameplay/Behaviors/jump_controller.gd")
@@ -219,14 +221,14 @@ func _physics_process(delta: float) -> void:
 # ==============================================================================
 
 func add_key() -> void:
-	key_count += 1
+	key_count = clampi(key_count + 1, MIN_KEYS, MAX_KEYS)
 	keys_changed.emit(key_count)
 	show_notification("Llave conseguida (%d)" % key_count)
 
 
 func use_key() -> bool:
 	if key_count > 0:
-		key_count -= 1
+		key_count = clampi(key_count - 1, MIN_KEYS, MAX_KEYS)
 		keys_changed.emit(key_count)
 		return true
 	else:
@@ -314,6 +316,7 @@ func die() -> void:
 # ==============================================================================
 
 func refresh_ui_state() -> void:
+	key_count = clampi(key_count, MIN_KEYS, MAX_KEYS)
 	max_health_changed.emit(max_health)
 	health_changed.emit(current_health, max_health)
 	keys_changed.emit(key_count)

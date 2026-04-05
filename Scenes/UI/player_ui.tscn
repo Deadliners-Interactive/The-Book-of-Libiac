@@ -1,83 +1,154 @@
-[gd_scene load_steps=6 format=3 uid="uid://bj6troapr0vx4"]
+[gd_scene format=3 uid="uid://bj6troapr0vx4"]
 
-[ext_resource type="Texture2D" uid="uid://d26psj5ygphuv" path="res://assets/Sprites/UI/pluma.png" id="1_0axo5"]
 [ext_resource type="Script" uid="uid://5nlaq2kwgco6" path="res://Scenes/UI/player_ui.gd" id="1_j5qct"]
-[ext_resource type="Texture2D" uid="uid://bir40puveha5i" path="res://assets/Sprites/UI/pluma_half.png" id="3_bsti6"]
-[ext_resource type="Texture2D" uid="uid://dwtgm545f3f1p" path="res://assets/Sprites/UI/pluma_empty.png" id="4_rffj1"]
-[ext_resource type="Texture2D" uid="uid://cp7pe1rwy8i4n" path="res://assets/Sprites/objects/key.png" id="5_rffj1"]
+[ext_resource type="Texture2D" uid="uid://dto1uj8ul7e0y" path="res://assets/Sprites/UI/Life/Wing_half.png" id="3_bsti6"]
+[ext_resource type="Texture2D" uid="uid://br50l6mcelqg7" path="res://assets/Sprites/UI/Life/Wing_empty.png" id="4_rffj1"]
+[ext_resource type="Texture2D" uid="uid://dxkq18qvmmde3" path="res://assets/Sprites/UI/Player_status_bar.PNG" id="6_deklj"]
+[ext_resource type="Texture2D" uid="uid://iyxkn8tvw3bf" path="res://assets/Sprites/UI/Life/Wing_full.png" id="7_nwg7q"]
 
-[node name="player_ui" type="CanvasLayer" groups=["ui"]]
+[node name="player_ui" type="CanvasLayer" unique_id=1317836317 groups=["ui"]]
 script = ExtResource("1_j5qct")
-full_heart = ExtResource("1_0axo5")
+full_heart = ExtResource("7_nwg7q")
 half_heart = ExtResource("3_bsti6")
 empty_heart = ExtResource("4_rffj1")
 notification_duration = 1.5
-notification_fade_speed = null
-max_notifications = null
 
-[node name="HeartsContainer" type="HBoxContainer" parent="."]
-unique_name_in_owner = true
-offset_left = -3.0
-offset_top = -90.0
-offset_right = 395.0
-offset_bottom = 40.0
-scale = Vector2(2.045, 2.045)
-size_flags_horizontal = 2
-theme_override_constants/separation = 0
-
-[node name="Heart1" type="TextureRect" parent="HeartsContainer"]
-visible = false
-layout_mode = 2
-texture = ExtResource("1_0axo5")
-expand_mode = 2
-
-[node name="Heart2" type="TextureRect" parent="HeartsContainer"]
-visible = false
-layout_mode = 2
-texture = ExtResource("1_0axo5")
-expand_mode = 2
-
-[node name="Heart3" type="TextureRect" parent="HeartsContainer"]
-visible = false
-layout_mode = 2
-texture = ExtResource("1_0axo5")
-expand_mode = 2
-
-[node name="KeysContainer" type="HBoxContainer" parent="."]
-unique_name_in_owner = true
-offset_left = -3.0
-offset_top = 55.0
-offset_right = 190.0
-offset_bottom = 132.0
-size_flags_horizontal = 2
-theme_override_constants/separation = 0
-
-[node name="TextureRect" type="TextureRect" parent="KeysContainer"]
-layout_mode = 2
-texture = ExtResource("5_rffj1")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="KeysContainer"]
-layout_mode = 2
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 15
-theme_override_font_sizes/font_size = 31
-text = "x0"
-
-[node name="Notification" type="PanelContainer" parent="."]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 23.0
-offset_top = -118.0
-offset_right = 1094.0
-offset_bottom = -74.0
-grow_vertical = 0
+[node name="Notification" type="PanelContainer" parent="." unique_id=138452595]
+anchors_preset = -1
+anchor_right = 0.99600005
+anchor_bottom = 0.86100006
+offset_top = 112.0
+offset_right = 0.023986816
+offset_bottom = 0.015991211
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 0
+size_flags_vertical = 8
 
-[node name="NotificationLabel" type="Label" parent="Notification"]
+[node name="NotificationLabel" type="Label" parent="Notification" unique_id=1638710114]
 layout_mode = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 15
-theme_override_font_sizes/font_size = 31
+theme_override_font_sizes/font_size = 8
 text = "asfgfgsa"
+
+[node name="Player_status_bar" type="TextureRect" parent="." unique_id=457111859]
+anchors_preset = -1
+anchor_top = 0.86100006
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 0.079956055
+grow_vertical = 0
+texture = ExtResource("6_deklj")
+
+[node name="MarginContainer" type="MarginContainer" parent="Player_status_bar" unique_id=1568446944]
+layout_mode = 0
+offset_right = 70.0
+offset_bottom = 17.0
+theme_override_constants/margin_left = 3
+theme_override_constants/margin_top = 2
+
+[node name="LifeContainer" type="HBoxContainer" parent="Player_status_bar/MarginContainer" unique_id=614420356]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Player_status_bar/MarginContainer/LifeContainer" unique_id=556529568]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Fila1" type="GridContainer" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer" unique_id=1917834494]
+layout_mode = 2
+theme_override_constants/h_separation = 2
+columns = 8
+
+[node name="Life1" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila1" unique_id=1366212312]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life2" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila1" unique_id=924943544]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life3" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila1" unique_id=896024386]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life4" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila1" unique_id=927346987]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life5" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila1" unique_id=428138950]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life6" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila1" unique_id=1237909055]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life7" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila1" unique_id=1861987837]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life8" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila1" unique_id=1546935413]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Fila2" type="GridContainer" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer" unique_id=990527213]
+layout_mode = 2
+theme_override_constants/h_separation = 2
+columns = 8
+
+[node name="Life9" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila2" unique_id=1506193908]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life10" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila2" unique_id=1934029269]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life11" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila2" unique_id=1009206113]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life12" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila2" unique_id=1533457647]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life13" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila2" unique_id=1196251696]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life14" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila2" unique_id=2035380102]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life15" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila2" unique_id=1787024927]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="Life16" type="TextureRect" parent="Player_status_bar/MarginContainer/LifeContainer/VBoxContainer/Fila2" unique_id=15545559]
+layout_mode = 2
+texture = ExtResource("7_nwg7q")
+
+[node name="KeysContainer" type="HBoxContainer" parent="Player_status_bar" unique_id=2128233533]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.758
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -0.053009033
+offset_right = -53.005005
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="Player_status_bar/KeysContainer" unique_id=206171930]
+custom_minimum_size = Vector2(9.9, 11)
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 6
+text = "9"
+autowrap_mode = 2
