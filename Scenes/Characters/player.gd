@@ -108,6 +108,7 @@ var _damage_visual_timer: Timer = Timer.new()
 var _roll_cooldown_timer: Timer = Timer.new()
 var _notification_cooldown_time: float = 1.0
 var _was_on_floor_last_frame: bool = false
+var _movement_animation_hold_time_left: float = 0.0
 var _edge_hop_controller = EdgeHopControllerScript.new()
 var _jump_controller = JumpControllerScript.new()
 var _ground_locomotion_controller = GroundLocomotionControllerScript.new()
@@ -187,6 +188,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_jump_controller.update_timers(delta, is_on_floor(), velocity.y, player_config)
 	_edge_hop_controller.tick(delta)
+	_movement_animation_hold_time_left = max(_movement_animation_hold_time_left - delta, 0.0)
 	_update_current_state(delta)
 	
 	# Apply gravity
@@ -442,6 +444,11 @@ func _handle_move(speed_mult: float = 1.0) -> void:
 			"move_up",
 			"move_down"
 	)
+	if input_dir != Vector2.ZERO:
+		_movement_animation_hold_time_left = player_config.movement_animation_hold_time
+	elif Vector3(velocity.x, 0.0, velocity.z).length_squared() > 0.0001:
+		_movement_animation_hold_time_left = max(_movement_animation_hold_time_left, player_config.movement_animation_hold_time * 0.5)
+
 	if _ground_locomotion_controller.apply_move(self, input_dir, _get_move_speed() * speed_mult, _damage_knockback_timer, transform.basis):
 		var facing_update: Dictionary = _direction_animation_controller.update_facing_from_input(
 			_animated_sprite,
@@ -700,6 +707,7 @@ func _update_animations() -> void:
 		"move_down"
 	)
 	var has_movement_input: bool = input_dir != Vector2.ZERO
+	var should_show_ground_movement: bool = has_movement_input or Vector3(velocity.x, 0.0, velocity.z).length_squared() > 0.0001 or _movement_animation_hold_time_left > 0.0
 	var should_use_airborne_animation: bool = not is_on_floor() or _jump_controller.is_jumping or velocity.y > 0.05
 	
 	if should_use_airborne_animation:
@@ -719,13 +727,13 @@ func _update_animations() -> void:
 			return
 		
 		# If actively moving with input but NOT jumping, show movement anim (climbing slopes)
-		if has_movement_input and (velocity.x != 0 or velocity.z != 0):
+		if should_show_ground_movement:
 			_animated_sprite.speed_scale = 1.0
 			_direction_animation_controller.play_animation_with_fallback(_animated_sprite, _last_move_animation, ANIM_MOVE_SIDE)
 			return
 		
 		# Grace period without movement
-		if velocity.x != 0 or velocity.z != 0:
+		if should_show_ground_movement:
 			_animated_sprite.speed_scale = 1.0
 			var ground_move_animation: StringName = _direction_animation_controller.get_move_animation_name(Vector3(velocity.x, 0.0, velocity.z), ANIM_MOVE_SIDE, ANIM_MOVE_UP, ANIM_MOVE_DOWN)
 			_direction_animation_controller.play_animation_with_fallback(_animated_sprite, ground_move_animation, ANIM_MOVE_SIDE)
@@ -735,7 +743,7 @@ func _update_animations() -> void:
 		return
 	
 	_animated_sprite.speed_scale = 1.0
-	if has_movement_input or velocity.x != 0 or velocity.z != 0:
+	if should_show_ground_movement:
 		_direction_animation_controller.play_animation_with_fallback(_animated_sprite, _last_move_animation, ANIM_MOVE_SIDE)
 	else:
 		_direction_animation_controller.play_idle_from_last_direction(_animated_sprite, _last_move_animation, ANIM_MOVE_SIDE)

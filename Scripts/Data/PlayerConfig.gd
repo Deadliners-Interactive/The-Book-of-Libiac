@@ -18,6 +18,7 @@ class_name PlayerConfig
 @export var fall_gravity_multiplier: float = 1.2
 @export var jump_release_gravity_multiplier: float = 1.4
 @export var air_animation_delay: float = 0.08
+@export var movement_animation_hold_time: float = 0.12
 @export var ground_snap_length: float = 0.6
 @export var max_floor_angle_degrees: float = 58.0
 @export var floor_stop_on_slope: bool = false
