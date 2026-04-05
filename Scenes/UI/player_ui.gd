@@ -60,7 +60,7 @@ func _ready() -> void:
 	add_to_group("ui")
 
 	if _key_label:
-		_key_label.text = "0"
+		_key_label.text = "00"
 	else:
 		push_warning("No se encontro Label del contador de llaves en Player_status_bar/KeysContainer")
 
@@ -172,7 +172,7 @@ func update_keys_display() -> void:
 		return
 
 	var display_keys: int = clampi(int(_player_ref.key_count), MIN_KEYS, MAX_KEYS)
-	_key_label.text = str(display_keys)
+	_key_label.text = "%02d" % display_keys
 
 
 # ==============================================================================
