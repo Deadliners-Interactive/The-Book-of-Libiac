@@ -154,5 +154,27 @@ theme_override_font_sizes/font_size = 6
 text = "00"
 autowrap_mode = 2
 
+[node name="GridContainer" type="GridContainer" parent="Player_status_bar" unique_id=2083456874]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -44.0
+offset_top = -18.0
+offset_right = -8.0
+offset_bottom = -2.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/h_separation = 20
+columns = 2
+
+[node name="Slot_A" type="TextureRect" parent="Player_status_bar/GridContainer" unique_id=1850219126]
+layout_mode = 2
+
+[node name="Slot_B" type="TextureRect" parent="Player_status_bar/GridContainer" unique_id=1569177245]
+layout_mode = 2
+
 [node name="Inventory_Menu" parent="." unique_id=1414968372 instance=ExtResource("2_inventory")]
 visible = false

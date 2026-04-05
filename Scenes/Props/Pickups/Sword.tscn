@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://c3i4l8tgkd3ed"]
+
+[ext_resource type="Texture2D" uid="uid://dao468as2n0a6" path="res://assets/Sprites/objects/Sword.png" id="1_7i451"]
+[ext_resource type="Script" uid="uid://dwn0kx6pmbqm2" path="res://Scripts/Interactables/sword_pickup.gd" id="1_g8fuq"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_7i451"]
+radius = 0.6319263
+
+[node name="Sword" type="Node3D" unique_id=315747087]
+script = ExtResource("1_g8fuq")
+
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=2027367977]
+pixel_size = 0.07
+billboard = 1
+texture_filter = 0
+texture = ExtResource("1_7i451")
+
+[node name="Area3D" type="Area3D" parent="." unique_id=1258843226]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1108770081]
+transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0, 0)
+shape = SubResource("SphereShape3D_7i451")

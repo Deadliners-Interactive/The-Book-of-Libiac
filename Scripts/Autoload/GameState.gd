@@ -13,8 +13,8 @@ var player_health: float = 30.0
 var player_max_health: float = 30.0
 var player_key_count: int = 0
 var player_position: Vector3 = Vector3.ZERO
-var player_owned_weapons: Array[StringName] = [StringName("sword")]
-var player_equipped_weapon: StringName = StringName("sword")
+var player_owned_weapons: Array[StringName] = []
+var player_equipped_weapon: StringName = StringName("none")
 
 var current_level: String = ""
 var spawn_point_name: String = "default"
@@ -57,6 +57,6 @@ func reset_player_state() -> void:
 	player_max_health = 30.0
 	player_key_count = 0
 	player_position = Vector3.ZERO
-	player_owned_weapons = [StringName("sword")]
-	player_equipped_weapon = StringName("sword")
+	player_owned_weapons = []
+	player_equipped_weapon = StringName("none")
 	spawn_point_name = "default"

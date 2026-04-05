@@ -77,8 +77,8 @@ const NotificationControllerScript = preload("res://Scripts/Gameplay/Behaviors/n
 
 @export_group("Combat - Equipment")
 @export var weapon_toggle_action: StringName = &"toggle_weapon"
-@export var sword_starts_unlocked: bool = true
-@export var sword_starts_equipped: bool = true
+@export var sword_starts_unlocked: bool = false
+@export var sword_starts_equipped: bool = false
 
 
 # ==============================================================================

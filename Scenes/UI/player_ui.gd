@@ -39,6 +39,8 @@ var _notification_queue: Array[String] = []
 var _is_showing_notification: bool = false
 var _last_notification_message: String = ""
 var _last_notification_time: float = 0.0
+var _slot_a_weapon_id: StringName = &"none"
+var _slot_b_weapon_id: StringName = &"none"
 
 # ==============================================================================
 # Onready Variables
@@ -50,6 +52,8 @@ var _last_notification_time: float = 0.0
 @onready var _notification_container: PanelContainer = $Notification
 @onready var _notification_label: Label = $Notification/NotificationLabel
 @onready var _inventory_menu: Control = get_node_or_null("Inventory_Menu") as Control
+@onready var _slot_a: TextureRect = $Player_status_bar/GridContainer/Slot_A
+@onready var _slot_b: TextureRect = $Player_status_bar/GridContainer/Slot_B
 
 var _player_ref: CharacterBody3D = null
 
@@ -81,12 +85,16 @@ func _ready() -> void:
 	_collect_life_nodes()
 	_initialize_default_life_display()
 
+	if _inventory_menu and _inventory_menu.has_signal("weapon_assign_requested"):
+		if not _inventory_menu.weapon_assign_requested.is_connected(_on_inventory_weapon_assign_requested):
+			_inventory_menu.weapon_assign_requested.connect(_on_inventory_weapon_assign_requested)
+
 	call_deferred("_find_player")
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(String(INVENTORY_TOGGLE_ACTION)):
-		_toggle_inventory_menu()
+		await _toggle_inventory_menu()
 		get_viewport().set_input_as_handled()
 
 
@@ -244,9 +252,27 @@ func _toggle_inventory_menu() -> void:
 		push_warning("No se encontro nodo Inventory_Menu en player_ui.tscn")
 		return
 
+	if _inventory_menu.has_method("is_busy") and _inventory_menu.call("is_busy"):
+		return
+
 	var should_open: bool = not _inventory_menu.visible
-	_inventory_menu.visible = should_open
-	get_tree().paused = should_open
+	if _inventory_menu.has_method("is_open"):
+		should_open = not bool(_inventory_menu.call("is_open"))
+
+	if should_open:
+		get_tree().paused = true
+		if _inventory_menu.has_method("open_with_transition"):
+			await _inventory_menu.call("open_with_transition")
+		else:
+			_inventory_menu.visible = true
+		return
+
+	if _inventory_menu.has_method("close_with_transition"):
+		await _inventory_menu.call("close_with_transition")
+	else:
+		_inventory_menu.visible = false
+
+	get_tree().paused = false
 
 
 func _ensure_inventory_input_action() -> void:
@@ -350,3 +376,29 @@ func _on_player_notification_requested(message: String) -> void:
 
 func _on_player_immediate_notification_requested(message: String) -> void:
 	show_immediate_notification(message)
+
+
+func _on_inventory_weapon_assign_requested(slot_name: StringName, weapon_id: StringName, icon: Texture2D) -> void:
+	match slot_name:
+		&"A":
+			# Zelda-like behavior: one weapon can only live in one quick slot.
+			if _slot_b_weapon_id == weapon_id:
+				_slot_b_weapon_id = &"none"
+				if _slot_b:
+					_slot_b.texture = null
+
+			_slot_a_weapon_id = weapon_id
+			if _slot_a:
+				_slot_a.texture = icon
+			show_notification("%s -> Slot A" % String(weapon_id).capitalize())
+		&"B":
+			# Zelda-like behavior: one weapon can only live in one quick slot.
+			if _slot_a_weapon_id == weapon_id:
+				_slot_a_weapon_id = &"none"
+				if _slot_a:
+					_slot_a.texture = null
+
+			_slot_b_weapon_id = weapon_id
+			if _slot_b:
+				_slot_b.texture = icon
+			show_notification("%s -> Slot B" % String(weapon_id).capitalize())

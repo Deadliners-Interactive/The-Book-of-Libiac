@@ -1,5 +1,14 @@
 [gd_scene format=3 uid="uid://bxdcfkugxoj3y"]
 
+[ext_resource type="Script" uid="uid://dcetxliecjr13" path="res://Scenes/UI/inventory_menu.gd" id="1_menu_script"]
+[ext_resource type="Texture2D" uid="uid://bpa661fc23fyp" path="res://assets/Sprites/UI/Inventory_UI1.PNG" id="2_ui1"]
+[ext_resource type="Texture2D" uid="uid://cwc24kkdswd2g" path="res://assets/Sprites/UI/Inventory_UI2.PNG" id="3_ui2"]
+[ext_resource type="Texture2D" uid="uid://cbhy1edx4sb35" path="res://assets/Sprites/UI/Inventory_UI3.PNG" id="4_ui3"]
+[ext_resource type="StyleBox" uid="uid://bjjemn4xsicoa" path="res://Scenes/UI/new_style_box_flat.tres" id="5_ciem2"]
+[ext_resource type="Texture2D" uid="uid://d0r732owavc1d" path="res://assets/Sprites/UI/Portraits/Portrait_Libiac.png" id="6_ehvdd"]
+[ext_resource type="Texture2D" uid="uid://dao468as2n0a6" path="res://assets/Sprites/objects/Sword.png" id="7_sword"]
+[ext_resource type="Texture2D" uid="uid://c63wa5sko53un" path="res://assets/Sprites/UI/Weapon_Select.png" id="8_select"]
+
 [node name="Inventory_Menu" type="Control" unique_id=1414968372]
 layout_mode = 3
 anchors_preset = 15
@@ -7,6 +16,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_menu_script")
+frame_1 = ExtResource("2_ui1")
+frame_2 = ExtResource("3_ui2")
+frame_3 = ExtResource("4_ui3")
+sword_icon = ExtResource("7_sword")
 
 [node name="InventoryMenu" type="PanelContainer" parent="." unique_id=451695352]
 process_mode = 3
@@ -16,9 +30,45 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -70.0
-offset_top = -42.0
-offset_right = 70.0
-offset_bottom = 42.0
+offset_left = -96.0
+offset_top = -57.0
+offset_right = 96.0
+offset_bottom = 39.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = ExtResource("5_ciem2")
+
+[node name="FrameTexture" type="TextureRect" parent="InventoryMenu" unique_id=150291761]
+layout_mode = 2
+texture = ExtResource("4_ui3")
+stretch_mode = 5
+
+[node name="Player_Portrait" type="TextureRect" parent="InventoryMenu/FrameTexture" unique_id=1237031507]
+layout_mode = 1
+offset_left = 8.0
+offset_top = 14.0
+offset_right = 40.0
+offset_bottom = 46.0
+texture = ExtResource("6_ehvdd")
+stretch_mode = 2
+
+[node name="WeaponSelect" type="TextureRect" parent="InventoryMenu/FrameTexture" unique_id=1178052147]
+visible = false
+z_index = 5
+layout_mode = 1
+offset_left = 106.0
+offset_top = 11.0
+offset_right = 122.0
+offset_bottom = 27.0
+mouse_filter = 2
+texture = ExtResource("8_select")
+
+[node name="WeaponsGrid" type="GridContainer" parent="InventoryMenu/FrameTexture" unique_id=663504308]
+layout_mode = 1
+offset_left = 106.0
+offset_top = 11.0
+offset_right = 182.0
+offset_bottom = 51.0
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 8
+columns = 4

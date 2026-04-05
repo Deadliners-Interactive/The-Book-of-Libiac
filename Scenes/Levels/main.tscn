@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://3jhl25skambw" path="res://Scenes/Props/treasure_chest.tscn" id="11_ee4r6"]
 [ext_resource type="MeshLibrary" uid="uid://dujrrlilayk0g" path="res://assets/Meshlibs/Plain_tiles.tres" id="17_42g4d"]
 [ext_resource type="Script" uid="uid://ci2i6cnjhx751" path="res://Scenes/Gameplay/Triggers/level_trigger.gd" id="19_fevyy"]
+[ext_resource type="PackedScene" uid="uid://c3i4l8tgkd3ed" path="res://Scenes/Props/Pickups/Sword.tscn" id="19_hlgat"]
 [ext_resource type="Texture2D" uid="uid://b7bqq0e6w31dt" path="res://assets/models/Env/dessert/ruina_0.png" id="23_1w6v2"]
 [ext_resource type="Texture2D" uid="uid://bw407eqdhvhq5" path="res://assets/models/Env/dessert/ruina_1.png" id="24_ueoa1"]
 [ext_resource type="Texture2D" uid="uid://c6nhlcegliyba" path="res://assets/models/Env/dessert/ruina_2.png" id="25_6vcvc"]
@@ -308,13 +309,6 @@ skeleton = NodePath("../..")
 [node name="Key" parent="." unique_id=704875833 instance=ExtResource("7_b3802")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5352004, 0.638445, -6.6042814)
 
-[node name="Door" parent="." unique_id=991357660 instance=ExtResource("8_fevyy")]
-transform = Transform3D(0.215, 0, 0, 0, 0.215, 0, 0, 0, 0.215, 5.4877744, 0.6848888, -8.206904)
-open_distance = 2.0
-open_speed = 1.5
-shake_duration = 1.0
-shake_intensity = 0.02
-
 [node name="HealthPickup" parent="." unique_id=2061723975 instance=ExtResource("10_pdsj5")]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.8600371, 0.47813773, -2.243822)
 heal_amount = 10.0
@@ -347,7 +341,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0087890625, -9.1552734e-05
 shape = SubResource("BoxShape3D_fevyy")
 
 [node name="Ruina" type="MeshInstance3D" parent="." unique_id=815671603]
-transform = Transform3D(4, 0, 0, 0, 4, 3.019916e-07, 0, -3.019916e-07, 4, 12.3940935, 2.4606633, 10.760082)
+transform = Transform3D(4, 0, 0, 0, 4, 3.019916e-07, 0, -3.019916e-07, 4, 12.3940935, 2.4124584, 10.760082)
 mesh = SubResource("ArrayMesh_su17q")
 skeleton = NodePath("")
 
@@ -366,7 +360,13 @@ data = {
 metadata/_editor_floor_ = Vector3(0, 1, 0)
 
 [node name="Key2" parent="." unique_id=806974490 instance=ExtResource("7_b3802")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0.15878654, 3.0577178, 16.879187)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15878654, 3.0577178, 16.879187)
 
 [node name="Wing" parent="." unique_id=1453355778 instance=ExtResource("9_hibaj")]
-transform = Transform3D(1.9375988, -0.16951792, 0, 0.16951792, 1.9375988, 0, 0, 0, 1.945, -2.8272371, 2.904091, 17.027025)
+transform = Transform3D(0.2590106, -0.022660488, 0, 0.022660488, 0.2590106, 0, 0, 0, 0.26, -2.8272371, 3.2010818, 17.027025)
+
+[node name="Sword" parent="." unique_id=315747087 instance=ExtResource("19_hlgat")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9534743, 3.3733268, 16.893383)
+
+[node name="Door" parent="." unique_id=1483721630 instance=ExtResource("8_fevyy")]
+transform = Transform3D(1.6345875, 0, 0, 0, 1.295911, 0, 0, 0, 1, 12.411792, 3.1825538, 12.112021)
