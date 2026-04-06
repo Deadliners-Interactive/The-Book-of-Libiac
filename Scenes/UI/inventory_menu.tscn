@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://d0r732owavc1d" path="res://assets/Sprites/UI/Portraits/Portrait_Libiac.png" id="6_ehvdd"]
 [ext_resource type="Texture2D" uid="uid://dao468as2n0a6" path="res://assets/Sprites/objects/Sword.png" id="7_sword"]
 [ext_resource type="Texture2D" uid="uid://c63wa5sko53un" path="res://assets/Sprites/UI/Weapon_Select.png" id="8_select"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/weapon_slot_item.tscn" id="9_slot_scene"]
 
 [node name="Inventory_Menu" type="Control" unique_id=1414968372]
 layout_mode = 3
@@ -21,6 +22,7 @@ frame_1 = ExtResource("2_ui1")
 frame_2 = ExtResource("3_ui2")
 frame_3 = ExtResource("4_ui3")
 sword_icon = ExtResource("7_sword")
+weapon_slot_scene = ExtResource("9_slot_scene")
 
 [node name="InventoryMenu" type="PanelContainer" parent="." unique_id=451695352]
 process_mode = 3

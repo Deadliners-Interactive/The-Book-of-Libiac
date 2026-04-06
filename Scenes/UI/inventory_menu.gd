@@ -13,6 +13,7 @@ signal weapon_assign_requested(slot_name: StringName, weapon_id: StringName, ico
 @export var frame_step_seconds: float = 0.05
 @export var sword_icon: Texture2D
 @export var selector_offset: Vector2 = Vector2(0, 0)
+@export var weapon_slot_scene: PackedScene
 
 
 # ==============================================================================
@@ -32,6 +33,8 @@ var _is_open: bool = false
 var _is_busy: bool = false
 var _player_ref: Node = null
 var _selected_index: int = -1
+var _slot_a_weapon_id: StringName = &"none"
+var _slot_b_weapon_id: StringName = &"none"
 var _slot_weapon_ids: Array[StringName] = []
 
 const TOTAL_WEAPON_SLOTS: int = 8
@@ -93,6 +96,14 @@ func is_open() -> bool:
 
 func is_busy() -> bool:
 	return _is_busy
+
+
+func set_quick_slot_assignments(slot_a_weapon_id: StringName, slot_b_weapon_id: StringName) -> void:
+	_slot_a_weapon_id = slot_a_weapon_id
+	_slot_b_weapon_id = slot_b_weapon_id
+
+	if _is_open and not _is_busy:
+		_refresh_weapons_grid()
 
 
 func open_with_transition() -> void:
@@ -179,13 +190,8 @@ func _refresh_weapons_grid() -> void:
 
 	# Build fixed slots so keyboard navigation always works over the 4x2 grid.
 	for i in range(TOTAL_WEAPON_SLOTS):
-		var slot_icon: TextureRect = TextureRect.new()
-		slot_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		slot_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		slot_icon.custom_minimum_size = SLOT_ICON_SIZE
-		slot_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		slot_icon.texture = null
-		_weapons_grid.add_child(slot_icon)
+		var slot_control: Control = _create_slot_control()
+		_weapons_grid.add_child(slot_control)
 		_slot_weapon_ids.append(&"none")
 
 	var write_index: int = 0
@@ -197,10 +203,11 @@ func _refresh_weapons_grid() -> void:
 		if icon == null:
 			continue
 
-		var slot_icon: TextureRect = _weapons_grid.get_child(write_index) as TextureRect
-		if slot_icon:
-			slot_icon.texture = icon
+		var slot_control: Control = _weapons_grid.get_child(write_index) as Control
+		if slot_control:
+			_set_slot_icon(slot_control, icon)
 			_slot_weapon_ids[write_index] = StringName(weapon_id)
+			_set_slot_marker(slot_control, _get_slot_tag_for_weapon(StringName(weapon_id)))
 			write_index += 1
 
 	var item_count: int = _weapons_grid.get_child_count()
@@ -292,6 +299,24 @@ func _update_selector_visual() -> void:
 	_weapon_select.position = local_pos + center_offset + selector_offset
 
 
+func _get_slot_tag_for_weapon(weapon_id: StringName) -> String:
+	var in_a: bool = weapon_id == _slot_a_weapon_id and weapon_id != &"none"
+	var in_b: bool = weapon_id == _slot_b_weapon_id and weapon_id != &"none"
+
+	if in_a and in_b:
+		return "A/B"
+	if in_a:
+		return "A"
+	if in_b:
+		return "B"
+
+	return ""
+
+
+func _apply_slot_marker(slot_icon: TextureRect, marker_text: String) -> void:
+	pass
+
+
 func _assign_selected_to_slot(slot_name: StringName) -> void:
 	if _selected_index < 0 or _selected_index >= _slot_weapon_ids.size():
 		return
@@ -302,7 +327,74 @@ func _assign_selected_to_slot(slot_name: StringName) -> void:
 
 	var selected_icon: Texture2D = null
 	var selected_node: Node = _weapons_grid.get_child(_selected_index)
-	if selected_node is TextureRect:
-		selected_icon = (selected_node as TextureRect).texture
+	if selected_node is Control:
+		selected_icon = _get_slot_icon_texture(selected_node as Control)
 
 	weapon_assign_requested.emit(slot_name, weapon_id, selected_icon)
+
+
+func _create_slot_control() -> Control:
+	if weapon_slot_scene != null:
+		var instance: Node = weapon_slot_scene.instantiate()
+		if instance is Control:
+			var slot_control: Control = instance as Control
+			_reset_slot_control(slot_control)
+			return slot_control
+
+	var fallback: TextureRect = TextureRect.new()
+	fallback.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	fallback.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	fallback.custom_minimum_size = SLOT_ICON_SIZE
+	fallback.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fallback.texture = null
+	return fallback
+
+
+func _reset_slot_control(slot_control: Control) -> void:
+	_set_slot_icon(slot_control, null)
+	_set_slot_marker(slot_control, "")
+
+
+func _set_slot_icon(slot_control: Control, icon: Texture2D) -> void:
+	if slot_control == null:
+		return
+
+	var icon_node: TextureRect = slot_control.get_node_or_null("Icon") as TextureRect
+	if icon_node:
+		icon_node.texture = icon
+		return
+
+	if slot_control is TextureRect:
+		(slot_control as TextureRect).texture = icon
+
+
+func _get_slot_icon_texture(slot_control: Control) -> Texture2D:
+	if slot_control == null:
+		return null
+
+	var icon_node: TextureRect = slot_control.get_node_or_null("Icon") as TextureRect
+	if icon_node:
+		return icon_node.texture
+
+	if slot_control is TextureRect:
+		return (slot_control as TextureRect).texture
+
+	return null
+
+
+func _set_slot_marker(slot_control: Control, marker_text: String) -> void:
+	if slot_control == null:
+		return
+
+	var marker_bg: CanvasItem = slot_control.get_node_or_null("SlotTagBackground") as CanvasItem
+	var marker_label: Label = slot_control.get_node_or_null("SlotTagBackground/SlotTagLabel") as Label
+	if marker_bg == null or marker_label == null:
+		return
+
+	if marker_text == "":
+		marker_bg.visible = false
+		marker_label.text = ""
+		return
+
+	marker_bg.visible = true
+	marker_label.text = marker_text

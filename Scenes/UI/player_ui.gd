@@ -94,6 +94,8 @@ func _ready() -> void:
 		if not _inventory_menu.weapon_assign_requested.is_connected(_on_inventory_weapon_assign_requested):
 			_inventory_menu.weapon_assign_requested.connect(_on_inventory_weapon_assign_requested)
 
+	_sync_inventory_menu_quick_slots()
+
 	call_deferred("_find_player")
 
 
@@ -279,6 +281,7 @@ func _toggle_inventory_menu() -> void:
 		should_open = not bool(_inventory_menu.call("is_open"))
 
 	if should_open:
+		_sync_inventory_menu_quick_slots()
 		get_tree().paused = true
 		if _inventory_menu.has_method("open_with_transition"):
 			await _inventory_menu.call("open_with_transition")
@@ -409,6 +412,7 @@ func _on_inventory_weapon_assign_requested(slot_name: StringName, weapon_id: Str
 			_slot_a_weapon_id = weapon_id
 			if _slot_a:
 				_slot_a.texture = icon
+			_sync_inventory_menu_quick_slots()
 			_set_active_quick_slot(&"A")
 			show_notification("%s -> Slot A" % String(weapon_id).capitalize())
 		&"B":
@@ -421,6 +425,7 @@ func _on_inventory_weapon_assign_requested(slot_name: StringName, weapon_id: Str
 			_slot_b_weapon_id = weapon_id
 			if _slot_b:
 				_slot_b.texture = icon
+			_sync_inventory_menu_quick_slots()
 			_set_active_quick_slot(&"B")
 			show_notification("%s -> Slot B" % String(weapon_id).capitalize())
 
@@ -456,3 +461,11 @@ func _apply_equipped_weapon_from_active_slot() -> void:
 		return
 
 	_player_ref.set_equipped_weapon(weapon_id)
+
+
+func _sync_inventory_menu_quick_slots() -> void:
+	if _inventory_menu == null:
+		return
+
+	if _inventory_menu.has_method("set_quick_slot_assignments"):
+		_inventory_menu.call("set_quick_slot_assignments", _slot_a_weapon_id, _slot_b_weapon_id)
